@@ -9,6 +9,7 @@ const sassMiddleware = require('node-sass-middleware')
 const index = require('./routes/index')
 const users = require('./routes/users')
 const game = require('./routes/game')
+const map = require('./routes/map')
 
 const app = express()
 
@@ -33,6 +34,7 @@ app.use(express.static(path.join(__dirname, 'public')))
 app.use('/', index)
 app.use('/users', users)
 app.use('/game', game)
+app.use('/map', map)
 
 // catch 404 and forward to error handler
 app.use((req, res, next) => {

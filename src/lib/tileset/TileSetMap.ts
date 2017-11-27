@@ -40,6 +40,5 @@ export class TileSetMap {
 
   draw () {
     this.mapLayers.forEach(layer => this.drawLayer(layer))
-
   }
 }

@@ -1,7 +1,13 @@
+const path = require('path')
+
 module.exports = {
-  entry: './src/game/app.ts',
+  entry: {
+    multiverseInvaders: './src/game/app.ts',
+    tileSetMap: './src/lib/tileset/test.js'
+  },
   output: {
-    filename: 'public/javascripts/multiverse invaders.bundle.min.js'
+    path: path.join(__dirname, './public/javascripts'),
+    filename: '[name].bundle.js'
   },
   resolve: {
     // Add '.ts' and '.tsx' as a resolvable extension.
