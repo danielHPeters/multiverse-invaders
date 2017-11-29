@@ -60,11 +60,33 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 16);
+/******/ 	return __webpack_require__(__webpack_require__.s = 18);
 /******/ })
 /************************************************************************/
 /******/ ([
-/* 0 */,
+/* 0 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var EntityType;
+(function (EntityType) {
+    EntityType["PLAYER"] = "ship";
+    EntityType["ENEMY"] = "enmey";
+    EntityType["ENEMY_BULLET"] = "bulletEnemy";
+    EntityType["PLAYER_BULLET"] = "bullet";
+    EntityType["BACKGROUND"] = "background";
+    EntityType["MAP"] = "map";
+    EntityType["GAME_OVER"] = "gameOver";
+    EntityType["LASER"] = "laser";
+    EntityType["MAIN_THEME"] = "shockWave";
+    EntityType["EXPLOSION_I"] = "explosion1";
+    EntityType["EXPLOSION_II"] = "explosion2";
+})(EntityType = exports.EntityType || (exports.EntityType = {}));
+
+
+/***/ }),
 /* 1 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -81,7 +103,7 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
-var Observable_1 = __webpack_require__(4);
+var Observable_1 = __webpack_require__(5);
 var Actions;
 (function (Actions) {
     Actions["UP"] = "UP";
@@ -119,13 +141,127 @@ exports.InputManager = InputManager;
 
 
 /***/ }),
-/* 2 */,
+/* 2 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var Vector2 = (function () {
+    function Vector2(x, y) {
+        this.x = x;
+        this.y = y;
+    }
+    Vector2.addVector = function (v1, v2) {
+        return new Vector2(v1.x + v2.x, v1.y + v2.y);
+    };
+    Vector2.subtractVector = function (v1, v2) {
+        return new Vector2(v1.x - v2.x, v1.y - v2.y);
+    };
+    Vector2.multiply = function (vector, scalar) {
+        return new Vector2(vector.x * scalar, vector.y * scalar);
+    };
+    Vector2.divide = function (vector, scalar) {
+        if (scalar === 0) {
+            throw new Error('cannot divide vector by scalar with value "0"');
+        }
+        return new Vector2(vector.x / scalar, vector.y / scalar);
+    };
+    Object.defineProperty(Vector2.prototype, "x", {
+        get: function () {
+            return this._x;
+        },
+        set: function (x) {
+            this._x = x;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Vector2.prototype, "y", {
+        get: function () {
+            return this._y;
+        },
+        set: function (y) {
+            this._y = y;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Vector2.prototype.set = function (x, y) {
+        this.x = x;
+        this.y = y;
+    };
+    Vector2.prototype.setVector = function (vector) {
+        this.x = vector.x;
+        this.y = vector.y;
+    };
+    Vector2.prototype.add = function (x, y) {
+        this.x += x;
+        this.y += y;
+    };
+    Vector2.prototype.addVector = function (vector) {
+        this.x += vector.x;
+        this.y += vector.y;
+    };
+    Vector2.prototype.subtract = function (x, y) {
+        this.x -= x;
+        this.y -= y;
+    };
+    Vector2.prototype.subtractVector = function (vector) {
+        this.x -= vector.x;
+        this.y -= vector.y;
+    };
+    Vector2.prototype.multiply = function (scalar) {
+        this.x *= scalar;
+        this.y *= scalar;
+    };
+    Vector2.prototype.divide = function (scalar) {
+        if (scalar === 0) {
+            throw new Error('cannot divide vector by "0"');
+        }
+        this.x /= scalar;
+        this.y /= scalar;
+    };
+    Vector2.prototype.mag = function () {
+        return Math.sqrt(this.x * this.x + this.y * this.y);
+    };
+    Vector2.prototype.negative = function () {
+        return new Vector2(-this.x, -this.y);
+    };
+    Vector2.prototype.normalize = function () {
+        var magnitude = this.mag();
+        if (magnitude !== 0) {
+            this.divide(magnitude);
+        }
+    };
+    Vector2.prototype.limit = function (max) {
+        if (Math.floor(this.mag()) > max) {
+            this.normalize();
+            this.multiply(max);
+        }
+    };
+    Vector2.prototype.distanceTo = function (vector) {
+        return Math.sqrt(Math.pow(vector.x - this.x, 2) + Math.pow(vector.y - this.y, 2));
+    };
+    Vector2.prototype.dot = function (vector) {
+        return this.x * vector.x + this.y * vector.y;
+    };
+    Vector2.prototype.clone = function () {
+        return new Vector2(this.x, this.y);
+    };
+    return Vector2;
+}());
+exports.Vector2 = Vector2;
+
+
+/***/ }),
 /* 3 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
+var SpriteSheet_1 = __webpack_require__(4);
 var AssetType;
 (function (AssetType) {
     AssetType["SPRITE"] = "SPRITE";
@@ -135,18 +271,48 @@ var AssetType;
 var AssetManager = (function () {
     function AssetManager() {
         this.cache = {
-            sprites: {}
+            sprites: {},
+            spriteSheets: {},
+            audio: {}
         };
         this.downloadCount = 0;
         this.queue = [];
+        this.initAudioContext();
     }
+    AssetManager.prototype.initAudioContext = function () {
+        try {
+            window.AudioContext = window.AudioContext || webkitAudioContext;
+            this.audioContext = new AudioContext();
+        }
+        catch (e) {
+            console.log('Web Audio API is not supported in this browser');
+        }
+    };
     AssetManager.prototype.done = function () {
         return this.downloadCount === this.queue.length;
     };
     AssetManager.prototype.queueDownload = function (id, path, type) {
-        this.queue.push({ id: id, path: path, type: type });
+        this.queue.push({
+            id: id, path: path, type: type
+        });
     };
-    AssetManager.prototype.loadSprite = function (id, path, callback) {
+    AssetManager.prototype.loadAudio = function (item, callback) {
+        var _this = this;
+        var request = new XMLHttpRequest();
+        request.open('GET', item.path, true);
+        request.responseType = 'arraybuffer';
+        request.addEventListener('load', function () {
+            _this.audioContext.decodeAudioData(request.response, function (buffer) {
+                _this.cache.audio[item.id] = buffer;
+                _this.downloadCount += 1;
+                if (_this.done()) {
+                    callback();
+                }
+            }, function (error) { console.log('Error with decoding audio data' + error); });
+        });
+        request.send();
+    };
+    AssetManager.prototype.loadSprite = function (item, callback) {
         var _this = this;
         var sprite = new Image();
         sprite.addEventListener('load', function () {
@@ -155,19 +321,46 @@ var AssetManager = (function () {
                 callback();
             }
         });
-        sprite.src = path;
-        this.cache.sprites[id] = sprite;
+        sprite.src = item.path;
+        this.cache.sprites[item.id] = sprite;
+    };
+    AssetManager.prototype.loadSpriteSheet = function (item, callback) {
+        var _this = this;
+        var spriteSheet = new Image();
+        spriteSheet.addEventListener('load', function () {
+            _this.cache.spriteSheets[item.id] = new SpriteSheet_1.SpriteSheet(spriteSheet, item.opts.frameWidth || 0, item.opts.frameHeight || 0);
+            _this.downloadCount += 1;
+            if (_this.done()) {
+                callback();
+            }
+        });
+        spriteSheet.src = item.path;
     };
     AssetManager.prototype.downloadAll = function (callback) {
         var _this = this;
         this.queue.forEach(function (item) {
-            if (item.type === AssetType.SPRITE) {
-                _this.loadSprite(item.id, item.path, callback);
+            if (item.type === AssetType.AUDIO) {
+                _this.loadAudio(item, callback);
+            }
+            else if (item.type === AssetType.SPRITE) {
+                _this.loadSprite(item, callback);
+            }
+            else if (item.type === AssetType.SPRITE_SHEET) {
+                _this.loadSpriteSheet(item, callback);
             }
         });
     };
+    AssetManager.prototype.getSound = function (id) {
+        var sound = this.audioContext.createBufferSource();
+        sound.buffer = this.cache.audio[id];
+        sound.connect(this.audioContext.destination);
+        return sound;
+    };
     AssetManager.prototype.getSprite = function (id) {
         return this.cache.sprites[id];
+    };
+    AssetManager.prototype.getSpriteSheet = function (id) {
+        return this.cache.spriteSheet[id];
     };
     return AssetManager;
 }());
@@ -176,6 +369,68 @@ exports.AssetManager = AssetManager;
 
 /***/ }),
 /* 4 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var SpriteSheet = (function () {
+    function SpriteSheet(image, frameWidth, frameHeight) {
+        this._image = image;
+        this._frameWidth = frameWidth;
+        this._frameHeight = frameHeight;
+        this._framesPerRow = Math.floor(this._image.width / this._frameWidth);
+    }
+    Object.defineProperty(SpriteSheet.prototype, "image", {
+        get: function () {
+            return this._image;
+        },
+        set: function (image) {
+            if (!(image instanceof Image)) {
+                throw new Error('Param image must be of type Image!');
+            }
+            this._image = image;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(SpriteSheet.prototype, "frameWidth", {
+        get: function () {
+            return this._frameWidth;
+        },
+        set: function (frameWidth) {
+            this._frameWidth = frameWidth;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(SpriteSheet.prototype, "frameHeight", {
+        get: function () {
+            return this._frameHeight;
+        },
+        set: function (frameHeight) {
+            this._frameHeight = frameHeight;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(SpriteSheet.prototype, "framesPerRow", {
+        get: function () {
+            return this._framesPerRow;
+        },
+        set: function (framesPerRow) {
+            this._framesPerRow = framesPerRow;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    return SpriteSheet;
+}());
+exports.SpriteSheet = SpriteSheet;
+
+
+/***/ }),
+/* 5 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -226,7 +481,7 @@ exports.Observable = Observable;
 
 
 /***/ }),
-/* 5 */
+/* 6 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -243,10 +498,10 @@ var Settings = (function () {
             ' ': InputManager_1.Actions.SHOOT
         };
         this.player = {
-            maxVelocity: 10,
+            maxVelocity: 15,
             fireDelay: 15,
             friction: 0.7,
-            acceleration: 2
+            acceleration: 3
         };
     }
     Settings.prototype.findKey = function (value) {
@@ -267,7 +522,6 @@ exports.Settings = Settings;
 
 
 /***/ }),
-/* 6 */,
 /* 7 */,
 /* 8 */,
 /* 9 */,
@@ -277,23 +531,29 @@ exports.Settings = Settings;
 /* 13 */,
 /* 14 */,
 /* 15 */,
-/* 16 */
+/* 16 */,
+/* 17 */,
+/* 18 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var TileSetMap_1 = __webpack_require__(17);
+var TileSetMap_1 = __webpack_require__(19);
 var AssetManager_1 = __webpack_require__(3);
 var InputManager_1 = __webpack_require__(1);
-var Settings_1 = __webpack_require__(5);
+var Settings_1 = __webpack_require__(6);
+var Entity_1 = __webpack_require__(20);
+var CollideAble_1 = __webpack_require__(0);
 document.addEventListener('DOMContentLoaded', function () { return init(); });
 function init() {
     var canvas = document.getElementById('background');
+    var canvasPlayer = document.getElementById('player');
     var assetManager = new AssetManager_1.AssetManager();
     var settings = new Settings_1.Settings();
     var inputManager = new InputManager_1.InputManager(settings);
-    assetManager.queueDownload('map', 'assets/tilesets/tileset.png', AssetManager_1.AssetType.SPRITE);
+    assetManager.queueDownload(CollideAble_1.EntityType.MAP, 'assets/tilesets/tileset.png', AssetManager_1.AssetType.SPRITE);
+    assetManager.queueDownload(CollideAble_1.EntityType.PLAYER, 'assets/sprites/player.png', AssetManager_1.AssetType.SPRITE);
     assetManager.downloadAll(function () {
         var ground = [
             [172, 172, 172, 79, 34, 34, 34, 34, 34, 34, 34, 34, 56, 57, 54, 55, 56, 147, 67, 67, 68, 79, 79, 171, 172, 172, 173, 79, 79, 55, 55, 55],
@@ -317,7 +577,7 @@ function init() {
             [34, 34, 34, 34, 79, 79, 79, 79, 79, 79, 155, 172, 172, 159, 189, 79, 79, 79, 79, 79, 79, 79, 79, 79, 79, 79, 79, 79, 79, 171, 172, 172],
             [34, 34, 34, 34, 34, 34, 79, 79, 79, 79, 171, 172, 172, 173, 79, 79, 79, 79, 79, 79, 79, 79, 79, 79, 79, 79, 79, 79, 155, 142, 172, 172]
         ];
-        var layer1 = [
+        var topLayer = [
             [0, 0, 32, 33, 0, 220, 0, 0, 220, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 69, 0, 0, 0, 0, 0, 32, 33],
             [0, 0, 48, 49, 0, 236, 220, 220, 236, 0, 0, 147, 72, 73, 70, 71, 72, 73, 83, 83, 84, 85, 0, 0, 0, 0, 0, 48, 49],
             [0, 0, 64, 65, 54, 0, 236, 236, 0, 0, 162, 163, 84, 89, 86, 87, 88, 89, 99, 99, 100, 101, 0, 0, 0, 0, 7, 112, 113],
@@ -339,14 +599,21 @@ function init() {
             [0, 0, 0, 0, 40, 19, 24, 25, 8, 9, 0, 0, 0, 0, 0, 48, 49, 50, 51, 52, 115, 3, 4, 0, 0, 0, 0, 0, 249, 250],
             [0, 0, 0, 0, 0, 0, 40, 41, 20, 21, 0, 0, 0, 0, 0, 64, 65, 66, 67, 52, 19, 19, 20, 21]
         ];
-        var tileMap = new TileSetMap_1.TileSetMap(assetManager.getSprite('map'), [ground, layer1], canvas.getContext('2d'), 32, 20, 32, 16);
+        var tileMap = new TileSetMap_1.TileSetMap(assetManager.getSprite(CollideAble_1.EntityType.MAP), [ground, topLayer], canvas.getContext('2d'), 32, ground.length, ground[0].length, 16);
+        var player = new Entity_1.Entity(190, 250, assetManager.getSprite(CollideAble_1.EntityType.PLAYER), canvasPlayer.getContext('2d'));
+        inputManager.register(player);
         tileMap.draw();
+        function render() {
+            player.move();
+            window.requestAnimationFrame(function () { return render(); });
+        }
+        render();
     });
 }
-//# sourceMappingURL=test.js.map
+
 
 /***/ }),
-/* 17 */
+/* 19 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -363,7 +630,7 @@ var TileSetMap = (function () {
         this.imageTilesPerRow = imageTilesPerRow;
     }
     TileSetMap.prototype.drawLayer = function (layer) {
-        for (var row = 0; row < this.imageTilesPerRow; row++) {
+        for (var row = 0; row < this.tilesPerRow; row++) {
             for (var col = 0; col < this.tilesPerColumn; col++) {
                 var tile = layer[row][col];
                 var tileRow = (tile / this.imageTilesPerRow) | 0;
@@ -379,6 +646,54 @@ var TileSetMap = (function () {
     return TileSetMap;
 }());
 exports.TileSetMap = TileSetMap;
+
+
+/***/ }),
+/* 20 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var Vector2_1 = __webpack_require__(2);
+var InputManager_1 = __webpack_require__(1);
+var Entity = (function () {
+    function Entity(x, y, sprite, context) {
+        this.position = new Vector2_1.Vector2(x, y);
+        this.velocity = new Vector2_1.Vector2(1, 1);
+        this.sprite = sprite;
+        this.context = context;
+        this.acceleration = new Vector2_1.Vector2(0, 0);
+        this.state = {};
+    }
+    Entity.prototype.move = function () {
+        this.context.clearRect(Math.floor(this.position.x), Math.floor(this.position.y), this.sprite.width, this.sprite.height);
+        this.acceleration.set(0, 0);
+        if (this.state[InputManager_1.Actions.LEFT]) {
+            this.acceleration.add(-3, 0);
+        }
+        if (this.state[InputManager_1.Actions.RIGHT]) {
+            this.acceleration.add(3, 0);
+        }
+        if (this.state[InputManager_1.Actions.UP]) {
+            this.acceleration.add(0, -3);
+        }
+        if (this.state[InputManager_1.Actions.DOWN]) {
+            this.acceleration.add(0, 3);
+        }
+        this.velocity.multiply(0.6);
+        this.velocity.addVector(this.acceleration);
+        this.velocity.limit(15);
+        this.position.addVector(this.velocity);
+        this.position.subtractVector(this.acceleration);
+        this.context.drawImage(this.sprite, Math.floor(this.position.x), Math.floor(this.position.y), this.sprite.width, this.sprite.height);
+    };
+    Entity.prototype.update = function (state) {
+        this.state = state;
+    };
+    return Entity;
+}());
+exports.Entity = Entity;
 
 
 /***/ })

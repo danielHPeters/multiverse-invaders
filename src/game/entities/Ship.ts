@@ -111,6 +111,7 @@ export class Ship implements Drawable, Observer, CollideAble {
 
       // Finish by redrawing the ship
       this.draw()
+
       if (this.state[Actions.SHOOT] && this.counter >= this.settings.fireDelay && !this.colliding) {
         this.fire()
         this.counter = 0

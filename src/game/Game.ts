@@ -7,6 +7,7 @@ import { QuadTree } from '../lib/collision/QuadTree'
 import { HitBox } from '../lib/collision/HitBox'
 import { Settings } from '../client/Settings'
 import { EntityType } from './interfaces/CollideAble'
+import { CollisionManager } from '../lib/collision/CollisionManager'
 
 /**
  *
@@ -23,6 +24,7 @@ export class Game {
   window
   assetManager: AssetManager
   inputManager: InputManager
+  collisionManager: CollisionManager
   settings: Settings
   quadTree: QuadTree
   playerScore: number
@@ -30,6 +32,7 @@ export class Game {
   shipStartY: number
   paused: boolean
   canvases
+  backgroundAudio: AudioBufferSourceNode
 
   /**
    *
@@ -79,6 +82,11 @@ export class Game {
       this.spawnWave()
       inputManager.register(this.ship)
       this.quadTree = new QuadTree(new HitBox(0, 0, this.canvases.main.width, this.canvases.main.height))
+      this.collisionManager = new CollisionManager(this.quadTree)
+      this.backgroundAudio = this.assetManager.getSound(EntityType.MAIN_THEME)
+      this.backgroundAudio.loop = true
+      this.backgroundAudio.loopEnd = Math.floor(this.backgroundAudio.buffer.duration)
+      this.backgroundAudio.start(0)
       this.start()
     }
   }
@@ -106,28 +114,6 @@ export class Game {
     }
   }
 
-  detectCollision (): void {
-    let objects = []
-    this.quadTree.getAllObjects(objects)
-
-    for (let i = 0; i < objects.length; i++) {
-      let obj = []
-      this.quadTree.findObjects(obj, objects[i])
-
-      for (let j = 0; j < obj.length; j++) {
-        // DETECT COLLISION ALGORITHM
-        if (objects[i].isCollideAbleWith(obj[j]) &&
-          (objects[i].position.x < obj[j].position.x + obj[j].width &&
-            objects[i].position.x + objects[i].width > obj[j].position.x &&
-            objects[i].position.y < obj[j].position.y + obj[j].height &&
-            objects[i].position.y + objects[i].height > obj[j].position.y)) {
-          objects[i].colliding = true
-          obj[j].colliding = true
-        }
-      }
-    }
-  }
-
   /**
    *
    */
@@ -140,7 +126,7 @@ export class Game {
         this.quadTree.insert(this.ship.pool.getPool())
         this.quadTree.insert(this.enemyPool.getPool())
         this.quadTree.insert(this.enemyBulletPool.getPool())
-        this.detectCollision()
+        this.collisionManager.detectCollision()
 
         // Spawn new wave if all enemies are destroyed.
         if (this.enemyPool.getPool().length === 0) {
@@ -184,7 +170,6 @@ export class Game {
     this.backgroundContext.clearRect(0, 0, this.canvases.background.width, this.canvases.background.height)
     this.shipContext.clearRect(0, 0, this.canvases.ship.width, this.canvases.ship.height)
     this.mainContext.clearRect(0, 0, this.canvases.main.width, this.canvases.main.height)
-    this.inputManager.reset()
     this.quadTree.clear()
     this.background.reset()
     this.playerScore = 0

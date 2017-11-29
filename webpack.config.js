@@ -3,7 +3,7 @@ const path = require('path')
 module.exports = {
   entry: {
     multiverseInvaders: './src/game/app.ts',
-    tileSetMap: './src/lib/tileset/test.js'
+    tileSetMap: './src/lib/tileset/test.ts'
   },
   output: {
     path: path.join(__dirname, './public/javascripts'),

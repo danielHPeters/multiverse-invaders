@@ -2,15 +2,19 @@ import { TileSetMap } from './TileSetMap'
 import { AssetManager, AssetType } from '../../client/AssetManager'
 import { InputManager } from '../../client/InputManager'
 import { Settings } from '../../client/Settings'
+import { Entity } from '../Entity'
+import { EntityType } from '../../game/interfaces/CollideAble'
 
 document.addEventListener('DOMContentLoaded', () => init())
 
 function init (): void {
   const canvas = document.getElementById('background') as HTMLCanvasElement
+  const canvasPlayer = document.getElementById('player') as HTMLCanvasElement
   const assetManager = new AssetManager()
   const settings = new Settings()
   const inputManager = new InputManager(settings)
-  assetManager.queueDownload('map', 'assets/tilesets/tileset.png', AssetType.SPRITE)
+  assetManager.queueDownload(EntityType.MAP, 'assets/tilesets/tileset.png', AssetType.SPRITE)
+  assetManager.queueDownload(EntityType.PLAYER, 'assets/sprites/player.png', AssetType.SPRITE)
   assetManager.downloadAll(() => {
     let ground = [
       [172, 172, 172, 79, 34, 34, 34, 34, 34, 34, 34, 34, 56, 57, 54, 55, 56, 147, 67, 67, 68, 79, 79, 171, 172, 172, 173, 79, 79, 55, 55, 55],
@@ -35,7 +39,7 @@ function init (): void {
       [34, 34, 34, 34, 34, 34, 79, 79, 79, 79, 171, 172, 172, 173, 79, 79, 79, 79, 79, 79, 79, 79, 79, 79, 79, 79, 79, 79, 155, 142, 172, 172]
     ]
 
-    let layer1 = [
+    let topLayer = [
       [0, 0, 32, 33, 0, 220, 0, 0, 220, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 69, 0, 0, 0, 0, 0, 32, 33],
       [0, 0, 48, 49, 0, 236, 220, 220, 236, 0, 0, 147, 72, 73, 70, 71, 72, 73, 83, 83, 84, 85, 0, 0, 0, 0, 0, 48, 49],
       [0, 0, 64, 65, 54, 0, 236, 236, 0, 0, 162, 163, 84, 89, 86, 87, 88, 89, 99, 99, 100, 101, 0, 0, 0, 0, 7, 112, 113],
@@ -58,7 +62,23 @@ function init (): void {
       [0, 0, 0, 0, 0, 0, 40, 41, 20, 21, 0, 0, 0, 0, 0, 64, 65, 66, 67, 52, 19, 19, 20, 21]
     ]
 
-    let tileMap = new TileSetMap(assetManager.getSprite('map'), [ground, layer1], canvas.getContext('2d'), 32, 20, 32, 16)
+    let tileMap = new TileSetMap(
+      assetManager.getSprite(EntityType.MAP),
+      [ground, topLayer],
+      canvas.getContext('2d'),
+      32, ground.length,
+      ground[0].length,
+      16
+    )
+    let player = new Entity(190, 250, assetManager.getSprite(EntityType.PLAYER), canvasPlayer.getContext('2d'))
+    inputManager.register(player)
     tileMap.draw()
+
+    function render (): void {
+      player.move()
+      window.requestAnimationFrame(() => render())
+    }
+
+    render()
   })
 }

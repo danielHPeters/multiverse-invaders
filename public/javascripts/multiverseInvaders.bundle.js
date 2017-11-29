@@ -60,7 +60,7 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 7);
+/******/ 	return __webpack_require__(__webpack_require__.s = 8);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -77,6 +77,12 @@ var EntityType;
     EntityType["ENEMY_BULLET"] = "bulletEnemy";
     EntityType["PLAYER_BULLET"] = "bullet";
     EntityType["BACKGROUND"] = "background";
+    EntityType["MAP"] = "map";
+    EntityType["GAME_OVER"] = "gameOver";
+    EntityType["LASER"] = "laser";
+    EntityType["MAIN_THEME"] = "shockWave";
+    EntityType["EXPLOSION_I"] = "explosion1";
+    EntityType["EXPLOSION_II"] = "explosion2";
 })(EntityType = exports.EntityType || (exports.EntityType = {}));
 
 
@@ -97,7 +103,7 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
-var Observable_1 = __webpack_require__(4);
+var Observable_1 = __webpack_require__(5);
 var Actions;
 (function (Actions) {
     Actions["UP"] = "UP";
@@ -255,6 +261,7 @@ exports.Vector2 = Vector2;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
+var SpriteSheet_1 = __webpack_require__(4);
 var AssetType;
 (function (AssetType) {
     AssetType["SPRITE"] = "SPRITE";
@@ -264,18 +271,48 @@ var AssetType;
 var AssetManager = (function () {
     function AssetManager() {
         this.cache = {
-            sprites: {}
+            sprites: {},
+            spriteSheets: {},
+            audio: {}
         };
         this.downloadCount = 0;
         this.queue = [];
+        this.initAudioContext();
     }
+    AssetManager.prototype.initAudioContext = function () {
+        try {
+            window.AudioContext = window.AudioContext || webkitAudioContext;
+            this.audioContext = new AudioContext();
+        }
+        catch (e) {
+            console.log('Web Audio API is not supported in this browser');
+        }
+    };
     AssetManager.prototype.done = function () {
         return this.downloadCount === this.queue.length;
     };
     AssetManager.prototype.queueDownload = function (id, path, type) {
-        this.queue.push({ id: id, path: path, type: type });
+        this.queue.push({
+            id: id, path: path, type: type
+        });
     };
-    AssetManager.prototype.loadSprite = function (id, path, callback) {
+    AssetManager.prototype.loadAudio = function (item, callback) {
+        var _this = this;
+        var request = new XMLHttpRequest();
+        request.open('GET', item.path, true);
+        request.responseType = 'arraybuffer';
+        request.addEventListener('load', function () {
+            _this.audioContext.decodeAudioData(request.response, function (buffer) {
+                _this.cache.audio[item.id] = buffer;
+                _this.downloadCount += 1;
+                if (_this.done()) {
+                    callback();
+                }
+            }, function (error) { console.log('Error with decoding audio data' + error); });
+        });
+        request.send();
+    };
+    AssetManager.prototype.loadSprite = function (item, callback) {
         var _this = this;
         var sprite = new Image();
         sprite.addEventListener('load', function () {
@@ -284,19 +321,46 @@ var AssetManager = (function () {
                 callback();
             }
         });
-        sprite.src = path;
-        this.cache.sprites[id] = sprite;
+        sprite.src = item.path;
+        this.cache.sprites[item.id] = sprite;
+    };
+    AssetManager.prototype.loadSpriteSheet = function (item, callback) {
+        var _this = this;
+        var spriteSheet = new Image();
+        spriteSheet.addEventListener('load', function () {
+            _this.cache.spriteSheets[item.id] = new SpriteSheet_1.SpriteSheet(spriteSheet, item.opts.frameWidth || 0, item.opts.frameHeight || 0);
+            _this.downloadCount += 1;
+            if (_this.done()) {
+                callback();
+            }
+        });
+        spriteSheet.src = item.path;
     };
     AssetManager.prototype.downloadAll = function (callback) {
         var _this = this;
         this.queue.forEach(function (item) {
-            if (item.type === AssetType.SPRITE) {
-                _this.loadSprite(item.id, item.path, callback);
+            if (item.type === AssetType.AUDIO) {
+                _this.loadAudio(item, callback);
+            }
+            else if (item.type === AssetType.SPRITE) {
+                _this.loadSprite(item, callback);
+            }
+            else if (item.type === AssetType.SPRITE_SHEET) {
+                _this.loadSpriteSheet(item, callback);
             }
         });
     };
+    AssetManager.prototype.getSound = function (id) {
+        var sound = this.audioContext.createBufferSource();
+        sound.buffer = this.cache.audio[id];
+        sound.connect(this.audioContext.destination);
+        return sound;
+    };
     AssetManager.prototype.getSprite = function (id) {
         return this.cache.sprites[id];
+    };
+    AssetManager.prototype.getSpriteSheet = function (id) {
+        return this.cache.spriteSheet[id];
     };
     return AssetManager;
 }());
@@ -305,6 +369,68 @@ exports.AssetManager = AssetManager;
 
 /***/ }),
 /* 4 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var SpriteSheet = (function () {
+    function SpriteSheet(image, frameWidth, frameHeight) {
+        this._image = image;
+        this._frameWidth = frameWidth;
+        this._frameHeight = frameHeight;
+        this._framesPerRow = Math.floor(this._image.width / this._frameWidth);
+    }
+    Object.defineProperty(SpriteSheet.prototype, "image", {
+        get: function () {
+            return this._image;
+        },
+        set: function (image) {
+            if (!(image instanceof Image)) {
+                throw new Error('Param image must be of type Image!');
+            }
+            this._image = image;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(SpriteSheet.prototype, "frameWidth", {
+        get: function () {
+            return this._frameWidth;
+        },
+        set: function (frameWidth) {
+            this._frameWidth = frameWidth;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(SpriteSheet.prototype, "frameHeight", {
+        get: function () {
+            return this._frameHeight;
+        },
+        set: function (frameHeight) {
+            this._frameHeight = frameHeight;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(SpriteSheet.prototype, "framesPerRow", {
+        get: function () {
+            return this._framesPerRow;
+        },
+        set: function (framesPerRow) {
+            this._framesPerRow = framesPerRow;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    return SpriteSheet;
+}());
+exports.SpriteSheet = SpriteSheet;
+
+
+/***/ }),
+/* 5 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -355,7 +481,7 @@ exports.Observable = Observable;
 
 
 /***/ }),
-/* 5 */
+/* 6 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -372,10 +498,10 @@ var Settings = (function () {
             ' ': InputManager_1.Actions.SHOOT
         };
         this.player = {
-            maxVelocity: 10,
+            maxVelocity: 15,
             fireDelay: 15,
             friction: 0.7,
-            acceleration: 2
+            acceleration: 3
         };
     }
     Settings.prototype.findKey = function (value) {
@@ -396,7 +522,7 @@ exports.Settings = Settings;
 
 
 /***/ }),
-/* 6 */
+/* 7 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -415,17 +541,17 @@ exports.HitBox = HitBox;
 
 
 /***/ }),
-/* 7 */
+/* 8 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var AssetManager_1 = __webpack_require__(3);
-var Game_1 = __webpack_require__(8);
+var Game_1 = __webpack_require__(9);
 var InputManager_1 = __webpack_require__(1);
-var Settings_1 = __webpack_require__(5);
-var SettingsMenu_1 = __webpack_require__(15);
+var Settings_1 = __webpack_require__(6);
+var SettingsMenu_1 = __webpack_require__(17);
 var CollideAble_1 = __webpack_require__(0);
 var assetManager = new AssetManager_1.AssetManager();
 var canvases = {
@@ -441,13 +567,11 @@ assetManager.queueDownload(CollideAble_1.EntityType.PLAYER, 'assets/sprites/ship
 assetManager.queueDownload(CollideAble_1.EntityType.PLAYER_BULLET, 'assets/sprites/bullet.png', AssetManager_1.AssetType.SPRITE);
 assetManager.queueDownload(CollideAble_1.EntityType.ENEMY, 'assets/sprites/enemy.png', AssetManager_1.AssetType.SPRITE);
 assetManager.queueDownload(CollideAble_1.EntityType.ENEMY_BULLET, 'assets/sprites/bullet_enemy.png', AssetManager_1.AssetType.SPRITE);
+assetManager.queueDownload(CollideAble_1.EntityType.MAIN_THEME, 'assets/audio/kick_shock.wav', AssetManager_1.AssetType.AUDIO);
 assetManager.downloadAll(function () {
     var game = new Game_1.Game(assetManager, inputManager, settings, canvases);
-    document.getElementById('game-over').addEventListener('click', function () {
-        game.restart();
-    });
+    document.getElementById('game-over').addEventListener('click', function () { return game.restart(); });
     document.getElementById('settings').addEventListener('click', function () {
-        console.log('settings');
         settingsMenu.toggleShow();
         game.togglePause();
     });
@@ -455,18 +579,19 @@ assetManager.downloadAll(function () {
 
 
 /***/ }),
-/* 8 */
+/* 9 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var Background_1 = __webpack_require__(9);
-var Ship_1 = __webpack_require__(10);
-var Pool_1 = __webpack_require__(11);
-var QuadTree_1 = __webpack_require__(14);
-var HitBox_1 = __webpack_require__(6);
+var Background_1 = __webpack_require__(10);
+var Ship_1 = __webpack_require__(11);
+var Pool_1 = __webpack_require__(12);
+var QuadTree_1 = __webpack_require__(15);
+var HitBox_1 = __webpack_require__(7);
 var CollideAble_1 = __webpack_require__(0);
+var CollisionManager_1 = __webpack_require__(16);
 var Game = (function () {
     function Game(assetManager, inputManager, settings, canvases) {
         this.playing = false;
@@ -490,6 +615,11 @@ var Game = (function () {
             this.spawnWave();
             inputManager.register(this.ship);
             this.quadTree = new QuadTree_1.QuadTree(new HitBox_1.HitBox(0, 0, this.canvases.main.width, this.canvases.main.height));
+            this.collisionManager = new CollisionManager_1.CollisionManager(this.quadTree);
+            this.backgroundAudio = this.assetManager.getSound(CollideAble_1.EntityType.MAIN_THEME);
+            this.backgroundAudio.loop = true;
+            this.backgroundAudio.loopEnd = Math.floor(this.backgroundAudio.buffer.duration);
+            this.backgroundAudio.start(0);
             this.start();
         }
     }
@@ -511,24 +641,6 @@ var Game = (function () {
             }
         }
     };
-    Game.prototype.detectCollision = function () {
-        var objects = [];
-        this.quadTree.getAllObjects(objects);
-        for (var i = 0; i < objects.length; i++) {
-            var obj = [];
-            this.quadTree.findObjects(obj, objects[i]);
-            for (var j = 0; j < obj.length; j++) {
-                if (objects[i].isCollideAbleWith(obj[j]) &&
-                    (objects[i].position.x < obj[j].position.x + obj[j].width &&
-                        objects[i].position.x + objects[i].width > obj[j].position.x &&
-                        objects[i].position.y < obj[j].position.y + obj[j].height &&
-                        objects[i].position.y + objects[i].height > obj[j].position.y)) {
-                    objects[i].colliding = true;
-                    obj[j].colliding = true;
-                }
-            }
-        }
-    };
     Game.prototype.render = function () {
         var _this = this;
         if (this.playing) {
@@ -539,7 +651,7 @@ var Game = (function () {
                 this.quadTree.insert(this.ship.pool.getPool());
                 this.quadTree.insert(this.enemyPool.getPool());
                 this.quadTree.insert(this.enemyBulletPool.getPool());
-                this.detectCollision();
+                this.collisionManager.detectCollision();
                 if (this.enemyPool.getPool().length === 0) {
                     this.spawnWave();
                 }
@@ -574,7 +686,6 @@ var Game = (function () {
         this.backgroundContext.clearRect(0, 0, this.canvases.background.width, this.canvases.background.height);
         this.shipContext.clearRect(0, 0, this.canvases.ship.width, this.canvases.ship.height);
         this.mainContext.clearRect(0, 0, this.canvases.main.width, this.canvases.main.height);
-        this.inputManager.reset();
         this.quadTree.clear();
         this.background.reset();
         this.playerScore = 0;
@@ -590,7 +701,7 @@ exports.Game = Game;
 
 
 /***/ }),
-/* 9 */
+/* 10 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -627,7 +738,7 @@ exports.Background = Background;
 
 
 /***/ }),
-/* 10 */
+/* 11 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -726,14 +837,14 @@ exports.Ship = Ship;
 
 
 /***/ }),
-/* 11 */
+/* 12 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var Bullet_1 = __webpack_require__(12);
-var Enemy_1 = __webpack_require__(13);
+var Bullet_1 = __webpack_require__(13);
+var Enemy_1 = __webpack_require__(14);
 var CollideAble_1 = __webpack_require__(0);
 var Pool = (function () {
     function Pool(assetManager, context, canvasWidth, canvasHeight, maxSize, type, pool, game) {
@@ -807,7 +918,7 @@ exports.Pool = Pool;
 
 
 /***/ }),
-/* 12 */
+/* 13 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -873,7 +984,7 @@ exports.Bullet = Bullet;
 
 
 /***/ }),
-/* 13 */
+/* 14 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -962,13 +1073,13 @@ exports.Enemy = Enemy;
 
 
 /***/ }),
-/* 14 */
+/* 15 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var HitBox_1 = __webpack_require__(6);
+var HitBox_1 = __webpack_require__(7);
 var QuadTree = (function () {
     function QuadTree(hitBox, level) {
         if (hitBox === void 0) { hitBox = new HitBox_1.HitBox(0, 0, 0, 0); }
@@ -1073,7 +1184,41 @@ exports.QuadTree = QuadTree;
 
 
 /***/ }),
-/* 15 */
+/* 16 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var CollisionManager = (function () {
+    function CollisionManager(quadTree) {
+        this.quadTree = quadTree;
+    }
+    CollisionManager.prototype.detectCollision = function () {
+        var objects = [];
+        this.quadTree.getAllObjects(objects);
+        for (var i = 0; i < objects.length; i++) {
+            var obj = [];
+            this.quadTree.findObjects(obj, objects[i]);
+            for (var j = 0; j < obj.length; j++) {
+                if (objects[i].isCollideAbleWith(obj[j]) &&
+                    (objects[i].position.x < obj[j].position.x + obj[j].width &&
+                        objects[i].position.x + objects[i].width > obj[j].position.x &&
+                        objects[i].position.y < obj[j].position.y + obj[j].height &&
+                        objects[i].position.y + objects[i].height > obj[j].position.y)) {
+                    objects[i].colliding = true;
+                    obj[j].colliding = true;
+                }
+            }
+        }
+    };
+    return CollisionManager;
+}());
+exports.CollisionManager = CollisionManager;
+
+
+/***/ }),
+/* 17 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";

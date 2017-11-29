@@ -13,10 +13,10 @@ export class Settings {
       ' ': Actions.SHOOT
     }
     this.player = {
-      maxVelocity: 10,
+      maxVelocity: 15,
       fireDelay: 15,
       friction: 0.7,
-      acceleration: 2
+      acceleration: 3
     }
   }
 
