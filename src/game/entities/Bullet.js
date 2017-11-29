@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var Vector2_1 = require("../../lib/vector/Vector2");
+var CollideAble_1 = require("../interfaces/CollideAble");
 var Bullet = (function () {
     function Bullet(x, y, width, height, canvasWidth, canvasHeight, speed, context, sprite, type) {
         this.position = new Vector2_1.Vector2(x, y);
@@ -15,11 +16,11 @@ var Bullet = (function () {
         this.type = type;
         this.colliding = false;
         this.collidesWith = [];
-        if (this.type === 'bullet') {
-            this.collidesWith.push('enemy');
+        if (this.type === CollideAble_1.EntityType.PLAYER_BULLET) {
+            this.collidesWith.push(CollideAble_1.EntityType.ENEMY);
         }
-        else if (this.type === 'bulletEnemy') {
-            this.collidesWith.push('ship');
+        else if (this.type === CollideAble_1.EntityType.ENEMY_BULLET) {
+            this.collidesWith.push(CollideAble_1.EntityType.PLAYER);
         }
     }
     Bullet.prototype.spawn = function (x, y, speed) {
@@ -33,10 +34,10 @@ var Bullet = (function () {
         if (this.colliding) {
             return true;
         }
-        else if (this.type === 'bullet' && this.position.y <= 0 - this.height) {
+        else if (this.type === CollideAble_1.EntityType.PLAYER_BULLET && this.position.y <= 0 - this.height) {
             return true;
         }
-        else if (this.type === 'bulletEnemy' && this.position.y >= this.canvasHeight) {
+        else if (this.type === CollideAble_1.EntityType.ENEMY_BULLET && this.position.y >= this.canvasHeight) {
             return true;
         }
         else {

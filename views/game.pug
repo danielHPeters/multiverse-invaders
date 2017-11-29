@@ -4,8 +4,11 @@ block content
   canvas#background(width='600' height='360') Your browser does not support canvas. Please try again with a different browser.
   canvas#main(width='600', height='360')
   canvas#ship(width='600', height='360')
+  .settings#settings SETTINGS
+    span
   .score SCORE:
     span#score
+  #settings-menu
   .game-over#game-over GAME OVER
     span RESTART
   script(src='javascripts/multiverseInvaders.bundle.js')

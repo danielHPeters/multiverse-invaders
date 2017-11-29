@@ -1,6 +1,6 @@
 import { Drawable } from '../interfaces/Drawable'
 import { Vector2 } from '../../lib/vector/Vector2'
-import { CollideAble } from '../interfaces/CollideAble'
+import { CollideAble, EntityType } from '../interfaces/CollideAble'
 
 /**
  *
@@ -16,7 +16,7 @@ export class Bullet implements Drawable, CollideAble {
   sprite: any
   alive: boolean
   collidesWith
-  type: string
+  type: EntityType
   colliding: boolean
 
   /**
@@ -32,7 +32,7 @@ export class Bullet implements Drawable, CollideAble {
    * @param {any} sprite
    * @param {string} type
    */
-  constructor (x: number, y: number, width: number, height: number, canvasWidth: number, canvasHeight: number, speed: number, context: any, sprite: any, type: string) {
+  constructor (x: number, y: number, width: number, height: number, canvasWidth: number, canvasHeight: number, speed: number, context: any, sprite: any, type: EntityType) {
     this.position = new Vector2(x, y)
     this.speed = speed
     this.width = width
@@ -45,10 +45,10 @@ export class Bullet implements Drawable, CollideAble {
     this.type = type
     this.colliding = false
     this.collidesWith = []
-    if (this.type === 'bullet') {
-      this.collidesWith.push('enemy')
-    } else if (this.type === 'bulletEnemy') {
-      this.collidesWith.push('ship')
+    if (this.type === EntityType.PLAYER_BULLET) {
+      this.collidesWith.push(EntityType.ENEMY)
+    } else if (this.type === EntityType.ENEMY_BULLET) {
+      this.collidesWith.push(EntityType.PLAYER)
     }
   }
 
@@ -72,9 +72,9 @@ export class Bullet implements Drawable, CollideAble {
     this.position.y -= this.speed
     if (this.colliding) {
       return true
-    } else if (this.type === 'bullet' && this.position.y <= 0 - this.height) {
+    } else if (this.type === EntityType.PLAYER_BULLET && this.position.y <= 0 - this.height) {
       return true
-    } else if (this.type === 'bulletEnemy' && this.position.y >= this.canvasHeight) {
+    } else if (this.type === EntityType.ENEMY_BULLET && this.position.y >= this.canvasHeight) {
       return true
     } else {
       this.context.drawImage(this.sprite, this.position.x, this.position.y)

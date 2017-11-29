@@ -11,21 +11,30 @@ var __extends = (this && this.__extends) || (function () {
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
 var Observable_1 = require("../lib/Observable");
+var Actions;
+(function (Actions) {
+    Actions["UP"] = "UP";
+    Actions["DOWN"] = "DOWN";
+    Actions["LEFT"] = "LEFT";
+    Actions["RIGHT"] = "RIGHT";
+    Actions["SHOOT"] = "SHOOT";
+})(Actions = exports.Actions || (exports.Actions = {}));
 var InputManager = (function (_super) {
     __extends(InputManager, _super);
-    function InputManager() {
+    function InputManager(settings) {
         var _this = _super.call(this) || this;
+        _this.inputMap = settings.keyBoard;
         _this.init();
         return _this;
     }
     InputManager.prototype.init = function () {
         var _this = this;
         window.addEventListener('keydown', function (event) {
-            _this.state[event.key] = true;
+            _this.state[_this.inputMap[event.key]] = true;
             _this.notify();
         });
         window.addEventListener('keyup', function (event) {
-            _this.state[event.key] = false;
+            _this.state[_this.inputMap[event.key]] = false;
             _this.notify();
         });
     };

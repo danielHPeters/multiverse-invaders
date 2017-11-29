@@ -2,6 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 var Bullet_1 = require("../entities/Bullet");
 var Enemy_1 = require("../entities/Enemy");
+var CollideAble_1 = require("../interfaces/CollideAble");
 var Pool = (function () {
     function Pool(assetManager, context, canvasWidth, canvasHeight, maxSize, type, pool, game) {
         if (pool === void 0) { pool = null; }
@@ -18,7 +19,7 @@ var Pool = (function () {
         this.init();
     }
     Pool.prototype.init = function () {
-        if (this.type === 'enemy') {
+        if (this.type === CollideAble_1.EntityType.ENEMY) {
             for (var i = 0; i < this.maxSize; i++) {
                 this.pool[i] = new Enemy_1.Enemy(0, 0, this.assetManager.getSprite(this.type).width, this.assetManager.getSprite(this.type).height, this.canvasWidth, this.canvasHeight, 0, this.context, this.assetManager.getSprite(this.type), this.type, this.subPool, this.game);
             }

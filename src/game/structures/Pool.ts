@@ -2,6 +2,7 @@ import { AssetManager } from '../../client/AssetManager'
 import { Bullet } from '../entities/Bullet'
 import { Enemy } from '../entities/Enemy'
 import { Game } from '../Game'
+import { EntityType } from '../interfaces/CollideAble'
 
 /**
  *
@@ -12,7 +13,7 @@ export class Pool {
   canvasWidth: number
   canvasHeight: number
   maxSize: number
-  type: string
+  type: EntityType
   pool: any[]
   subPool: Pool
   game: Game
@@ -28,7 +29,7 @@ export class Pool {
    * @param {Pool} pool
    * @param {Game} game
    */
-  constructor (assetManager: AssetManager, context: any, canvasWidth: number, canvasHeight: number, maxSize: number, type: string, pool: Pool = null, game: Game = null) {
+  constructor (assetManager: AssetManager, context: any, canvasWidth: number, canvasHeight: number, maxSize: number, type: EntityType, pool: Pool = null, game: Game = null) {
     this.assetManager = assetManager
     this.context = context
     this.canvasWidth = canvasWidth
@@ -45,7 +46,7 @@ export class Pool {
    *
    */
   init (): void {
-    if (this.type === 'enemy') {
+    if (this.type === EntityType.ENEMY) {
       for (let i = 0; i < this.maxSize; i++) {
         this.pool[i] = new Enemy(
           0,

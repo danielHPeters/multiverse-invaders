@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var Vector2_1 = require("../../lib/vector/Vector2");
+var CollideAble_1 = require("../interfaces/CollideAble");
 var Enemy = (function () {
     function Enemy(x, y, width, height, canvasWidth, canvasHeight, speed, context, sprite, type, bulletPool, game) {
         this.position = new Vector2_1.Vector2(x, y);
@@ -16,7 +17,7 @@ var Enemy = (function () {
         this.alive = false;
         this.type = type;
         this.collidesWith = [];
-        this.collidesWith.push('bullet');
+        this.collidesWith.push(CollideAble_1.EntityType.PLAYER_BULLET);
         this.colliding = false;
         this.bulletPool = bulletPool;
         this.game = game;

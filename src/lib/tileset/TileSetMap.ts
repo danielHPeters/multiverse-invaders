@@ -17,7 +17,7 @@ export class TileSetMap {
     this.imageTilesPerRow = imageTilesPerRow
   }
 
-  drawLayer (layer) {
+  drawLayer (layer): void {
     for (let row = 0; row < this.imageTilesPerRow; row++) {
       for (let col = 0; col < this.tilesPerColumn; col++) {
         let tile = layer[row][col]
@@ -38,7 +38,7 @@ export class TileSetMap {
     }
   }
 
-  draw () {
+  draw (): void {
     this.mapLayers.forEach(layer => this.drawLayer(layer))
   }
 }

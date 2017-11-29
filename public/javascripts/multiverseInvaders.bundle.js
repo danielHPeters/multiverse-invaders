@@ -60,11 +60,82 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 2);
+/******/ 	return __webpack_require__(__webpack_require__.s = 7);
 /******/ })
 /************************************************************************/
 /******/ ([
 /* 0 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var EntityType;
+(function (EntityType) {
+    EntityType["PLAYER"] = "ship";
+    EntityType["ENEMY"] = "enmey";
+    EntityType["ENEMY_BULLET"] = "bulletEnemy";
+    EntityType["PLAYER_BULLET"] = "bullet";
+    EntityType["BACKGROUND"] = "background";
+})(EntityType = exports.EntityType || (exports.EntityType = {}));
+
+
+/***/ }),
+/* 1 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = Object.setPrototypeOf ||
+        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+Object.defineProperty(exports, "__esModule", { value: true });
+var Observable_1 = __webpack_require__(4);
+var Actions;
+(function (Actions) {
+    Actions["UP"] = "UP";
+    Actions["DOWN"] = "DOWN";
+    Actions["LEFT"] = "LEFT";
+    Actions["RIGHT"] = "RIGHT";
+    Actions["SHOOT"] = "SHOOT";
+})(Actions = exports.Actions || (exports.Actions = {}));
+var InputManager = (function (_super) {
+    __extends(InputManager, _super);
+    function InputManager(settings) {
+        var _this = _super.call(this) || this;
+        _this.inputMap = settings.keyBoard;
+        _this.init();
+        return _this;
+    }
+    InputManager.prototype.init = function () {
+        var _this = this;
+        window.addEventListener('keydown', function (event) {
+            _this.state[_this.inputMap[event.key]] = true;
+            _this.notify();
+        });
+        window.addEventListener('keyup', function (event) {
+            _this.state[_this.inputMap[event.key]] = false;
+            _this.notify();
+        });
+    };
+    InputManager.prototype.reset = function () {
+        var _this = this;
+        Object.keys(this.state).forEach(function (key) { return _this.state[key] = false; });
+    };
+    return InputManager;
+}(Observable_1.Observable));
+exports.InputManager = InputManager;
+
+
+/***/ }),
+/* 2 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -75,10 +146,10 @@ var Vector2 = (function () {
         this.x = x;
         this.y = y;
     }
-    Vector2.add = function (v1, v2) {
+    Vector2.addVector = function (v1, v2) {
         return new Vector2(v1.x + v2.x, v1.y + v2.y);
     };
-    Vector2.subtract = function (v1, v2) {
+    Vector2.subtractVector = function (v1, v2) {
         return new Vector2(v1.x - v2.x, v1.y - v2.y);
     };
     Vector2.multiply = function (vector, scalar) {
@@ -118,11 +189,19 @@ var Vector2 = (function () {
         this.x = vector.x;
         this.y = vector.y;
     };
-    Vector2.prototype.add = function (vector) {
+    Vector2.prototype.add = function (x, y) {
+        this.x += x;
+        this.y += y;
+    };
+    Vector2.prototype.addVector = function (vector) {
         this.x += vector.x;
         this.y += vector.y;
     };
-    Vector2.prototype.subtract = function (vector) {
+    Vector2.prototype.subtract = function (x, y) {
+        this.x -= x;
+        this.y -= y;
+    };
+    Vector2.prototype.subtractVector = function (vector) {
         this.x -= vector.x;
         this.y -= vector.y;
     };
@@ -150,7 +229,7 @@ var Vector2 = (function () {
         }
     };
     Vector2.prototype.limit = function (max) {
-        if (this.mag() > max) {
+        if (Math.floor(this.mag()) > max) {
             this.normalize();
             this.multiply(max);
         }
@@ -167,50 +246,6 @@ var Vector2 = (function () {
     return Vector2;
 }());
 exports.Vector2 = Vector2;
-
-
-/***/ }),
-/* 1 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-var Vector2_1 = __webpack_require__(0);
-var HitBox = (function () {
-    function HitBox(x, y, width, height) {
-        this.position = new Vector2_1.Vector2(x, y);
-        this.width = width;
-        this.height = height;
-    }
-    return HitBox;
-}());
-exports.HitBox = HitBox;
-
-
-/***/ }),
-/* 2 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-var AssetManager_1 = __webpack_require__(3);
-var Game_1 = __webpack_require__(4);
-var InputManager_1 = __webpack_require__(11);
-var assetManager = new AssetManager_1.AssetManager();
-var inputManager = new InputManager_1.InputManager();
-assetManager.queueDownload('background', 'assets/textures/background.png', AssetManager_1.AssetType.SPRITE);
-assetManager.queueDownload('ship', 'assets/sprites/ship.png', AssetManager_1.AssetType.SPRITE);
-assetManager.queueDownload('bullet', 'assets/sprites/bullet.png', AssetManager_1.AssetType.SPRITE);
-assetManager.queueDownload('enemy', 'assets/sprites/enemy.png', AssetManager_1.AssetType.SPRITE);
-assetManager.queueDownload('bulletEnemy', 'assets/sprites/bullet_enemy.png', AssetManager_1.AssetType.SPRITE);
-assetManager.downloadAll(function () {
-    var game = new Game_1.Game(assetManager, inputManager);
-    document.getElementById('game-over').addEventListener('click', function () {
-        game.restart();
-    });
-});
 
 
 /***/ }),
@@ -275,40 +310,195 @@ exports.AssetManager = AssetManager;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var Background_1 = __webpack_require__(5);
-var Ship_1 = __webpack_require__(6);
-var Pool_1 = __webpack_require__(7);
-var QuadTree_1 = __webpack_require__(10);
-var HitBox_1 = __webpack_require__(1);
+var Observable = (function () {
+    function Observable() {
+        this._observers = [];
+        this._state = {};
+    }
+    Observable.prototype.register = function (observer) {
+        this._observers.push(observer);
+    };
+    Observable.prototype.unRegister = function (observer) {
+        this._observers = this._observers.filter(function (obs) {
+            return obs !== observer;
+        });
+    };
+    Observable.prototype.notify = function () {
+        var _this = this;
+        this._observers.forEach(function (observer) {
+            observer.update(_this._state);
+        });
+    };
+    Object.defineProperty(Observable.prototype, "observers", {
+        get: function () {
+            return this._observers;
+        },
+        set: function (observers) {
+            this._observers = observers;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Observable.prototype, "state", {
+        get: function () {
+            return this._state;
+        },
+        set: function (state) {
+            this._state = state;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    return Observable;
+}());
+exports.Observable = Observable;
+
+
+/***/ }),
+/* 5 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var InputManager_1 = __webpack_require__(1);
+var Settings = (function () {
+    function Settings() {
+        this.keyBoard = {
+            'w': InputManager_1.Actions.UP,
+            's': InputManager_1.Actions.DOWN,
+            'a': InputManager_1.Actions.LEFT,
+            'd': InputManager_1.Actions.RIGHT,
+            ' ': InputManager_1.Actions.SHOOT
+        };
+        this.player = {
+            maxVelocity: 10,
+            fireDelay: 15,
+            friction: 0.7,
+            acceleration: 2
+        };
+    }
+    Settings.prototype.findKey = function (value) {
+        var _this = this;
+        return Object.keys(this.keyBoard).filter(function (key) { return _this.keyBoard[key] === value; })[0];
+    };
+    Settings.prototype.setKey = function (newKey, action) {
+        var oldKey = this.findKey(action);
+        if (newKey !== oldKey) {
+            console.log('old:' + oldKey, ' new: ' + newKey + ' value: ' + action);
+            this.keyBoard[newKey] = this.keyBoard[oldKey];
+            delete this.keyBoard[oldKey];
+        }
+    };
+    return Settings;
+}());
+exports.Settings = Settings;
+
+
+/***/ }),
+/* 6 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var Vector2_1 = __webpack_require__(2);
+var HitBox = (function () {
+    function HitBox(x, y, width, height) {
+        this.position = new Vector2_1.Vector2(x, y);
+        this.width = width;
+        this.height = height;
+    }
+    return HitBox;
+}());
+exports.HitBox = HitBox;
+
+
+/***/ }),
+/* 7 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var AssetManager_1 = __webpack_require__(3);
+var Game_1 = __webpack_require__(8);
+var InputManager_1 = __webpack_require__(1);
+var Settings_1 = __webpack_require__(5);
+var SettingsMenu_1 = __webpack_require__(15);
+var CollideAble_1 = __webpack_require__(0);
+var assetManager = new AssetManager_1.AssetManager();
+var canvases = {
+    background: document.getElementById('background'),
+    ship: document.getElementById('ship'),
+    main: document.getElementById('main')
+};
+var settings = new Settings_1.Settings();
+var inputManager = new InputManager_1.InputManager(settings);
+var settingsMenu = new SettingsMenu_1.SettingsMenu(document.getElementById('settings-menu'), settings);
+assetManager.queueDownload(CollideAble_1.EntityType.BACKGROUND, 'assets/textures/background.png', AssetManager_1.AssetType.SPRITE);
+assetManager.queueDownload(CollideAble_1.EntityType.PLAYER, 'assets/sprites/ship.png', AssetManager_1.AssetType.SPRITE);
+assetManager.queueDownload(CollideAble_1.EntityType.PLAYER_BULLET, 'assets/sprites/bullet.png', AssetManager_1.AssetType.SPRITE);
+assetManager.queueDownload(CollideAble_1.EntityType.ENEMY, 'assets/sprites/enemy.png', AssetManager_1.AssetType.SPRITE);
+assetManager.queueDownload(CollideAble_1.EntityType.ENEMY_BULLET, 'assets/sprites/bullet_enemy.png', AssetManager_1.AssetType.SPRITE);
+assetManager.downloadAll(function () {
+    var game = new Game_1.Game(assetManager, inputManager, settings, canvases);
+    document.getElementById('game-over').addEventListener('click', function () {
+        game.restart();
+    });
+    document.getElementById('settings').addEventListener('click', function () {
+        console.log('settings');
+        settingsMenu.toggleShow();
+        game.togglePause();
+    });
+});
+
+
+/***/ }),
+/* 8 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var Background_1 = __webpack_require__(9);
+var Ship_1 = __webpack_require__(10);
+var Pool_1 = __webpack_require__(11);
+var QuadTree_1 = __webpack_require__(14);
+var HitBox_1 = __webpack_require__(6);
+var CollideAble_1 = __webpack_require__(0);
 var Game = (function () {
-    function Game(assetManager, inputManager) {
+    function Game(assetManager, inputManager, settings, canvases) {
         this.playing = false;
+        this.paused = false;
         this.window = window;
         this.assetManager = assetManager;
         this.inputManager = inputManager;
-        this.backgroundCanvas = document.getElementById('background');
-        this.shipCanvas = document.getElementById('ship');
-        this.mainCanvas = document.getElementById('main');
-        if (this.backgroundCanvas.getContext) {
-            this.backgroundContext = this.backgroundCanvas.getContext('2d');
-            this.shipContext = this.shipCanvas.getContext('2d');
-            this.mainContext = this.mainCanvas.getContext('2d');
+        this.settings = settings;
+        this.canvases = canvases;
+        if (this.canvases.background.getContext) {
+            this.backgroundContext = this.canvases.background.getContext('2d');
+            this.shipContext = this.canvases.ship.getContext('2d');
+            this.mainContext = this.canvases.main.getContext('2d');
             this.playerScore = 0;
-            this.background = new Background_1.Background(0, 0, this.backgroundCanvas.width, this.backgroundCanvas.height, this.backgroundContext, this.assetManager.getSprite('background'));
-            this.shipStartX = this.shipCanvas.width / 2 - assetManager.getSprite('ship').width;
-            this.shipStartY = this.shipCanvas.height / 4 * 3 + assetManager.getSprite('ship').height * 2;
-            this.ship = new Ship_1.Ship(this.shipStartX, this.shipStartY, assetManager.getSprite('ship').width, assetManager.getSprite('ship').height, this.shipCanvas.width, this.shipCanvas.height, 6, this.shipContext, assetManager.getSprite('ship'), new Pool_1.Pool(assetManager, this.mainContext, this.mainCanvas.width, this.mainCanvas.height, 30, 'bullet'));
-            this.enemyBulletPool = new Pool_1.Pool(assetManager, this.mainContext, this.mainCanvas.width, this.mainCanvas.height, 50, 'bulletEnemy');
-            this.enemyPool = new Pool_1.Pool(assetManager, this.mainContext, this.mainCanvas.width, this.mainCanvas.height, 30, 'enemy', this.enemyBulletPool, this);
+            this.background = new Background_1.Background(0, 0, this.canvases.background.width, this.canvases.background.height, this.backgroundContext, this.assetManager.getSprite(CollideAble_1.EntityType.BACKGROUND));
+            this.shipStartX = this.canvases.ship.width / 2 - assetManager.getSprite(CollideAble_1.EntityType.PLAYER).width;
+            this.shipStartY = this.canvases.ship.height / 4 * 3 + assetManager.getSprite(CollideAble_1.EntityType.PLAYER).height * 2;
+            this.ship = new Ship_1.Ship(this.shipStartX, this.shipStartY, assetManager.getSprite(CollideAble_1.EntityType.PLAYER).width, assetManager.getSprite(CollideAble_1.EntityType.PLAYER).height, this.canvases.ship.width, this.canvases.ship.height, this.shipContext, assetManager.getSprite(CollideAble_1.EntityType.PLAYER), new Pool_1.Pool(assetManager, this.mainContext, this.canvases.main.width, this.canvases.main.height, 80, CollideAble_1.EntityType.PLAYER_BULLET), settings.player);
+            this.enemyBulletPool = new Pool_1.Pool(assetManager, this.mainContext, this.canvases.main.width, this.canvases.main.height, 50, CollideAble_1.EntityType.ENEMY_BULLET);
+            this.enemyPool = new Pool_1.Pool(assetManager, this.mainContext, this.canvases.main.width, this.canvases.main.height, 30, CollideAble_1.EntityType.ENEMY, this.enemyBulletPool, this);
             this.spawnWave();
             inputManager.register(this.ship);
-            this.quadTree = new QuadTree_1.QuadTree(new HitBox_1.HitBox(0, 0, this.mainCanvas.width, this.mainCanvas.height));
+            this.quadTree = new QuadTree_1.QuadTree(new HitBox_1.HitBox(0, 0, this.canvases.main.width, this.canvases.main.height));
             this.start();
         }
     }
+    Game.prototype.togglePause = function () {
+        this.paused = !this.paused;
+    };
     Game.prototype.spawnWave = function () {
-        var height = this.assetManager.getSprite('enemy').height;
-        var width = this.assetManager.getSprite('enemy').width;
+        var height = this.assetManager.getSprite(CollideAble_1.EntityType.ENEMY).height;
+        var width = this.assetManager.getSprite(CollideAble_1.EntityType.ENEMY).width;
         var x = 100;
         var y = -height;
         var spacer = y * 1.5;
@@ -342,28 +532,30 @@ var Game = (function () {
     Game.prototype.render = function () {
         var _this = this;
         if (this.playing) {
-            document.getElementById('score').innerHTML = this.playerScore.toString();
-            this.quadTree.clear();
-            this.quadTree.insert(this.ship);
-            this.quadTree.insert(this.ship.pool.getPool());
-            this.quadTree.insert(this.enemyPool.getPool());
-            this.quadTree.insert(this.enemyBulletPool.getPool());
-            this.detectCollision();
-            if (this.enemyPool.getPool().length === 0) {
-                this.spawnWave();
+            if (!this.paused) {
+                document.getElementById('score').innerHTML = this.playerScore.toString();
+                this.quadTree.clear();
+                this.quadTree.insert(this.ship);
+                this.quadTree.insert(this.ship.pool.getPool());
+                this.quadTree.insert(this.enemyPool.getPool());
+                this.quadTree.insert(this.enemyBulletPool.getPool());
+                this.detectCollision();
+                if (this.enemyPool.getPool().length === 0) {
+                    this.spawnWave();
+                }
+                if (this.ship.alive()) {
+                    this.background.draw();
+                    this.ship.move();
+                    this.ship.pool.render();
+                    this.enemyPool.render();
+                    this.enemyBulletPool.render();
+                }
+                else {
+                    this.playing = false;
+                    this.gameOver();
+                }
             }
-            if (this.ship.alive()) {
-                window.requestAnimationFrame(function () { return _this.render(); });
-                this.background.draw();
-                this.ship.move();
-                this.ship.pool.render();
-                this.enemyPool.render();
-                this.enemyBulletPool.render();
-            }
-            else {
-                this.playing = false;
-                this.gameOver();
-            }
+            window.requestAnimationFrame(function () { return _this.render(); });
         }
     };
     Game.prototype.scorePoints = function () {
@@ -379,9 +571,9 @@ var Game = (function () {
     };
     Game.prototype.restart = function () {
         document.getElementById('game-over').style.display = 'none';
-        this.backgroundContext.clearRect(0, 0, this.backgroundCanvas.width, this.backgroundCanvas.height);
-        this.shipContext.clearRect(0, 0, this.shipCanvas.width, this.shipCanvas.height);
-        this.mainContext.clearRect(0, 0, this.mainCanvas.width, this.mainCanvas.height);
+        this.backgroundContext.clearRect(0, 0, this.canvases.background.width, this.canvases.background.height);
+        this.shipContext.clearRect(0, 0, this.canvases.ship.width, this.canvases.ship.height);
+        this.mainContext.clearRect(0, 0, this.canvases.main.width, this.canvases.main.height);
         this.inputManager.reset();
         this.quadTree.clear();
         this.background.reset();
@@ -398,13 +590,14 @@ exports.Game = Game;
 
 
 /***/ }),
-/* 5 */
+/* 9 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var Vector2_1 = __webpack_require__(0);
+var Vector2_1 = __webpack_require__(2);
+var CollideAble_1 = __webpack_require__(0);
 var Background = (function () {
     function Background(x, y, width, height, context, sprite) {
         this.position = new Vector2_1.Vector2(x, y);
@@ -415,7 +608,7 @@ var Background = (function () {
         this.canvasHeight = height;
         this.context = context;
         this.sprite = sprite;
-        this.type = 'background';
+        this.type = CollideAble_1.EntityType.BACKGROUND;
     }
     Background.prototype.reset = function () {
         this.position.set(0, 0);
@@ -434,35 +627,36 @@ exports.Background = Background;
 
 
 /***/ }),
-/* 6 */
+/* 10 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var Vector2_1 = __webpack_require__(0);
+var Vector2_1 = __webpack_require__(2);
+var CollideAble_1 = __webpack_require__(0);
+var InputManager_1 = __webpack_require__(1);
 var Ship = (function () {
-    function Ship(x, y, width, height, canvasWidth, canvasHeight, speed, context, sprite, pool) {
+    function Ship(x, y, width, height, canvasWidth, canvasHeight, context, sprite, pool, settings) {
         this.position = new Vector2_1.Vector2(x, y);
+        this.startPosition = new Vector2_1.Vector2(x, y);
+        this.acceleration = new Vector2_1.Vector2(0, 0);
         this.velocity = new Vector2_1.Vector2(0, 0);
-        this.speed = speed;
         this.width = width;
         this.height = height;
         this.canvasWidth = canvasWidth;
         this.canvasHeight = canvasHeight;
         this.context = context;
         this.sprite = sprite;
-        this.type = 'ship';
+        this.type = CollideAble_1.EntityType.PLAYER;
         this.pool = pool;
-        this.fireRate = 15;
         this.counter = 0;
         this.collidesWith = [];
-        this.collidesWith.push('bulletEnemy');
+        this.collidesWith.push(CollideAble_1.EntityType.ENEMY_BULLET);
         this.colliding = false;
-        this.friction = 0.6;
         this.state = {};
+        this.settings = settings;
         this.maxTop = Math.floor(this.canvasHeight / 4 * 3);
-        this.startPosition = new Vector2_1.Vector2(x, y);
     }
     Ship.prototype.reset = function () {
         this.position.setVector(this.startPosition);
@@ -470,54 +664,45 @@ var Ship = (function () {
         this.colliding = false;
     };
     Ship.prototype.move = function () {
-        this.counter++;
-        if (this.state['a'] || this.state['d'] || this.state['w'] || this.state['s']) {
+        if (!this.colliding) {
+            this.counter++;
             this.context.clearRect(Math.floor(this.position.x), Math.floor(this.position.y), this.width, this.height);
-            if (this.state['a']) {
-                if (this.velocity.x > -this.speed) {
-                    this.velocity.x--;
-                }
+            this.acceleration.set(0, 0);
+            if (this.state[InputManager_1.Actions.LEFT]) {
+                this.acceleration.add(-this.settings.acceleration, 0);
             }
-            if (this.state['d']) {
-                if (this.velocity.x < this.speed) {
-                    this.velocity.x++;
-                }
+            if (this.state[InputManager_1.Actions.RIGHT]) {
+                this.acceleration.add(this.settings.acceleration, 0);
             }
-            if (this.state['w']) {
-                if (this.velocity.y > -this.speed) {
-                    this.velocity.y--;
-                }
+            if (this.state[InputManager_1.Actions.UP]) {
+                this.acceleration.add(0, -this.settings.acceleration);
             }
-            if (this.state['s']) {
-                if (this.velocity.y < this.speed) {
-                    this.velocity.y++;
-                }
+            if (this.state[InputManager_1.Actions.DOWN]) {
+                this.acceleration.add(0, this.settings.acceleration);
             }
-            this.velocity.multiply(this.friction);
-            this.position.add(this.velocity);
+            this.velocity.multiply(this.settings.friction);
+            this.velocity.addVector(this.acceleration);
+            this.velocity.limit(this.settings.maxVelocity);
+            this.position.addVector(this.velocity);
+            this.position.subtractVector(this.acceleration);
             if (this.position.x <= 0) {
                 this.position.x = 0;
-                this.velocity.x *= -1;
+                this.velocity.x += -1;
             }
             if (this.position.x >= this.canvasWidth - this.width) {
                 this.position.x = this.canvasWidth - this.width;
-                this.velocity.x *= -1;
             }
             if (this.position.y <= this.maxTop) {
                 this.position.y = this.maxTop;
-                this.velocity.y *= -1;
             }
             if (this.position.y >= this.canvasHeight - this.height) {
                 this.position.y = this.canvasHeight - this.height;
-                this.velocity.y *= -1;
             }
-            if (!this.colliding) {
-                this.draw();
+            this.draw();
+            if (this.state[InputManager_1.Actions.SHOOT] && this.counter >= this.settings.fireDelay && !this.colliding) {
+                this.fire();
+                this.counter = 0;
             }
-        }
-        if (this.state[' '] && this.counter >= this.fireRate && !this.colliding) {
-            this.fire();
-            this.counter = 0;
         }
     };
     Ship.prototype.alive = function () {
@@ -541,14 +726,15 @@ exports.Ship = Ship;
 
 
 /***/ }),
-/* 7 */
+/* 11 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var Bullet_1 = __webpack_require__(8);
-var Enemy_1 = __webpack_require__(9);
+var Bullet_1 = __webpack_require__(12);
+var Enemy_1 = __webpack_require__(13);
+var CollideAble_1 = __webpack_require__(0);
 var Pool = (function () {
     function Pool(assetManager, context, canvasWidth, canvasHeight, maxSize, type, pool, game) {
         if (pool === void 0) { pool = null; }
@@ -565,7 +751,7 @@ var Pool = (function () {
         this.init();
     }
     Pool.prototype.init = function () {
-        if (this.type === 'enemy') {
+        if (this.type === CollideAble_1.EntityType.ENEMY) {
             for (var i = 0; i < this.maxSize; i++) {
                 this.pool[i] = new Enemy_1.Enemy(0, 0, this.assetManager.getSprite(this.type).width, this.assetManager.getSprite(this.type).height, this.canvasWidth, this.canvasHeight, 0, this.context, this.assetManager.getSprite(this.type), this.type, this.subPool, this.game);
             }
@@ -621,13 +807,14 @@ exports.Pool = Pool;
 
 
 /***/ }),
-/* 8 */
+/* 12 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var Vector2_1 = __webpack_require__(0);
+var Vector2_1 = __webpack_require__(2);
+var CollideAble_1 = __webpack_require__(0);
 var Bullet = (function () {
     function Bullet(x, y, width, height, canvasWidth, canvasHeight, speed, context, sprite, type) {
         this.position = new Vector2_1.Vector2(x, y);
@@ -642,11 +829,11 @@ var Bullet = (function () {
         this.type = type;
         this.colliding = false;
         this.collidesWith = [];
-        if (this.type === 'bullet') {
-            this.collidesWith.push('enemy');
+        if (this.type === CollideAble_1.EntityType.PLAYER_BULLET) {
+            this.collidesWith.push(CollideAble_1.EntityType.ENEMY);
         }
-        else if (this.type === 'bulletEnemy') {
-            this.collidesWith.push('ship');
+        else if (this.type === CollideAble_1.EntityType.ENEMY_BULLET) {
+            this.collidesWith.push(CollideAble_1.EntityType.PLAYER);
         }
     }
     Bullet.prototype.spawn = function (x, y, speed) {
@@ -660,10 +847,10 @@ var Bullet = (function () {
         if (this.colliding) {
             return true;
         }
-        else if (this.type === 'bullet' && this.position.y <= 0 - this.height) {
+        else if (this.type === CollideAble_1.EntityType.PLAYER_BULLET && this.position.y <= 0 - this.height) {
             return true;
         }
-        else if (this.type === 'bulletEnemy' && this.position.y >= this.canvasHeight) {
+        else if (this.type === CollideAble_1.EntityType.ENEMY_BULLET && this.position.y >= this.canvasHeight) {
             return true;
         }
         else {
@@ -686,13 +873,14 @@ exports.Bullet = Bullet;
 
 
 /***/ }),
-/* 9 */
+/* 13 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var Vector2_1 = __webpack_require__(0);
+var Vector2_1 = __webpack_require__(2);
+var CollideAble_1 = __webpack_require__(0);
 var Enemy = (function () {
     function Enemy(x, y, width, height, canvasWidth, canvasHeight, speed, context, sprite, type, bulletPool, game) {
         this.position = new Vector2_1.Vector2(x, y);
@@ -708,7 +896,7 @@ var Enemy = (function () {
         this.alive = false;
         this.type = type;
         this.collidesWith = [];
-        this.collidesWith.push('bullet');
+        this.collidesWith.push(CollideAble_1.EntityType.PLAYER_BULLET);
         this.colliding = false;
         this.bulletPool = bulletPool;
         this.game = game;
@@ -774,13 +962,13 @@ exports.Enemy = Enemy;
 
 
 /***/ }),
-/* 10 */
+/* 14 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var HitBox_1 = __webpack_require__(1);
+var HitBox_1 = __webpack_require__(6);
 var QuadTree = (function () {
     function QuadTree(hitBox, level) {
         if (hitBox === void 0) { hitBox = new HitBox_1.HitBox(0, 0, 0, 0); }
@@ -885,99 +1073,114 @@ exports.QuadTree = QuadTree;
 
 
 /***/ }),
-/* 11 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-var __extends = (this && this.__extends) || (function () {
-    var extendStatics = Object.setPrototypeOf ||
-        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-    return function (d, b) {
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
-Object.defineProperty(exports, "__esModule", { value: true });
-var Observable_1 = __webpack_require__(12);
-var InputManager = (function (_super) {
-    __extends(InputManager, _super);
-    function InputManager() {
-        var _this = _super.call(this) || this;
-        _this.init();
-        return _this;
-    }
-    InputManager.prototype.init = function () {
-        var _this = this;
-        window.addEventListener('keydown', function (event) {
-            _this.state[event.key] = true;
-            _this.notify();
-        });
-        window.addEventListener('keyup', function (event) {
-            _this.state[event.key] = false;
-            _this.notify();
-        });
-    };
-    InputManager.prototype.reset = function () {
-        var _this = this;
-        Object.keys(this.state).forEach(function (key) { return _this.state[key] = false; });
-    };
-    return InputManager;
-}(Observable_1.Observable));
-exports.InputManager = InputManager;
-
-
-/***/ }),
-/* 12 */
+/* 15 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var Observable = (function () {
-    function Observable() {
-        this._observers = [];
-        this._state = {};
+var InputManager_1 = __webpack_require__(1);
+var SettingsMenu = (function () {
+    function SettingsMenu(element, settings) {
+        this.element = element;
+        this.settings = settings;
+        this.showing = false;
+        this.init();
     }
-    Observable.prototype.register = function (observer) {
-        this._observers.push(observer);
-    };
-    Observable.prototype.unRegister = function (observer) {
-        this._observers = this._observers.filter(function (obs) {
-            return obs !== observer;
-        });
-    };
-    Observable.prototype.notify = function () {
+    SettingsMenu.prototype.init = function () {
         var _this = this;
-        this._observers.forEach(function (observer) {
-            observer.update(_this._state);
+        var title = document.createElement('h4');
+        var playerTitle = document.createElement('h4');
+        var form = document.createElement('form');
+        var submit = document.createElement('input');
+        var playerForm = document.createElement('form');
+        var playerSubmit = document.createElement('input');
+        title.appendChild(document.createTextNode('Keyboard'));
+        playerTitle.appendChild(document.createTextNode('Player Settings'));
+        form.setAttribute('id', 'keyboardSettings');
+        form.setAttribute('method', 'post');
+        playerForm.setAttribute('id', 'playerSettings');
+        playerForm.setAttribute('method', 'post');
+        submit.setAttribute('type', 'submit');
+        submit.setAttribute('value', 'Save');
+        playerSubmit.setAttribute('type', 'submit');
+        playerSubmit.setAttribute('value', 'Save');
+        this.element.appendChild(title);
+        this.element.appendChild(form);
+        Object.keys(this.settings.keyBoard).forEach(function (setting) { return _this.addEntry(setting, form); });
+        form.appendChild(submit);
+        form.addEventListener('submit', function (event) {
+            event.preventDefault();
+            _this.settings.setKey(document.getElementById(InputManager_1.Actions.UP).value, InputManager_1.Actions.UP);
+            _this.settings.setKey(document.getElementById(InputManager_1.Actions.DOWN).value, InputManager_1.Actions.DOWN);
+            _this.settings.setKey(document.getElementById(InputManager_1.Actions.LEFT).value, InputManager_1.Actions.LEFT);
+            _this.settings.setKey(document.getElementById(InputManager_1.Actions.RIGHT).value, InputManager_1.Actions.RIGHT);
+            _this.settings.setKey(document.getElementById(InputManager_1.Actions.SHOOT).value, InputManager_1.Actions.SHOOT);
+            _this.clear();
+        });
+        this.element.appendChild(document.createElement('hr'));
+        this.element.appendChild(playerTitle);
+        this.element.appendChild(playerForm);
+        Object.keys(this.settings.player).forEach(function (setting) { return _this.addPlayerSettingEntry(setting, playerForm); });
+        playerForm.appendChild(playerSubmit);
+        playerForm.addEventListener('submit', function (event) {
+            event.preventDefault();
+            _this.settings.player.acceleration = Number(document.getElementById('acceleration').value);
+            _this.settings.player.maxVelocity = Number(document.getElementById('maxVelocity').value);
+            _this.settings.player.friction = Number(document.getElementById('friction').value);
+            _this.settings.player.fireDelay = Number(document.getElementById('fireDelay').value);
+            _this.clear();
         });
     };
-    Object.defineProperty(Observable.prototype, "observers", {
-        get: function () {
-            return this._observers;
-        },
-        set: function (observers) {
-            this._observers = observers;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Observable.prototype, "state", {
-        get: function () {
-            return this._state;
-        },
-        set: function (state) {
-            this._state = state;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    return Observable;
+    SettingsMenu.prototype.clear = function () {
+        while (this.element.firstChild) {
+            this.element.removeChild(this.element.firstChild);
+        }
+        this.init();
+    };
+    SettingsMenu.prototype.addPlayerSettingEntry = function (setting, element) {
+        var label = document.createElement('label');
+        var input = document.createElement('input');
+        var row = document.createElement('div');
+        label.setAttribute('for', setting);
+        label.appendChild(document.createTextNode(setting + ':'));
+        input.setAttribute('id', setting);
+        input.setAttribute('type', 'number');
+        input.setAttribute('name', setting);
+        input.setAttribute('value', this.settings.player[setting]);
+        row.classList.add('row');
+        row.appendChild(label);
+        row.appendChild(input);
+        element.appendChild(row);
+    };
+    SettingsMenu.prototype.addEntry = function (setting, element) {
+        var row = document.createElement('div');
+        var label = document.createElement('label');
+        var input = document.createElement('input');
+        row.classList.add('row');
+        label.setAttribute('for', this.settings.keyBoard[setting]);
+        label.appendChild(document.createTextNode(this.settings.keyBoard[setting] + ':'));
+        input.setAttribute('id', this.settings.keyBoard[setting]);
+        input.setAttribute('type', 'text');
+        input.setAttribute('name', this.settings.keyBoard[setting]);
+        input.setAttribute('value', setting);
+        row.appendChild(label);
+        row.appendChild(input);
+        element.appendChild(row);
+    };
+    SettingsMenu.prototype.toggleShow = function () {
+        if (this.showing) {
+            this.element.style.display = 'none';
+            this.showing = false;
+        }
+        else {
+            this.element.style.display = 'block';
+            this.showing = true;
+        }
+    };
+    return SettingsMenu;
 }());
-exports.Observable = Observable;
+exports.SettingsMenu = SettingsMenu;
 
 
 /***/ })

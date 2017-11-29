@@ -81,7 +81,7 @@ export class QuadTree {
     }
     if (this.nodes.length > 0) {
       let index = this.getIndex(object)
-      // Only add the object to a sub node if it can fit completely within one
+      // Only addVector the object to a sub node if it can fit completely within one
       if (index !== -1) {
         this.nodes[index].insert(object)
         return

@@ -5,6 +5,8 @@ import { Ship } from './entities/Ship'
 import { Pool } from './structures/Pool'
 import { QuadTree } from '../lib/collision/QuadTree'
 import { HitBox } from '../lib/collision/HitBox'
+import { Settings } from '../client/Settings'
+import { EntityType } from './interfaces/CollideAble'
 
 /**
  *
@@ -14,9 +16,6 @@ export class Game {
   ship: Ship
   enemyPool: Pool
   enemyBulletPool: Pool
-  backgroundCanvas
-  shipCanvas
-  mainCanvas
   backgroundContext
   shipContext
   mainContext
@@ -24,67 +23,76 @@ export class Game {
   window
   assetManager: AssetManager
   inputManager: InputManager
+  settings: Settings
   quadTree: QuadTree
   playerScore: number
   shipStartX: number
   shipStartY: number
+  paused: boolean
+  canvases
 
   /**
    *
    * @param {AssetManager} assetManager
    * @param {InputManager} inputManager
+   * @param {Settings} settings
+   * @param canvases
    */
-  constructor (assetManager: AssetManager, inputManager: InputManager) {
+  constructor (assetManager: AssetManager, inputManager: InputManager, settings: Settings, canvases) {
     this.playing = false
+    this.paused = false
     this.window = window
     this.assetManager = assetManager
     this.inputManager = inputManager
-    this.backgroundCanvas = document.getElementById('background')
-    this.shipCanvas = document.getElementById('ship')
-    this.mainCanvas = document.getElementById('main')
+    this.settings = settings
+    this.canvases = canvases
 
-    if (this.backgroundCanvas.getContext) {
-      this.backgroundContext = this.backgroundCanvas.getContext('2d')
-      this.shipContext = this.shipCanvas.getContext('2d')
-      this.mainContext = this.mainCanvas.getContext('2d')
+    if (this.canvases.background.getContext) {
+      this.backgroundContext = this.canvases.background.getContext('2d')
+      this.shipContext = this.canvases.ship.getContext('2d')
+      this.mainContext = this.canvases.main.getContext('2d')
       this.playerScore = 0
       this.background = new Background(
         0,
         0,
-        this.backgroundCanvas.width,
-        this.backgroundCanvas.height,
+        this.canvases.background.width,
+        this.canvases.background.height,
         this.backgroundContext,
-        this.assetManager.getSprite('background')
+        this.assetManager.getSprite(EntityType.BACKGROUND)
       )
-      this.shipStartX = this.shipCanvas.width / 2 - assetManager.getSprite('ship').width
-      this.shipStartY = this.shipCanvas.height / 4 * 3 + assetManager.getSprite('ship').height * 2
+      this.shipStartX = this.canvases.ship.width / 2 - assetManager.getSprite(EntityType.PLAYER).width
+      this.shipStartY = this.canvases.ship.height / 4 * 3 + assetManager.getSprite(EntityType.PLAYER).height * 2
       this.ship = new Ship(
         this.shipStartX,
         this.shipStartY,
-        assetManager.getSprite('ship').width,
-        assetManager.getSprite('ship').height,
-        this.shipCanvas.width,
-        this.shipCanvas.height,
-        6,
+        assetManager.getSprite(EntityType.PLAYER).width,
+        assetManager.getSprite(EntityType.PLAYER).height,
+        this.canvases.ship.width,
+        this.canvases.ship.height,
         this.shipContext,
-        assetManager.getSprite('ship'),
-        new Pool(assetManager, this.mainContext, this.mainCanvas.width, this.mainCanvas.height, 30, 'bullet')
+        assetManager.getSprite(EntityType.PLAYER),
+        new Pool(assetManager, this.mainContext, this.canvases.main.width, this.canvases.main.height, 80, EntityType.PLAYER_BULLET),
+        settings.player
       )
-      this.enemyBulletPool = new Pool(assetManager, this.mainContext, this.mainCanvas.width, this.mainCanvas.height, 50, 'bulletEnemy')
-      this.enemyPool = new Pool(assetManager, this.mainContext, this.mainCanvas.width, this.mainCanvas.height, 30, 'enemy', this.enemyBulletPool, this)
+      this.enemyBulletPool = new Pool(assetManager, this.mainContext, this.canvases.main.width, this.canvases.main.height, 50, EntityType.ENEMY_BULLET)
+      this.enemyPool = new Pool(assetManager, this.mainContext, this.canvases.main.width, this.canvases.main.height, 30, EntityType.ENEMY, this.enemyBulletPool, this)
       this.spawnWave()
       inputManager.register(this.ship)
-      this.quadTree = new QuadTree(new HitBox(0, 0, this.mainCanvas.width, this.mainCanvas.height))
+      this.quadTree = new QuadTree(new HitBox(0, 0, this.canvases.main.width, this.canvases.main.height))
       this.start()
     }
+  }
+
+  togglePause (): void {
+    this.paused = !this.paused
   }
 
   /**
    *
    */
   spawnWave (): void {
-    const height = this.assetManager.getSprite('enemy').height
-    const width = this.assetManager.getSprite('enemy').width
+    const height = this.assetManager.getSprite(EntityType.ENEMY).height
+    const width = this.assetManager.getSprite(EntityType.ENEMY).width
     let x = 100
     let y = -height
     const spacer = y * 1.5
@@ -125,34 +133,36 @@ export class Game {
    */
   render (): void {
     if (this.playing) {
-      document.getElementById('score').innerHTML = this.playerScore.toString()
-      this.quadTree.clear()
-      this.quadTree.insert(this.ship)
-      this.quadTree.insert(this.ship.pool.getPool())
-      this.quadTree.insert(this.enemyPool.getPool())
-      this.quadTree.insert(this.enemyBulletPool.getPool())
-      this.detectCollision()
+      if (!this.paused) {
+        document.getElementById('score').innerHTML = this.playerScore.toString()
+        this.quadTree.clear()
+        this.quadTree.insert(this.ship)
+        this.quadTree.insert(this.ship.pool.getPool())
+        this.quadTree.insert(this.enemyPool.getPool())
+        this.quadTree.insert(this.enemyBulletPool.getPool())
+        this.detectCollision()
 
-      // Spawn new wave if all enemies are destroyed.
-      if (this.enemyPool.getPool().length === 0) {
-        this.spawnWave()
-      }
+        // Spawn new wave if all enemies are destroyed.
+        if (this.enemyPool.getPool().length === 0) {
+          this.spawnWave()
+        }
 
-      if (this.ship.alive()) {
-        window.requestAnimationFrame(() => this.render())
-        this.background.draw()
-        this.ship.move()
-        this.ship.pool.render()
-        this.enemyPool.render()
-        this.enemyBulletPool.render()
-      } else {
-        this.playing = false
-        this.gameOver()
+        if (this.ship.alive()) {
+          this.background.draw()
+          this.ship.move()
+          this.ship.pool.render()
+          this.enemyPool.render()
+          this.enemyBulletPool.render()
+        } else {
+          this.playing = false
+          this.gameOver()
+        }
       }
+      window.requestAnimationFrame(() => this.render())
     }
   }
 
-  scorePoints () {
+  scorePoints (): void {
     this.playerScore += 10
   }
 
@@ -165,15 +175,15 @@ export class Game {
     this.ship.draw()
   }
 
-  gameOver () {
+  gameOver (): void {
     document.getElementById('game-over').style.display = 'block'
   }
 
   restart (): void {
     document.getElementById('game-over').style.display = 'none'
-    this.backgroundContext.clearRect(0, 0, this.backgroundCanvas.width, this.backgroundCanvas.height)
-    this.shipContext.clearRect(0, 0, this.shipCanvas.width, this.shipCanvas.height)
-    this.mainContext.clearRect(0, 0, this.mainCanvas.width, this.mainCanvas.height)
+    this.backgroundContext.clearRect(0, 0, this.canvases.background.width, this.canvases.background.height)
+    this.shipContext.clearRect(0, 0, this.canvases.ship.width, this.canvases.ship.height)
+    this.mainContext.clearRect(0, 0, this.canvases.main.width, this.canvases.main.height)
     this.inputManager.reset()
     this.quadTree.clear()
     this.background.reset()

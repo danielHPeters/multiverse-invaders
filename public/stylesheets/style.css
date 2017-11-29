@@ -20,13 +20,30 @@ canvas {
 #ship {
   z-index: 0; }
 
+.settings {
+  position: absolute;
+  top: 5px;
+  left: 5px;
+  color: #FF7F00;
+  font-family: Helvetica, sans-serif;
+  cursor: pointer; }
+
 .score {
   position: absolute;
   top: 5px;
   left: 480px;
   color: #FF7F00;
-  font-family: Helvetica, sans-serif;
-  cursor: default; }
+  font-family: Helvetica, sans-serif; }
+  .score span {
+    cursor: default; }
+
+#settings-menu {
+  width: 300px;
+  padding: 10px;
+  position: absolute;
+  background-color: #FF7F00;
+  color: #fff;
+  display: none; }
 
 #game-over {
   position: absolute;

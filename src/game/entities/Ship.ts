@@ -2,7 +2,8 @@ import { Drawable } from '../interfaces/Drawable'
 import { Vector2 } from '../../lib/vector/Vector2'
 import { Pool } from '../structures/Pool'
 import { Observer } from '../../lib/Observer'
-import { CollideAble } from '../interfaces/CollideAble'
+import { CollideAble, EntityType } from '../interfaces/CollideAble'
+import { Actions } from '../../client/InputManager'
 
 /**
  *
@@ -10,6 +11,7 @@ import { CollideAble } from '../interfaces/CollideAble'
 export class Ship implements Drawable, Observer, CollideAble {
   position: Vector2
   speed: number
+  acceleration: Vector2
   width: number
   height: number
   canvasWidth: number
@@ -17,16 +19,15 @@ export class Ship implements Drawable, Observer, CollideAble {
   context: any
   sprite: any
   pool: Pool
-  fireRate: number
   counter: number
   collidesWith
-  type: string
+  type: EntityType
   colliding: boolean
   velocity: Vector2
-  friction: number
   state
   maxTop: number
   startPosition
+  settings
 
   /**
    *
@@ -41,30 +42,29 @@ export class Ship implements Drawable, Observer, CollideAble {
    * @param {any} sprite
    * @param {Pool} pool
    */
-  constructor (x: number, y: number, width: number, height: number, canvasWidth: number, canvasHeight: number, speed: number, context: any, sprite: any, pool: Pool) {
+  constructor (x: number, y: number, width: number, height: number, canvasWidth: number, canvasHeight: number, context: any, sprite: any, pool: Pool, settings) {
     this.position = new Vector2(x, y)
+    this.startPosition = new Vector2(x, y)
+    this.acceleration = new Vector2(0, 0)
     this.velocity = new Vector2(0, 0)
-    this.speed = speed
     this.width = width
     this.height = height
     this.canvasWidth = canvasWidth
     this.canvasHeight = canvasHeight
     this.context = context
     this.sprite = sprite
-    this.type = 'ship'
+    this.type = EntityType.PLAYER
     this.pool = pool
-    this.fireRate = 15
     this.counter = 0
     this.collidesWith = []
-    this.collidesWith.push('bulletEnemy')
+    this.collidesWith.push(EntityType.ENEMY_BULLET)
     this.colliding = false
-    this.friction = 0.6
     this.state = {}
+    this.settings = settings
     this.maxTop = Math.floor(this.canvasHeight / 4 * 3)
-    this.startPosition = new Vector2(x, y)
   }
 
-  reset () {
+  reset (): void {
     this.position.setVector(this.startPosition)
     this.velocity.set(0, 0)
     this.colliding = false
@@ -74,64 +74,51 @@ export class Ship implements Drawable, Observer, CollideAble {
    *
    */
   move (): void {
-    this.counter++
-    if (this.state['a'] || this.state['d'] || this.state['w'] || this.state['s']) {
+    if (!this.colliding) {
+      this.counter++
       this.context.clearRect(Math.floor(this.position.x), Math.floor(this.position.y), this.width, this.height)
-      if (this.state['a']) {
-        if (this.velocity.x > -this.speed) {
-          this.velocity.x--
-        }
-        // this.position.x -= this.speed
+      this.acceleration.set(0, 0)
+      if (this.state[Actions.LEFT]) {
+        this.acceleration.add(-this.settings.acceleration, 0)
       }
-      if (this.state['d']) {
-        if (this.velocity.x < this.speed) {
-          this.velocity.x++
-        }
-        // this.position.x += this.speed
+      if (this.state[Actions.RIGHT]) {
+        this.acceleration.add(this.settings.acceleration, 0)
       }
-      if (this.state['w']) {
-        if (this.velocity.y > -this.speed) {
-          this.velocity.y--
-        }
-        // this.position.y -= this.speed
+      if (this.state[Actions.UP]) {
+        this.acceleration.add(0, -this.settings.acceleration)
       }
-      if (this.state['s']) {
-        if (this.velocity.y < this.speed) {
-          this.velocity.y++
-        }
-        // this.position.y += this.speed
+      if (this.state[Actions.DOWN]) {
+        this.acceleration.add(0, this.settings.acceleration)
       }
-      this.velocity.multiply(this.friction)
-      this.position.add(this.velocity)
+      this.velocity.multiply(this.settings.friction)
+      this.velocity.addVector(this.acceleration)
+      this.velocity.limit(this.settings.maxVelocity)
+      this.position.addVector(this.velocity)
+      this.position.subtractVector(this.acceleration)
       if (this.position.x <= 0) {
         this.position.x = 0
-        this.velocity.x *= -1
+        this.velocity.x += -1
       }
       if (this.position.x >= this.canvasWidth - this.width) {
         this.position.x = this.canvasWidth - this.width
-        this.velocity.x *= -1
       }
       if (this.position.y <= this.maxTop) {
         this.position.y = this.maxTop
-        this.velocity.y *= -1
       }
       if (this.position.y >= this.canvasHeight - this.height) {
         this.position.y = this.canvasHeight - this.height
-        this.velocity.y *= -1
       }
 
       // Finish by redrawing the ship
-      if (!this.colliding) {
-        this.draw()
+      this.draw()
+      if (this.state[Actions.SHOOT] && this.counter >= this.settings.fireDelay && !this.colliding) {
+        this.fire()
+        this.counter = 0
       }
-    }
-    if (this.state[' '] && this.counter >= this.fireRate && !this.colliding) {
-      this.fire()
-      this.counter = 0
     }
   }
 
-  alive () {
+  alive (): boolean {
     return !this.colliding
   }
 

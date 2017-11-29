@@ -5,10 +5,10 @@ var Vector2 = (function () {
         this.x = x;
         this.y = y;
     }
-    Vector2.add = function (v1, v2) {
+    Vector2.addVector = function (v1, v2) {
         return new Vector2(v1.x + v2.x, v1.y + v2.y);
     };
-    Vector2.subtract = function (v1, v2) {
+    Vector2.subtractVector = function (v1, v2) {
         return new Vector2(v1.x - v2.x, v1.y - v2.y);
     };
     Vector2.multiply = function (vector, scalar) {
@@ -48,11 +48,19 @@ var Vector2 = (function () {
         this.x = vector.x;
         this.y = vector.y;
     };
-    Vector2.prototype.add = function (vector) {
+    Vector2.prototype.add = function (x, y) {
+        this.x += x;
+        this.y += y;
+    };
+    Vector2.prototype.addVector = function (vector) {
         this.x += vector.x;
         this.y += vector.y;
     };
-    Vector2.prototype.subtract = function (vector) {
+    Vector2.prototype.subtract = function (x, y) {
+        this.x -= x;
+        this.y -= y;
+    };
+    Vector2.prototype.subtractVector = function (vector) {
         this.x -= vector.x;
         this.y -= vector.y;
     };
@@ -80,7 +88,7 @@ var Vector2 = (function () {
         }
     };
     Vector2.prototype.limit = function (max) {
-        if (this.mag() > max) {
+        if (Math.floor(this.mag()) > max) {
             this.normalize();
             this.multiply(max);
         }

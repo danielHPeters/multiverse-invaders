@@ -32,8 +32,8 @@ export class AssetManager {
    * @param {string} path
    * @param {string} type
    */
-  queueDownload (id: string, path: string, type: string) {
-    this.queue.push({id: id, path: path, type: type})
+  queueDownload (id: string, path: string, type: string): void {
+    this.queue.push({ id: id, path: path, type: type })
   }
 
   /**
@@ -42,7 +42,7 @@ export class AssetManager {
    * @param {string} path
    * @param callback
    */
-  loadSprite (id: string, path: string, callback) {
+  loadSprite (id: string, path: string, callback): any {
     let sprite = new Image()
     sprite.addEventListener('load', () => {
       this.downloadCount++
@@ -58,7 +58,7 @@ export class AssetManager {
    *
    * @param callback
    */
-  downloadAll (callback) {
+  downloadAll (callback): void {
     this.queue.forEach(item => {
       if (item.type === AssetType.SPRITE) {
         this.loadSprite(item.id, item.path, callback)

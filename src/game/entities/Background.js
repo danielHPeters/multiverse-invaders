@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var Vector2_1 = require("../../lib/vector/Vector2");
+var CollideAble_1 = require("../interfaces/CollideAble");
 var Background = (function () {
     function Background(x, y, width, height, context, sprite) {
         this.position = new Vector2_1.Vector2(x, y);
@@ -11,7 +12,7 @@ var Background = (function () {
         this.canvasHeight = height;
         this.context = context;
         this.sprite = sprite;
-        this.type = 'background';
+        this.type = CollideAble_1.EntityType.BACKGROUND;
     }
     Background.prototype.reset = function () {
         this.position.set(0, 0);

@@ -1,5 +1,6 @@
 import { Drawable } from '../interfaces/Drawable'
 import { Vector2 } from '../../lib/vector/Vector2'
+import { EntityType } from '../interfaces/CollideAble'
 
 export class Background implements Drawable {
   position: Vector2
@@ -9,7 +10,7 @@ export class Background implements Drawable {
   canvasWidth: number
   canvasHeight: number
   context: any
-  type: string
+  type: EntityType
   sprite: any
 
   /**
@@ -30,7 +31,7 @@ export class Background implements Drawable {
     this.canvasHeight = height
     this.context = context
     this.sprite = sprite
-    this.type = 'background'
+    this.type = EntityType.BACKGROUND
   }
 
   reset () {

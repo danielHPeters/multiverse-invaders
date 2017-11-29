@@ -14,13 +14,13 @@ export class Vector2 {
   }
 
   /**
-   * Static add method to combine two vectors into a new one.
+   * Static addVector method to combine two vectors into a new one.
    *
    * @param {Vector2} v1 first vector
    * @param {Vector2} v2 second vector
    * @returns {Vector2} combined vector
    */
-  static add (v1: Vector2, v2: Vector2): Vector2 {
+  static addVector (v1: Vector2, v2: Vector2): Vector2 {
     return new Vector2(v1.x + v2.x, v1.y + v2.y)
   }
 
@@ -31,7 +31,7 @@ export class Vector2 {
    * @param {Vector2} v2 second vector
    * @returns {Vector2} resulting vector
    */
-  static subtract (v1: Vector2, v2: Vector2): Vector2 {
+  static subtractVector (v1: Vector2, v2: Vector2): Vector2 {
     return new Vector2(v1.x - v2.x, v1.y - v2.y)
   }
 
@@ -117,13 +117,35 @@ export class Vector2 {
   }
 
   /**
+   * Add x and y to this vector.
+   *
+   * @param {number} x x value
+   * @param {number} y y value
+   */
+  add (x: number, y: number): void {
+    this.x += x
+    this.y += y
+  }
+
+  /**
    * Add vector to this vector.
    *
    * @param {Vector2} vector other vector
    */
-  add (vector: Vector2): void {
+  addVector (vector: Vector2): void {
     this.x += vector.x
     this.y += vector.y
+  }
+
+  /**
+   * Subtraxt x and y from this vector.
+   *
+   * @param {number} x x value
+   * @param {number} y y value
+   */
+  subtract (x: number, y: number): void {
+    this.x -= x
+    this.y -= y
   }
 
   /**
@@ -131,7 +153,7 @@ export class Vector2 {
    *
    * @param {Vector2} vector other vector
    */
-  subtract (vector: Vector2): void {
+  subtractVector (vector: Vector2): void {
     this.x -= vector.x
     this.y -= vector.y
   }
@@ -194,7 +216,7 @@ export class Vector2 {
    * @param max maximum length
    */
   limit (max): void {
-    if (this.mag() > max) {
+    if (Math.floor(this.mag()) > max) {
       this.normalize()
       this.multiply(max)
     }

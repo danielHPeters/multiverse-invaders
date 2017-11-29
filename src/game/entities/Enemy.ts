@@ -1,7 +1,7 @@
 import { Drawable } from '../interfaces/Drawable'
 import { Vector2 } from '../../lib/vector/Vector2'
 import { Pool } from '../structures/Pool'
-import { CollideAble } from '../interfaces/CollideAble'
+import { CollideAble, EntityType } from '../interfaces/CollideAble'
 import { Game } from '../Game'
 
 /**
@@ -26,7 +26,7 @@ export class Enemy implements Drawable, CollideAble {
   alive: boolean
   bulletPool: Pool
   collidesWith
-  type: string
+  type: EntityType
   colliding: boolean
   game: Game
 
@@ -45,7 +45,7 @@ export class Enemy implements Drawable, CollideAble {
    * @param {Pool} bulletPool
    * @param {Game} game
    */
-  constructor (x: number, y: number, width: number, height: number, canvasWidth: number, canvasHeight: number, speed: number, context, sprite, type: string, bulletPool: Pool, game: Game) {
+  constructor (x: number, y: number, width: number, height: number, canvasWidth: number, canvasHeight: number, speed: number, context, sprite, type: EntityType, bulletPool: Pool, game: Game) {
     this.position = new Vector2(x, y)
     this.width = width
     this.height = height
@@ -59,7 +59,7 @@ export class Enemy implements Drawable, CollideAble {
     this.alive = false
     this.type = type
     this.collidesWith = []
-    this.collidesWith.push('bullet')
+    this.collidesWith.push(EntityType.PLAYER_BULLET)
     this.colliding = false
     this.bulletPool = bulletPool
     this.game = game
