@@ -183,9 +183,9 @@ export class Vector2 {
   }
 
   /**
-   * Get the magnitude / length of this vector.
+   * Get the magnitude / elementsCount of this vector.
    *
-   * @returns {number} magnitude / length of this vector
+   * @returns {number} magnitude / elementsCount of this vector
    */
   mag (): number {
     return Math.sqrt(this.x * this.x + this.y * this.y)
@@ -211,9 +211,9 @@ export class Vector2 {
   }
 
   /**
-   * Limit the vector to a maximum length.
+   * Limit the vector to a maximum elementsCount.
    *
-   * @param max maximum length
+   * @param max maximum elementsCount
    */
   limit (max): void {
     if (Math.floor(this.mag()) > max) {

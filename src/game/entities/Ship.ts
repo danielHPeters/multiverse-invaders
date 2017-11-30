@@ -1,7 +1,7 @@
 import { Drawable } from '../interfaces/Drawable'
 import { Vector2 } from '../../lib/vector/Vector2'
 import { Pool } from '../structures/Pool'
-import { Observer } from '../../lib/Observer'
+import { Observer } from '../../lib/observer/Observer'
 import { CollideAble, EntityType } from '../interfaces/CollideAble'
 import { Actions } from '../../client/InputManager'
 import { AssetManager, AssetType } from '../../client/AssetManager'

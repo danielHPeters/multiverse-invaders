@@ -1,7 +1,7 @@
-import { Vector2 } from './vector/Vector2'
-import { Actions } from '../client/InputManager'
-import { Observer } from './Observer'
-import { CollideAble, EntityType } from '../game/interfaces/CollideAble'
+import { Vector2 } from '../vector/Vector2'
+import { Actions } from '../../client/InputManager'
+import { Observer } from '../observer/Observer'
+import { CollideAble, EntityType } from '../../game/interfaces/CollideAble'
 
 export class Entity implements Observer, CollideAble {
   type: EntityType
