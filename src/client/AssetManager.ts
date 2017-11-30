@@ -1,8 +1,9 @@
 import { EntityType } from '../game/interfaces/CollideAble'
 import { SpriteSheet } from './graphics/2D/SpriteSheet'
+import { Sound } from './audio/Sound'
 
 export enum AssetType {
-  SPRITE = 'SPRITE', SPRITE_SHEET = 'SPRITE_SHEET', AUDIO = 'AUDIO'
+  SPRITE = 'SPRITE', SPRITE_SHEET = 'SPRITE_SHEET', AUDIO = 'AUDIO', AUDIO_LOOP = 'LOOP'
 }
 
 export class AssetManager {
@@ -10,6 +11,9 @@ export class AssetManager {
   cache
   queue
   downloadCount: number
+  masterGain: GainNode
+  effectsGain: GainNode
+  ambientGain: GainNode
 
   /**
    *
@@ -30,9 +34,30 @@ export class AssetManager {
       // Fix for browsers using prefixes
       window.AudioContext = window.AudioContext || webkitAudioContext
       this.audioContext = new AudioContext()
+      this.masterGain = this.audioContext.createGain()
+      this.effectsGain = this.audioContext.createGain()
+      this.ambientGain = this.audioContext.createGain()
+      this.masterGain.gain.value = 1
+      this.masterGain.connect(this.audioContext.destination)
+      this.effectsGain.connect(this.masterGain)
+      this.ambientGain.connect(this.masterGain)
+      this.ambientGain.gain.value = 1
+      this.effectsGain.gain.value = 1
     } catch (e) {
       console.log('Web Audio API is not supported in this browser')
     }
+  }
+
+  adjustMasterVolume (value: number): void {
+    this.masterGain.gain.value = value
+  }
+
+  adjustAmbientVolume (value: number): void {
+    this.ambientGain.gain.value = value
+  }
+
+  adjustEffectsVolume (value: number): void {
+    this.effectsGain.gain.value = value
   }
 
   /**
@@ -45,20 +70,24 @@ export class AssetManager {
 
   /**
    *
-   * @param {string} id
+   * @param {EntityType} id
    * @param {string} path
-   * @param {string} type
+   * @param {AssetType} type
+   * @param {{}} opts
    */
-  queueDownload (id: EntityType, path: string, type: AssetType): void {
+  queueDownload (id: EntityType, path: string, type: AssetType, opts = null): void {
     this.queue.push({
-      id: id, path: path, type: type
+      id: id,
+      path: path,
+      type: type,
+      opts: opts
     })
   }
 
   /**
    * Build an AJAX Request to loadAudio audio file into the buffer cache.
    *
-   * @param {{}} item object with name of file and path to file
+   * @param item object with name of file and path to file
    * @param callback function to execute on done
    */
   loadAudio (item, callback): void {
@@ -69,8 +98,8 @@ export class AssetManager {
 
     // Decode asynchronously
     request.addEventListener('load', () => {
-      this.audioContext.decodeAudioData(
-        request.response,
+      let audioData = request.response
+      this.audioContext.decodeAudioData(audioData).then(
         buffer => {
           this.cache.audio[item.id] = buffer
           this.downloadCount += 1
@@ -139,20 +168,23 @@ export class AssetManager {
    * Create an audio buffer source node from cached buffer.
    * Send it to the destination of the audio context and play it.
    *
-   * @param id filename
+   * @param {EntityType} id file id
+   * @param {AssetType} type
    */
-  getSound (id): AudioBufferSourceNode {
-    let sound = this.audioContext.createBufferSource()
-
-    sound.buffer = this.cache.audio[id]
-    sound.connect(this.audioContext.destination)
-    return sound
+  getSound (id: EntityType, type: AssetType): Sound {
+    let gain
+    if (type === AssetType.AUDIO) {
+      gain = this.effectsGain
+    } else {
+      gain = this.ambientGain
+    }
+    return new Sound(this.audioContext, gain, this.cache.audio[id])
   }
 
   /**
    *
    * @param {string} id
-   * @returns {any}
+   * @returns {EntityType}
    */
   getSprite (id: EntityType): any {
     return this.cache.sprites[id]
@@ -165,6 +197,6 @@ export class AssetManager {
    * @returns {SpriteSheet}
    */
   getSpriteSheet (id: EntityType): SpriteSheet {
-    return this.cache.spriteSheet[id]
+    return this.cache.spriteSheets[id]
   }
 }

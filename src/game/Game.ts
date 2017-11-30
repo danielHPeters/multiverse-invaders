@@ -1,5 +1,5 @@
 import { Background } from './entities/Background'
-import { AssetManager } from '../client/AssetManager'
+import { AssetManager, AssetType } from '../client/AssetManager'
 import { InputManager } from '../client/InputManager'
 import { Ship } from './entities/Ship'
 import { Pool } from './structures/Pool'
@@ -8,6 +8,7 @@ import { HitBox } from '../lib/collision/HitBox'
 import { Settings } from '../client/Settings'
 import { EntityType } from './interfaces/CollideAble'
 import { CollisionManager } from '../lib/collision/CollisionManager'
+import { Sound } from '../client/audio/Sound'
 
 /**
  *
@@ -32,7 +33,8 @@ export class Game {
   shipStartY: number
   paused: boolean
   canvases
-  backgroundAudio: AudioBufferSourceNode
+  backgroundAudio: Sound
+  gameOverAudio: Sound
 
   /**
    *
@@ -73,7 +75,7 @@ export class Game {
         this.canvases.ship.width,
         this.canvases.ship.height,
         this.shipContext,
-        assetManager.getSprite(EntityType.PLAYER),
+        assetManager,
         new Pool(assetManager, this.mainContext, this.canvases.main.width, this.canvases.main.height, 80, EntityType.PLAYER_BULLET),
         settings.player
       )
@@ -83,10 +85,8 @@ export class Game {
       inputManager.register(this.ship)
       this.quadTree = new QuadTree(new HitBox(0, 0, this.canvases.main.width, this.canvases.main.height))
       this.collisionManager = new CollisionManager(this.quadTree)
-      this.backgroundAudio = this.assetManager.getSound(EntityType.MAIN_THEME)
-      this.backgroundAudio.loop = true
-      this.backgroundAudio.loopEnd = Math.floor(this.backgroundAudio.buffer.duration)
-      this.backgroundAudio.start(0)
+      this.backgroundAudio = this.assetManager.getSound(EntityType.MAIN_THEME, AssetType.AUDIO_LOOP)
+      this.backgroundAudio.play(true)
       this.start()
     }
   }
@@ -162,10 +162,15 @@ export class Game {
   }
 
   gameOver (): void {
+    this.backgroundAudio.stop()
     document.getElementById('game-over').style.display = 'block'
+    this.gameOverAudio = this.assetManager.getSound(EntityType.GAME_OVER, AssetType.AUDIO_LOOP)
+    this.gameOverAudio.play(true)
   }
 
   restart (): void {
+    this.gameOverAudio.stop()
+    this.backgroundAudio.play(true)
     document.getElementById('game-over').style.display = 'none'
     this.backgroundContext.clearRect(0, 0, this.canvases.background.width, this.canvases.background.height)
     this.shipContext.clearRect(0, 0, this.canvases.ship.width, this.canvases.ship.height)

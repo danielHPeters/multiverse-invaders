@@ -1,16 +1,18 @@
 import { Settings } from './Settings'
 import { Actions } from './InputManager'
+import { AssetManager } from './AssetManager'
 
 export class SettingsMenu {
   element
   settings: Settings
+  assetManager: AssetManager
   showing: boolean
 
-  constructor (element, settings: Settings) {
+  constructor (element, settings: Settings, assetManager: AssetManager) {
     this.element = element
     this.settings = settings
+    this.assetManager = assetManager
     this.showing = false
-    this.init()
   }
 
   init (): void {
@@ -56,6 +58,58 @@ export class SettingsMenu {
       this.settings.player.fireDelay = Number((document.getElementById('fireDelay') as HTMLInputElement).value)
       this.clear()
     })
+    let divider = document.createElement('hr')
+    let div = document.createElement('div')
+    let audioTitle = document.createElement('h4')
+    let audioLabel = document.createElement('label')
+    let audioSlide = document.createElement('input')
+    div.classList.add('row')
+    audioTitle.appendChild(document.createTextNode('Audio Settings'))
+    audioLabel.appendChild(document.createTextNode('Master Volume:'))
+    audioLabel.setAttribute('for', 'masterVolume')
+    audioSlide.setAttribute('id', 'masterVolume')
+    audioSlide.setAttribute('type', 'range')
+    audioSlide.setAttribute('min', '0')
+    audioSlide.setAttribute('max', '1')
+    audioSlide.setAttribute('step', '0.1')
+    audioSlide.addEventListener('change', event => this.assetManager.adjustMasterVolume(Number(audioSlide.value)))
+    div.appendChild(audioLabel)
+    div.appendChild(audioSlide)
+    this.element.appendChild(divider)
+    this.element.appendChild(audioTitle)
+    this.element.appendChild(div)
+
+    let ambientDiv = document.createElement('div')
+    let ambientLabel = document.createElement('label')
+    let ambientSlide = document.createElement('input')
+    ambientDiv.classList.add('row')
+    ambientLabel.appendChild(document.createTextNode('Ambient Volume:'))
+    ambientLabel.setAttribute('for', 'ambientVolume')
+    ambientSlide.setAttribute('id', 'ambientVolume')
+    ambientSlide.setAttribute('type', 'range')
+    ambientSlide.setAttribute('min', '0')
+    ambientSlide.setAttribute('max', '1')
+    ambientSlide.setAttribute('step', '0.1')
+    ambientSlide.addEventListener('change', event => this.assetManager.adjustAmbientVolume(Number(ambientSlide.value)))
+    ambientDiv.appendChild(ambientLabel)
+    ambientDiv.appendChild(ambientSlide)
+    this.element.appendChild(ambientDiv)
+
+    let effectsDiv = document.createElement('div')
+    let effectsLabel = document.createElement('label')
+    let effectsSlide = document.createElement('input')
+    effectsDiv.classList.add('row')
+    effectsLabel.appendChild(document.createTextNode('Effects Volume:'))
+    effectsLabel.setAttribute('for', 'effectsVolume')
+    effectsSlide.setAttribute('id', 'effectsVolume')
+    effectsSlide.setAttribute('type', 'range')
+    effectsSlide.setAttribute('min', '0')
+    effectsSlide.setAttribute('max', '1')
+    effectsSlide.setAttribute('step', '0.1')
+    effectsSlide.addEventListener('change', event => this.assetManager.adjustEffectsVolume(Number(effectsSlide.value)))
+    effectsDiv.appendChild(effectsLabel)
+    effectsDiv.appendChild(effectsSlide)
+    this.element.appendChild(effectsDiv)
   }
 
   clear (): void {

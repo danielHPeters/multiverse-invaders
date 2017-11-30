@@ -60,7 +60,7 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 8);
+/******/ 	return __webpack_require__(__webpack_require__.s = 11);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -83,6 +83,7 @@ var EntityType;
     EntityType["MAIN_THEME"] = "shockWave";
     EntityType["EXPLOSION_I"] = "explosion1";
     EntityType["EXPLOSION_II"] = "explosion2";
+    EntityType["BOX"] = "BOX";
 })(EntityType = exports.EntityType || (exports.EntityType = {}));
 
 
@@ -92,52 +93,107 @@ var EntityType;
 
 "use strict";
 
-var __extends = (this && this.__extends) || (function () {
-    var extendStatics = Object.setPrototypeOf ||
-        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-    return function (d, b) {
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
 Object.defineProperty(exports, "__esModule", { value: true });
-var Observable_1 = __webpack_require__(5);
-var Actions;
-(function (Actions) {
-    Actions["UP"] = "UP";
-    Actions["DOWN"] = "DOWN";
-    Actions["LEFT"] = "LEFT";
-    Actions["RIGHT"] = "RIGHT";
-    Actions["SHOOT"] = "SHOOT";
-})(Actions = exports.Actions || (exports.Actions = {}));
-var InputManager = (function (_super) {
-    __extends(InputManager, _super);
-    function InputManager(settings) {
-        var _this = _super.call(this) || this;
-        _this.inputMap = settings.keyBoard;
-        _this.init();
-        return _this;
+class Vector2 {
+    constructor(x, y) {
+        this.x = x;
+        this.y = y;
     }
-    InputManager.prototype.init = function () {
-        var _this = this;
-        window.addEventListener('keydown', function (event) {
-            _this.state[_this.inputMap[event.key]] = true;
-            _this.notify();
-        });
-        window.addEventListener('keyup', function (event) {
-            _this.state[_this.inputMap[event.key]] = false;
-            _this.notify();
-        });
-    };
-    InputManager.prototype.reset = function () {
-        var _this = this;
-        Object.keys(this.state).forEach(function (key) { return _this.state[key] = false; });
-    };
-    return InputManager;
-}(Observable_1.Observable));
-exports.InputManager = InputManager;
+    static addVector(v1, v2) {
+        return new Vector2(v1.x + v2.x, v1.y + v2.y);
+    }
+    static subtractVector(v1, v2) {
+        return new Vector2(v1.x - v2.x, v1.y - v2.y);
+    }
+    static multiply(vector, scalar) {
+        return new Vector2(vector.x * scalar, vector.y * scalar);
+    }
+    static divide(vector, scalar) {
+        if (scalar === 0) {
+            throw new Error('cannot divide vector by scalar with value "0"');
+        }
+        return new Vector2(vector.x / scalar, vector.y / scalar);
+    }
+    set x(x) {
+        this._x = x;
+    }
+    set y(y) {
+        this._y = y;
+    }
+    get x() {
+        return this._x;
+    }
+    get y() {
+        return this._y;
+    }
+    set(x, y) {
+        this.x = x;
+        this.y = y;
+    }
+    setVector(vector) {
+        this.x = vector.x;
+        this.y = vector.y;
+    }
+    add(x, y) {
+        this.x += x;
+        this.y += y;
+    }
+    addVector(vector) {
+        this.x += vector.x;
+        this.y += vector.y;
+    }
+    subtract(x, y) {
+        this.x -= x;
+        this.y -= y;
+    }
+    subtractVector(vector) {
+        this.x -= vector.x;
+        this.y -= vector.y;
+    }
+    multiply(scalar) {
+        this.x *= scalar;
+        this.y *= scalar;
+    }
+    divide(scalar) {
+        if (scalar === 0) {
+            throw new Error('cannot divide vector by "0"');
+        }
+        this.x /= scalar;
+        this.y /= scalar;
+    }
+    mag() {
+        return Math.sqrt(this.x * this.x + this.y * this.y);
+    }
+    negative() {
+        return new Vector2(-this.x, -this.y);
+    }
+    normalize() {
+        let magnitude = this.mag();
+        if (magnitude !== 0) {
+            this.divide(magnitude);
+        }
+    }
+    limit(max) {
+        if (Math.floor(this.mag()) > max) {
+            this.normalize();
+            this.multiply(max);
+        }
+    }
+    distanceTo(vector) {
+        return Math.sqrt(Math.pow(vector.x - this.x, 2) + Math.pow(vector.y - this.y, 2));
+    }
+    dot(vector) {
+        return this.x * vector.x + this.y * vector.y;
+    }
+    floor() {
+        this.x = Math.floor(this.x);
+        this.x = Math.floor(this.x);
+    }
+    clone() {
+        return new Vector2(this.x, this.y);
+    }
+}
+exports.Vector2 = Vector2;
 
 
 /***/ }),
@@ -147,111 +203,36 @@ exports.InputManager = InputManager;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var Vector2 = (function () {
-    function Vector2(x, y) {
-        this.x = x;
-        this.y = y;
+const Observable_1 = __webpack_require__(7);
+var Actions;
+(function (Actions) {
+    Actions["UP"] = "UP";
+    Actions["DOWN"] = "DOWN";
+    Actions["LEFT"] = "LEFT";
+    Actions["RIGHT"] = "RIGHT";
+    Actions["SHOOT"] = "SHOOT";
+})(Actions = exports.Actions || (exports.Actions = {}));
+class InputManager extends Observable_1.Observable {
+    constructor(settings) {
+        super();
+        this.inputMap = settings.keyBoard;
+        this.init();
     }
-    Vector2.addVector = function (v1, v2) {
-        return new Vector2(v1.x + v2.x, v1.y + v2.y);
-    };
-    Vector2.subtractVector = function (v1, v2) {
-        return new Vector2(v1.x - v2.x, v1.y - v2.y);
-    };
-    Vector2.multiply = function (vector, scalar) {
-        return new Vector2(vector.x * scalar, vector.y * scalar);
-    };
-    Vector2.divide = function (vector, scalar) {
-        if (scalar === 0) {
-            throw new Error('cannot divide vector by scalar with value "0"');
-        }
-        return new Vector2(vector.x / scalar, vector.y / scalar);
-    };
-    Object.defineProperty(Vector2.prototype, "x", {
-        get: function () {
-            return this._x;
-        },
-        set: function (x) {
-            this._x = x;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Vector2.prototype, "y", {
-        get: function () {
-            return this._y;
-        },
-        set: function (y) {
-            this._y = y;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Vector2.prototype.set = function (x, y) {
-        this.x = x;
-        this.y = y;
-    };
-    Vector2.prototype.setVector = function (vector) {
-        this.x = vector.x;
-        this.y = vector.y;
-    };
-    Vector2.prototype.add = function (x, y) {
-        this.x += x;
-        this.y += y;
-    };
-    Vector2.prototype.addVector = function (vector) {
-        this.x += vector.x;
-        this.y += vector.y;
-    };
-    Vector2.prototype.subtract = function (x, y) {
-        this.x -= x;
-        this.y -= y;
-    };
-    Vector2.prototype.subtractVector = function (vector) {
-        this.x -= vector.x;
-        this.y -= vector.y;
-    };
-    Vector2.prototype.multiply = function (scalar) {
-        this.x *= scalar;
-        this.y *= scalar;
-    };
-    Vector2.prototype.divide = function (scalar) {
-        if (scalar === 0) {
-            throw new Error('cannot divide vector by "0"');
-        }
-        this.x /= scalar;
-        this.y /= scalar;
-    };
-    Vector2.prototype.mag = function () {
-        return Math.sqrt(this.x * this.x + this.y * this.y);
-    };
-    Vector2.prototype.negative = function () {
-        return new Vector2(-this.x, -this.y);
-    };
-    Vector2.prototype.normalize = function () {
-        var magnitude = this.mag();
-        if (magnitude !== 0) {
-            this.divide(magnitude);
-        }
-    };
-    Vector2.prototype.limit = function (max) {
-        if (Math.floor(this.mag()) > max) {
-            this.normalize();
-            this.multiply(max);
-        }
-    };
-    Vector2.prototype.distanceTo = function (vector) {
-        return Math.sqrt(Math.pow(vector.x - this.x, 2) + Math.pow(vector.y - this.y, 2));
-    };
-    Vector2.prototype.dot = function (vector) {
-        return this.x * vector.x + this.y * vector.y;
-    };
-    Vector2.prototype.clone = function () {
-        return new Vector2(this.x, this.y);
-    };
-    return Vector2;
-}());
-exports.Vector2 = Vector2;
+    init() {
+        window.addEventListener('keydown', event => {
+            this.state[this.inputMap[event.key]] = true;
+            this.notify();
+        });
+        window.addEventListener('keyup', event => {
+            this.state[this.inputMap[event.key]] = false;
+            this.notify();
+        });
+    }
+    reset() {
+        Object.keys(this.state).forEach(key => this.state[key] = false);
+    }
+}
+exports.InputManager = InputManager;
 
 
 /***/ }),
@@ -261,15 +242,17 @@ exports.Vector2 = Vector2;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var SpriteSheet_1 = __webpack_require__(4);
+const SpriteSheet_1 = __webpack_require__(5);
+const Sound_1 = __webpack_require__(6);
 var AssetType;
 (function (AssetType) {
     AssetType["SPRITE"] = "SPRITE";
     AssetType["SPRITE_SHEET"] = "SPRITE_SHEET";
     AssetType["AUDIO"] = "AUDIO";
+    AssetType["AUDIO_LOOP"] = "LOOP";
 })(AssetType = exports.AssetType || (exports.AssetType = {}));
-var AssetManager = (function () {
-    function AssetManager() {
+class AssetManager {
+    constructor() {
         this.cache = {
             sprites: {},
             spriteSheets: {},
@@ -279,91 +262,112 @@ var AssetManager = (function () {
         this.queue = [];
         this.initAudioContext();
     }
-    AssetManager.prototype.initAudioContext = function () {
+    initAudioContext() {
         try {
             window.AudioContext = window.AudioContext || webkitAudioContext;
             this.audioContext = new AudioContext();
+            this.masterGain = this.audioContext.createGain();
+            this.effectsGain = this.audioContext.createGain();
+            this.ambientGain = this.audioContext.createGain();
+            this.masterGain.gain.value = 1;
+            this.masterGain.connect(this.audioContext.destination);
+            this.effectsGain.connect(this.masterGain);
+            this.ambientGain.connect(this.masterGain);
+            this.ambientGain.gain.value = 1;
+            this.effectsGain.gain.value = 1;
         }
         catch (e) {
             console.log('Web Audio API is not supported in this browser');
         }
-    };
-    AssetManager.prototype.done = function () {
+    }
+    adjustMasterVolume(value) {
+        this.masterGain.gain.value = value;
+    }
+    adjustAmbientVolume(value) {
+        this.ambientGain.gain.value = value;
+    }
+    adjustEffectsVolume(value) {
+        this.effectsGain.gain.value = value;
+    }
+    done() {
         return this.downloadCount === this.queue.length;
-    };
-    AssetManager.prototype.queueDownload = function (id, path, type) {
+    }
+    queueDownload(id, path, type, opts = null) {
         this.queue.push({
-            id: id, path: path, type: type
+            id: id,
+            path: path,
+            type: type,
+            opts: opts
         });
-    };
-    AssetManager.prototype.loadAudio = function (item, callback) {
-        var _this = this;
-        var request = new XMLHttpRequest();
+    }
+    loadAudio(item, callback) {
+        let request = new XMLHttpRequest();
         request.open('GET', item.path, true);
         request.responseType = 'arraybuffer';
-        request.addEventListener('load', function () {
-            _this.audioContext.decodeAudioData(request.response, function (buffer) {
-                _this.cache.audio[item.id] = buffer;
-                _this.downloadCount += 1;
-                if (_this.done()) {
+        request.addEventListener('load', () => {
+            let audioData = request.response;
+            this.audioContext.decodeAudioData(audioData).then(buffer => {
+                this.cache.audio[item.id] = buffer;
+                this.downloadCount += 1;
+                if (this.done()) {
                     callback();
                 }
-            }, function (error) { console.log('Error with decoding audio data' + error); });
+            }, error => { console.log('Error with decoding audio data' + error); });
         });
         request.send();
-    };
-    AssetManager.prototype.loadSprite = function (item, callback) {
-        var _this = this;
-        var sprite = new Image();
-        sprite.addEventListener('load', function () {
-            _this.downloadCount++;
-            if (_this.done()) {
+    }
+    loadSprite(item, callback) {
+        let sprite = new Image();
+        sprite.addEventListener('load', () => {
+            this.downloadCount++;
+            if (this.done()) {
                 callback();
             }
         });
         sprite.src = item.path;
         this.cache.sprites[item.id] = sprite;
-    };
-    AssetManager.prototype.loadSpriteSheet = function (item, callback) {
-        var _this = this;
-        var spriteSheet = new Image();
-        spriteSheet.addEventListener('load', function () {
-            _this.cache.spriteSheets[item.id] = new SpriteSheet_1.SpriteSheet(spriteSheet, item.opts.frameWidth || 0, item.opts.frameHeight || 0);
-            _this.downloadCount += 1;
-            if (_this.done()) {
+    }
+    loadSpriteSheet(item, callback) {
+        let spriteSheet = new Image();
+        spriteSheet.addEventListener('load', () => {
+            this.cache.spriteSheets[item.id] = new SpriteSheet_1.SpriteSheet(spriteSheet, item.opts.frameWidth || 0, item.opts.frameHeight || 0);
+            this.downloadCount += 1;
+            if (this.done()) {
                 callback();
             }
         });
         spriteSheet.src = item.path;
-    };
-    AssetManager.prototype.downloadAll = function (callback) {
-        var _this = this;
-        this.queue.forEach(function (item) {
+    }
+    downloadAll(callback) {
+        this.queue.forEach(item => {
             if (item.type === AssetType.AUDIO) {
-                _this.loadAudio(item, callback);
+                this.loadAudio(item, callback);
             }
             else if (item.type === AssetType.SPRITE) {
-                _this.loadSprite(item, callback);
+                this.loadSprite(item, callback);
             }
             else if (item.type === AssetType.SPRITE_SHEET) {
-                _this.loadSpriteSheet(item, callback);
+                this.loadSpriteSheet(item, callback);
             }
         });
-    };
-    AssetManager.prototype.getSound = function (id) {
-        var sound = this.audioContext.createBufferSource();
-        sound.buffer = this.cache.audio[id];
-        sound.connect(this.audioContext.destination);
-        return sound;
-    };
-    AssetManager.prototype.getSprite = function (id) {
+    }
+    getSound(id, type) {
+        let gain;
+        if (type === AssetType.AUDIO) {
+            gain = this.effectsGain;
+        }
+        else {
+            gain = this.ambientGain;
+        }
+        return new Sound_1.Sound(this.audioContext, gain, this.cache.audio[id]);
+    }
+    getSprite(id) {
         return this.cache.sprites[id];
-    };
-    AssetManager.prototype.getSpriteSheet = function (id) {
-        return this.cache.spriteSheet[id];
-    };
-    return AssetManager;
-}());
+    }
+    getSpriteSheet(id) {
+        return this.cache.spriteSheets[id];
+    }
+}
 exports.AssetManager = AssetManager;
 
 
@@ -374,59 +378,23 @@ exports.AssetManager = AssetManager;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var SpriteSheet = (function () {
-    function SpriteSheet(image, frameWidth, frameHeight) {
-        this._image = image;
-        this._frameWidth = frameWidth;
-        this._frameHeight = frameHeight;
-        this._framesPerRow = Math.floor(this._image.width / this._frameWidth);
+const Vector2_1 = __webpack_require__(1);
+const CollideAble_1 = __webpack_require__(0);
+class HitBox {
+    constructor(x, y, width, height) {
+        this.position = new Vector2_1.Vector2(x, y);
+        this.width = width;
+        this.height = height;
+        this.colliding = false;
+        this.collidesWith = [];
+        this.type = CollideAble_1.EntityType.BOX;
+        this.collidesWith.push(CollideAble_1.EntityType.PLAYER);
     }
-    Object.defineProperty(SpriteSheet.prototype, "image", {
-        get: function () {
-            return this._image;
-        },
-        set: function (image) {
-            if (!(image instanceof Image)) {
-                throw new Error('Param image must be of type Image!');
-            }
-            this._image = image;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(SpriteSheet.prototype, "frameWidth", {
-        get: function () {
-            return this._frameWidth;
-        },
-        set: function (frameWidth) {
-            this._frameWidth = frameWidth;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(SpriteSheet.prototype, "frameHeight", {
-        get: function () {
-            return this._frameHeight;
-        },
-        set: function (frameHeight) {
-            this._frameHeight = frameHeight;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(SpriteSheet.prototype, "framesPerRow", {
-        get: function () {
-            return this._framesPerRow;
-        },
-        set: function (framesPerRow) {
-            this._framesPerRow = framesPerRow;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    return SpriteSheet;
-}());
-exports.SpriteSheet = SpriteSheet;
+    isCollideAbleWith(other) {
+        return this.collidesWith.includes(other.type.toString());
+    }
+}
+exports.HitBox = HitBox;
 
 
 /***/ }),
@@ -436,48 +404,42 @@ exports.SpriteSheet = SpriteSheet;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var Observable = (function () {
-    function Observable() {
-        this._observers = [];
-        this._state = {};
+class SpriteSheet {
+    constructor(image, frameWidth, frameHeight) {
+        this._image = image;
+        this._frameWidth = frameWidth;
+        this._frameHeight = frameHeight;
+        this._framesPerRow = Math.floor(this._image.width / this._frameWidth);
     }
-    Observable.prototype.register = function (observer) {
-        this._observers.push(observer);
-    };
-    Observable.prototype.unRegister = function (observer) {
-        this._observers = this._observers.filter(function (obs) {
-            return obs !== observer;
-        });
-    };
-    Observable.prototype.notify = function () {
-        var _this = this;
-        this._observers.forEach(function (observer) {
-            observer.update(_this._state);
-        });
-    };
-    Object.defineProperty(Observable.prototype, "observers", {
-        get: function () {
-            return this._observers;
-        },
-        set: function (observers) {
-            this._observers = observers;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Observable.prototype, "state", {
-        get: function () {
-            return this._state;
-        },
-        set: function (state) {
-            this._state = state;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    return Observable;
-}());
-exports.Observable = Observable;
+    get image() {
+        return this._image;
+    }
+    set image(image) {
+        if (!(image instanceof Image)) {
+            throw new Error('Param image must be of type Image!');
+        }
+        this._image = image;
+    }
+    get frameWidth() {
+        return this._frameWidth;
+    }
+    set frameWidth(frameWidth) {
+        this._frameWidth = frameWidth;
+    }
+    get frameHeight() {
+        return this._frameHeight;
+    }
+    set frameHeight(frameHeight) {
+        this._frameHeight = frameHeight;
+    }
+    get framesPerRow() {
+        return this._framesPerRow;
+    }
+    set framesPerRow(framesPerRow) {
+        this._framesPerRow = framesPerRow;
+    }
+}
+exports.SpriteSheet = SpriteSheet;
 
 
 /***/ }),
@@ -487,9 +449,221 @@ exports.Observable = Observable;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var InputManager_1 = __webpack_require__(1);
-var Settings = (function () {
-    function Settings() {
+class Sound {
+    constructor(audioContext, masterGain, buffer) {
+        this.audioContext = audioContext;
+        this.masterGain = masterGain;
+        this.buffer = buffer;
+        this.gainNode = this.audioContext.createGain();
+        this.gainNode.gain.value = 0.2;
+        this.gainNode.connect(this.masterGain);
+        this.playing = false;
+    }
+    play(loop = false) {
+        this.source = this.audioContext.createBufferSource();
+        this.source.buffer = this.buffer;
+        this.source.loop = loop;
+        this.source.connect(this.gainNode);
+        this.source.start(0);
+    }
+    stop() {
+        this.source.stop(0);
+    }
+}
+exports.Sound = Sound;
+
+
+/***/ }),
+/* 7 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+class Observable {
+    constructor() {
+        this._observers = [];
+        this._state = {};
+    }
+    register(observer) {
+        this._observers.push(observer);
+    }
+    unRegister(observer) {
+        this._observers = this._observers.filter(obs => {
+            return obs !== observer;
+        });
+    }
+    notify() {
+        this._observers.forEach(observer => {
+            observer.update(this._state);
+        });
+    }
+    get observers() {
+        return this._observers;
+    }
+    set observers(observers) {
+        this._observers = observers;
+    }
+    get state() {
+        return this._state;
+    }
+    set state(state) {
+        this._state = state;
+    }
+}
+exports.Observable = Observable;
+
+
+/***/ }),
+/* 8 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+const HitBox_1 = __webpack_require__(4);
+class QuadTree {
+    constructor(hitBox = new HitBox_1.HitBox(0, 0, 0, 0), level = 0) {
+        this.level = level;
+        this.maxObjects = 10;
+        this.maxLevels = 5;
+        this.hitBox = hitBox;
+        this.objects = [];
+        this.nodes = [];
+    }
+    clear() {
+        this.objects = [];
+        this.nodes.forEach(node => node.clear());
+        this.nodes = [];
+    }
+    getAllObjects(returnedObjects) {
+        this.nodes.forEach(node => node.getAllObjects(returnedObjects));
+        this.objects.forEach(object => returnedObjects.push(object));
+        return returnedObjects;
+    }
+    findObjects(returnedObjects, object) {
+        if (typeof object === 'undefined') {
+            console.log('UNDEFINED OBJECT');
+            return;
+        }
+        let index = this.getIndex(object);
+        if (index !== -1 && this.nodes.length) {
+            this.nodes[index].findObjects(returnedObjects, object);
+        }
+        this.objects.forEach(obj => returnedObjects.push(obj));
+        return returnedObjects;
+    }
+    insert(object) {
+        if (typeof object === 'undefined') {
+            return;
+        }
+        if (object instanceof Array) {
+            object.forEach(element => this.insert(element));
+            return;
+        }
+        if (this.nodes.length > 0) {
+            let index = this.getIndex(object);
+            if (index !== -1) {
+                this.nodes[index].insert(object);
+                return;
+            }
+        }
+        this.objects.push(object);
+        if (this.objects.length > this.maxObjects && this.level < this.maxLevels) {
+            if (typeof this.nodes[0] === 'undefined') {
+                this.split();
+            }
+            let i = 0;
+            while (i < this.objects.length) {
+                let index = this.getIndex(this.objects[i]);
+                if (index !== -1) {
+                    this.nodes[index].insert((this.objects.splice(i, 1))[0]);
+                }
+                else {
+                    i++;
+                }
+            }
+        }
+    }
+    getIndex(object) {
+        let index = -1;
+        let verticalMidpoint = this.hitBox.position.x + this.hitBox.width / 2;
+        let horizontalMidpoint = this.hitBox.position.y + this.hitBox.height / 2;
+        let topQuadrant = (object.position.y < horizontalMidpoint && object.position.y + object.height < horizontalMidpoint);
+        let bottomQuadrant = (object.position.y > horizontalMidpoint);
+        if (object.position.x < verticalMidpoint && object.position.x + object.width < verticalMidpoint) {
+            if (topQuadrant) {
+                index = 1;
+            }
+            else if (bottomQuadrant) {
+                index = 2;
+            }
+        }
+        else if (object.position.x > verticalMidpoint) {
+            if (topQuadrant) {
+                index = 0;
+            }
+            else if (bottomQuadrant) {
+                index = 3;
+            }
+        }
+        return index;
+    }
+    split() {
+        let subWidth = (this.hitBox.width / 2) | 0;
+        let subHeight = (this.hitBox.height / 2) | 0;
+        this.nodes[0] = new QuadTree(new HitBox_1.HitBox(this.hitBox.position.x + subWidth, this.hitBox.position.y, subWidth, subHeight), this.level + 1);
+        this.nodes[1] = new QuadTree(new HitBox_1.HitBox(this.hitBox.position.x, this.hitBox.position.y, subWidth, subHeight), this.level + 1);
+        this.nodes[2] = new QuadTree(new HitBox_1.HitBox(this.hitBox.position.x, this.hitBox.position.y + subHeight, subWidth, subHeight), this.level + 1);
+        this.nodes[3] = new QuadTree(new HitBox_1.HitBox(this.hitBox.position.x + subWidth, this.hitBox.position.y + subHeight, subWidth, subHeight), this.level + 1);
+    }
+}
+exports.QuadTree = QuadTree;
+
+
+/***/ }),
+/* 9 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+class CollisionManager {
+    constructor(quadTree) {
+        this.quadTree = quadTree;
+    }
+    detectCollision() {
+        let objects = [];
+        this.quadTree.getAllObjects(objects);
+        for (let i = 0; i < objects.length; i++) {
+            let obj = [];
+            this.quadTree.findObjects(obj, objects[i]);
+            for (let j = 0; j < obj.length; j++) {
+                if (objects[i].isCollideAbleWith(obj[j]) &&
+                    (Math.floor(objects[i].position.x) < Math.floor(obj[j].position.x) + obj[j].width &&
+                        Math.floor(objects[i].position.x) + objects[i].width > Math.floor(obj[j].position.x) &&
+                        Math.floor(objects[i].position.y) < Math.floor(obj[j].position.y) + obj[j].height &&
+                        Math.floor(objects[i].position.y) + objects[i].height > Math.floor(obj[j].position.y))) {
+                    objects[i].colliding = true;
+                    obj[j].colliding = true;
+                }
+            }
+        }
+    }
+}
+exports.CollisionManager = CollisionManager;
+
+
+/***/ }),
+/* 10 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+const InputManager_1 = __webpack_require__(2);
+class Settings {
+    constructor() {
         this.keyBoard = {
             'w': InputManager_1.Actions.UP,
             's': InputManager_1.Actions.DOWN,
@@ -504,74 +678,57 @@ var Settings = (function () {
             acceleration: 3
         };
     }
-    Settings.prototype.findKey = function (value) {
-        var _this = this;
-        return Object.keys(this.keyBoard).filter(function (key) { return _this.keyBoard[key] === value; })[0];
-    };
-    Settings.prototype.setKey = function (newKey, action) {
-        var oldKey = this.findKey(action);
+    findKey(value) {
+        return Object.keys(this.keyBoard).filter(key => this.keyBoard[key] === value)[0];
+    }
+    setKey(newKey, action) {
+        let oldKey = this.findKey(action);
         if (newKey !== oldKey) {
             console.log('old:' + oldKey, ' new: ' + newKey + ' value: ' + action);
             this.keyBoard[newKey] = this.keyBoard[oldKey];
             delete this.keyBoard[oldKey];
         }
-    };
-    return Settings;
-}());
+    }
+}
 exports.Settings = Settings;
 
 
 /***/ }),
-/* 7 */
+/* 11 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var Vector2_1 = __webpack_require__(2);
-var HitBox = (function () {
-    function HitBox(x, y, width, height) {
-        this.position = new Vector2_1.Vector2(x, y);
-        this.width = width;
-        this.height = height;
-    }
-    return HitBox;
-}());
-exports.HitBox = HitBox;
-
-
-/***/ }),
-/* 8 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-var AssetManager_1 = __webpack_require__(3);
-var Game_1 = __webpack_require__(9);
-var InputManager_1 = __webpack_require__(1);
-var Settings_1 = __webpack_require__(6);
-var SettingsMenu_1 = __webpack_require__(17);
-var CollideAble_1 = __webpack_require__(0);
-var assetManager = new AssetManager_1.AssetManager();
-var canvases = {
+const AssetManager_1 = __webpack_require__(3);
+const Game_1 = __webpack_require__(12);
+const InputManager_1 = __webpack_require__(2);
+const Settings_1 = __webpack_require__(10);
+const SettingsMenu_1 = __webpack_require__(18);
+const CollideAble_1 = __webpack_require__(0);
+const assetManager = new AssetManager_1.AssetManager();
+const canvases = {
     background: document.getElementById('background'),
     ship: document.getElementById('ship'),
     main: document.getElementById('main')
 };
-var settings = new Settings_1.Settings();
-var inputManager = new InputManager_1.InputManager(settings);
-var settingsMenu = new SettingsMenu_1.SettingsMenu(document.getElementById('settings-menu'), settings);
+const settings = new Settings_1.Settings();
+const inputManager = new InputManager_1.InputManager(settings);
+const settingsMenu = new SettingsMenu_1.SettingsMenu(document.getElementById('settings-menu'), settings, assetManager);
 assetManager.queueDownload(CollideAble_1.EntityType.BACKGROUND, 'assets/textures/background.png', AssetManager_1.AssetType.SPRITE);
 assetManager.queueDownload(CollideAble_1.EntityType.PLAYER, 'assets/sprites/ship.png', AssetManager_1.AssetType.SPRITE);
 assetManager.queueDownload(CollideAble_1.EntityType.PLAYER_BULLET, 'assets/sprites/bullet.png', AssetManager_1.AssetType.SPRITE);
 assetManager.queueDownload(CollideAble_1.EntityType.ENEMY, 'assets/sprites/enemy.png', AssetManager_1.AssetType.SPRITE);
 assetManager.queueDownload(CollideAble_1.EntityType.ENEMY_BULLET, 'assets/sprites/bullet_enemy.png', AssetManager_1.AssetType.SPRITE);
 assetManager.queueDownload(CollideAble_1.EntityType.MAIN_THEME, 'assets/audio/kick_shock.wav', AssetManager_1.AssetType.AUDIO);
-assetManager.downloadAll(function () {
-    var game = new Game_1.Game(assetManager, inputManager, settings, canvases);
-    document.getElementById('game-over').addEventListener('click', function () { return game.restart(); });
-    document.getElementById('settings').addEventListener('click', function () {
+assetManager.queueDownload(CollideAble_1.EntityType.LASER, 'assets/audio/laser.wav', AssetManager_1.AssetType.AUDIO);
+assetManager.queueDownload(CollideAble_1.EntityType.EXPLOSION_I, 'assets/audio/explosion.wav', AssetManager_1.AssetType.AUDIO);
+assetManager.queueDownload(CollideAble_1.EntityType.GAME_OVER, 'assets/audio/game_over.wav', AssetManager_1.AssetType.AUDIO);
+assetManager.downloadAll(() => {
+    const game = new Game_1.Game(assetManager, inputManager, settings, canvases);
+    settingsMenu.init();
+    document.getElementById('game-over').addEventListener('click', () => game.restart());
+    document.getElementById('settings').addEventListener('click', () => {
         settingsMenu.toggleShow();
         game.togglePause();
     });
@@ -579,21 +736,22 @@ assetManager.downloadAll(function () {
 
 
 /***/ }),
-/* 9 */
+/* 12 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var Background_1 = __webpack_require__(10);
-var Ship_1 = __webpack_require__(11);
-var Pool_1 = __webpack_require__(12);
-var QuadTree_1 = __webpack_require__(15);
-var HitBox_1 = __webpack_require__(7);
-var CollideAble_1 = __webpack_require__(0);
-var CollisionManager_1 = __webpack_require__(16);
-var Game = (function () {
-    function Game(assetManager, inputManager, settings, canvases) {
+const Background_1 = __webpack_require__(13);
+const AssetManager_1 = __webpack_require__(3);
+const Ship_1 = __webpack_require__(14);
+const Pool_1 = __webpack_require__(15);
+const QuadTree_1 = __webpack_require__(8);
+const HitBox_1 = __webpack_require__(4);
+const CollideAble_1 = __webpack_require__(0);
+const CollisionManager_1 = __webpack_require__(9);
+class Game {
+    constructor(assetManager, inputManager, settings, canvases) {
         this.playing = false;
         this.paused = false;
         this.window = window;
@@ -609,30 +767,28 @@ var Game = (function () {
             this.background = new Background_1.Background(0, 0, this.canvases.background.width, this.canvases.background.height, this.backgroundContext, this.assetManager.getSprite(CollideAble_1.EntityType.BACKGROUND));
             this.shipStartX = this.canvases.ship.width / 2 - assetManager.getSprite(CollideAble_1.EntityType.PLAYER).width;
             this.shipStartY = this.canvases.ship.height / 4 * 3 + assetManager.getSprite(CollideAble_1.EntityType.PLAYER).height * 2;
-            this.ship = new Ship_1.Ship(this.shipStartX, this.shipStartY, assetManager.getSprite(CollideAble_1.EntityType.PLAYER).width, assetManager.getSprite(CollideAble_1.EntityType.PLAYER).height, this.canvases.ship.width, this.canvases.ship.height, this.shipContext, assetManager.getSprite(CollideAble_1.EntityType.PLAYER), new Pool_1.Pool(assetManager, this.mainContext, this.canvases.main.width, this.canvases.main.height, 80, CollideAble_1.EntityType.PLAYER_BULLET), settings.player);
+            this.ship = new Ship_1.Ship(this.shipStartX, this.shipStartY, assetManager.getSprite(CollideAble_1.EntityType.PLAYER).width, assetManager.getSprite(CollideAble_1.EntityType.PLAYER).height, this.canvases.ship.width, this.canvases.ship.height, this.shipContext, assetManager, new Pool_1.Pool(assetManager, this.mainContext, this.canvases.main.width, this.canvases.main.height, 80, CollideAble_1.EntityType.PLAYER_BULLET), settings.player);
             this.enemyBulletPool = new Pool_1.Pool(assetManager, this.mainContext, this.canvases.main.width, this.canvases.main.height, 50, CollideAble_1.EntityType.ENEMY_BULLET);
             this.enemyPool = new Pool_1.Pool(assetManager, this.mainContext, this.canvases.main.width, this.canvases.main.height, 30, CollideAble_1.EntityType.ENEMY, this.enemyBulletPool, this);
             this.spawnWave();
             inputManager.register(this.ship);
             this.quadTree = new QuadTree_1.QuadTree(new HitBox_1.HitBox(0, 0, this.canvases.main.width, this.canvases.main.height));
             this.collisionManager = new CollisionManager_1.CollisionManager(this.quadTree);
-            this.backgroundAudio = this.assetManager.getSound(CollideAble_1.EntityType.MAIN_THEME);
-            this.backgroundAudio.loop = true;
-            this.backgroundAudio.loopEnd = Math.floor(this.backgroundAudio.buffer.duration);
-            this.backgroundAudio.start(0);
+            this.backgroundAudio = this.assetManager.getSound(CollideAble_1.EntityType.MAIN_THEME, AssetManager_1.AssetType.AUDIO_LOOP);
+            this.backgroundAudio.play(true);
             this.start();
         }
     }
-    Game.prototype.togglePause = function () {
+    togglePause() {
         this.paused = !this.paused;
-    };
-    Game.prototype.spawnWave = function () {
-        var height = this.assetManager.getSprite(CollideAble_1.EntityType.ENEMY).height;
-        var width = this.assetManager.getSprite(CollideAble_1.EntityType.ENEMY).width;
-        var x = 100;
-        var y = -height;
-        var spacer = y * 1.5;
-        for (var i = 1; i <= 18; i++) {
+    }
+    spawnWave() {
+        const height = this.assetManager.getSprite(CollideAble_1.EntityType.ENEMY).height;
+        const width = this.assetManager.getSprite(CollideAble_1.EntityType.ENEMY).width;
+        let x = 100;
+        let y = -height;
+        const spacer = y * 1.5;
+        for (let i = 1; i <= 18; i++) {
             this.enemyPool.get(x, y, 2);
             x += width + 25;
             if (i % 6 === 0) {
@@ -640,9 +796,8 @@ var Game = (function () {
                 y += spacer;
             }
         }
-    };
-    Game.prototype.render = function () {
-        var _this = this;
+    }
+    render() {
         if (this.playing) {
             if (!this.paused) {
                 document.getElementById('score').innerHTML = this.playerScore.toString();
@@ -667,21 +822,26 @@ var Game = (function () {
                     this.gameOver();
                 }
             }
-            window.requestAnimationFrame(function () { return _this.render(); });
+            window.requestAnimationFrame(() => this.render());
         }
-    };
-    Game.prototype.scorePoints = function () {
+    }
+    scorePoints() {
         this.playerScore += 10;
-    };
-    Game.prototype.start = function () {
+    }
+    start() {
         this.playing = true;
         this.render();
         this.ship.draw();
-    };
-    Game.prototype.gameOver = function () {
+    }
+    gameOver() {
+        this.backgroundAudio.stop();
         document.getElementById('game-over').style.display = 'block';
-    };
-    Game.prototype.restart = function () {
+        this.gameOverAudio = this.assetManager.getSound(CollideAble_1.EntityType.GAME_OVER, AssetManager_1.AssetType.AUDIO_LOOP);
+        this.gameOverAudio.play(true);
+    }
+    restart() {
+        this.gameOverAudio.stop();
+        this.backgroundAudio.play(true);
         document.getElementById('game-over').style.display = 'none';
         this.backgroundContext.clearRect(0, 0, this.canvases.background.width, this.canvases.background.height);
         this.shipContext.clearRect(0, 0, this.canvases.ship.width, this.canvases.ship.height);
@@ -694,23 +854,22 @@ var Game = (function () {
         this.enemyPool.clearAll();
         this.ship.pool.clearAll();
         this.start();
-    };
-    return Game;
-}());
+    }
+}
 exports.Game = Game;
 
 
 /***/ }),
-/* 10 */
+/* 13 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var Vector2_1 = __webpack_require__(2);
-var CollideAble_1 = __webpack_require__(0);
-var Background = (function () {
-    function Background(x, y, width, height, context, sprite) {
+const Vector2_1 = __webpack_require__(1);
+const CollideAble_1 = __webpack_require__(0);
+class Background {
+    constructor(x, y, width, height, context, sprite) {
         this.position = new Vector2_1.Vector2(x, y);
         this.speed = 1;
         this.width = width;
@@ -721,34 +880,34 @@ var Background = (function () {
         this.sprite = sprite;
         this.type = CollideAble_1.EntityType.BACKGROUND;
     }
-    Background.prototype.reset = function () {
+    reset() {
         this.position.set(0, 0);
-    };
-    Background.prototype.draw = function () {
+    }
+    draw() {
         this.position.y += this.speed;
         this.context.drawImage(this.sprite, this.position.x, this.position.y);
         this.context.drawImage(this.sprite, this.position.x, this.position.y - this.height);
         if (this.position.y >= this.height) {
             this.position.y = 0;
         }
-    };
-    return Background;
-}());
+    }
+}
 exports.Background = Background;
 
 
 /***/ }),
-/* 11 */
+/* 14 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var Vector2_1 = __webpack_require__(2);
-var CollideAble_1 = __webpack_require__(0);
-var InputManager_1 = __webpack_require__(1);
-var Ship = (function () {
-    function Ship(x, y, width, height, canvasWidth, canvasHeight, context, sprite, pool, settings) {
+const Vector2_1 = __webpack_require__(1);
+const CollideAble_1 = __webpack_require__(0);
+const InputManager_1 = __webpack_require__(2);
+const AssetManager_1 = __webpack_require__(3);
+class Ship {
+    constructor(x, y, width, height, canvasWidth, canvasHeight, context, assetManager, pool, settings) {
         this.position = new Vector2_1.Vector2(x, y);
         this.startPosition = new Vector2_1.Vector2(x, y);
         this.acceleration = new Vector2_1.Vector2(0, 0);
@@ -758,7 +917,7 @@ var Ship = (function () {
         this.canvasWidth = canvasWidth;
         this.canvasHeight = canvasHeight;
         this.context = context;
-        this.sprite = sprite;
+        this.sprite = assetManager.getSprite(CollideAble_1.EntityType.PLAYER);
         this.type = CollideAble_1.EntityType.PLAYER;
         this.pool = pool;
         this.counter = 0;
@@ -768,13 +927,14 @@ var Ship = (function () {
         this.state = {};
         this.settings = settings;
         this.maxTop = Math.floor(this.canvasHeight / 4 * 3);
+        this.assetManager = assetManager;
     }
-    Ship.prototype.reset = function () {
+    reset() {
         this.position.setVector(this.startPosition);
         this.velocity.set(0, 0);
         this.colliding = false;
-    };
-    Ship.prototype.move = function () {
+    }
+    move() {
         if (!this.colliding) {
             this.counter++;
             this.context.clearRect(Math.floor(this.position.x), Math.floor(this.position.y), this.width, this.height);
@@ -795,7 +955,6 @@ var Ship = (function () {
             this.velocity.addVector(this.acceleration);
             this.velocity.limit(this.settings.maxVelocity);
             this.position.addVector(this.velocity);
-            this.position.subtractVector(this.acceleration);
             if (this.position.x <= 0) {
                 this.position.x = 0;
                 this.velocity.x += -1;
@@ -815,41 +974,40 @@ var Ship = (function () {
                 this.counter = 0;
             }
         }
-    };
-    Ship.prototype.alive = function () {
+    }
+    alive() {
         return !this.colliding;
-    };
-    Ship.prototype.draw = function () {
+    }
+    draw() {
         this.context.drawImage(this.sprite, Math.floor(this.position.x), Math.floor(this.position.y));
-    };
-    Ship.prototype.update = function (state) {
+    }
+    update(state) {
         this.state = state;
-    };
-    Ship.prototype.fire = function () {
+    }
+    fire() {
         this.pool.getTwo(Math.floor(this.position.x) + 6, Math.floor(this.position.y), 3, Math.floor(this.position.x) + 33, Math.floor(this.position.y), 3);
-    };
-    Ship.prototype.isCollideAbleWith = function (other) {
-        return this.collidesWith.includes(other.type);
-    };
-    return Ship;
-}());
+        let laser = this.assetManager.getSound(CollideAble_1.EntityType.LASER, AssetManager_1.AssetType.AUDIO);
+        laser.play();
+    }
+    isCollideAbleWith(other) {
+        return this.collidesWith.includes(other.type.toString());
+    }
+}
 exports.Ship = Ship;
 
 
 /***/ }),
-/* 12 */
+/* 15 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var Bullet_1 = __webpack_require__(13);
-var Enemy_1 = __webpack_require__(14);
-var CollideAble_1 = __webpack_require__(0);
-var Pool = (function () {
-    function Pool(assetManager, context, canvasWidth, canvasHeight, maxSize, type, pool, game) {
-        if (pool === void 0) { pool = null; }
-        if (game === void 0) { game = null; }
+const Bullet_1 = __webpack_require__(16);
+const Enemy_1 = __webpack_require__(17);
+const CollideAble_1 = __webpack_require__(0);
+class Pool {
+    constructor(assetManager, context, canvasWidth, canvasHeight, maxSize, type, pool = null, game = null) {
         this.assetManager = assetManager;
         this.context = context;
         this.canvasWidth = canvasWidth;
@@ -861,34 +1019,36 @@ var Pool = (function () {
         this.game = game;
         this.init();
     }
-    Pool.prototype.init = function () {
+    init() {
         if (this.type === CollideAble_1.EntityType.ENEMY) {
-            for (var i = 0; i < this.maxSize; i++) {
-                this.pool[i] = new Enemy_1.Enemy(0, 0, this.assetManager.getSprite(this.type).width, this.assetManager.getSprite(this.type).height, this.canvasWidth, this.canvasHeight, 0, this.context, this.assetManager.getSprite(this.type), this.type, this.subPool, this.game);
+            let sprite = this.assetManager.getSprite(this.type);
+            for (let i = 0; i < this.maxSize; i++) {
+                this.pool[i] = new Enemy_1.Enemy(0, 0, sprite.width, sprite.height, this.canvasWidth, this.canvasHeight, 0, this.context, sprite, this.type, this.subPool, this.game);
             }
         }
         else {
-            for (var i = 0; i < this.maxSize; i++) {
-                this.pool[i] = new Bullet_1.Bullet(0, 0, this.assetManager.getSprite(this.type).width, this.assetManager.getSprite(this.type).height, this.canvasWidth, this.canvasHeight, 0, this.context, this.assetManager.getSprite(this.type), this.type);
+            for (let i = 0; i < this.maxSize; i++) {
+                let sprite = this.assetManager.getSprite(this.type);
+                this.pool[i] = new Bullet_1.Bullet(0, 0, sprite.width, sprite.height, this.canvasWidth, this.canvasHeight, 0, this.context, sprite, this.type);
             }
         }
-    };
-    Pool.prototype.get = function (x, y, speed) {
-        var lastElement = this.pool[this.maxSize - 1];
+    }
+    get(x, y, speed) {
+        let lastElement = this.pool[this.maxSize - 1];
         if (!lastElement.alive) {
             lastElement.spawn(x, y, speed);
             this.pool.unshift(this.pool.pop());
         }
-    };
-    Pool.prototype.getTwo = function (x1, y1, speed1, x2, y2, speed2) {
+    }
+    getTwo(x1, y1, speed1, x2, y2, speed2) {
         if (!this.pool[this.maxSize - 1].alive &&
             !this.pool[this.maxSize - 2].alive) {
             this.get(x1, y1, speed1);
             this.get(x2, y2, speed2);
         }
-    };
-    Pool.prototype.render = function () {
-        for (var i = 0; i < this.pool.length; i++) {
+    }
+    render() {
+        for (let i = 0; i < this.pool.length; i++) {
             if (this.pool[i].alive) {
                 if (this.pool[i].draw()) {
                     this.pool[i].clear();
@@ -899,35 +1059,34 @@ var Pool = (function () {
                 break;
             }
         }
-    };
-    Pool.prototype.clearAll = function () {
-        this.pool.forEach(function (object) { return object.clear(); });
-    };
-    Pool.prototype.getPool = function () {
-        var objects = [];
-        this.pool.forEach(function (object) {
+    }
+    clearAll() {
+        this.pool.forEach(object => object.clear());
+    }
+    getPool() {
+        let objects = [];
+        this.pool.forEach(object => {
             if (object.alive) {
                 objects.push(object);
             }
         });
         return objects;
-    };
-    return Pool;
-}());
+    }
+}
 exports.Pool = Pool;
 
 
 /***/ }),
-/* 13 */
+/* 16 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var Vector2_1 = __webpack_require__(2);
-var CollideAble_1 = __webpack_require__(0);
-var Bullet = (function () {
-    function Bullet(x, y, width, height, canvasWidth, canvasHeight, speed, context, sprite, type) {
+const Vector2_1 = __webpack_require__(1);
+const CollideAble_1 = __webpack_require__(0);
+class Bullet {
+    constructor(x, y, width, height, canvasWidth, canvasHeight, speed, context, sprite, type) {
         this.position = new Vector2_1.Vector2(x, y);
         this.speed = speed;
         this.width = width;
@@ -947,12 +1106,12 @@ var Bullet = (function () {
             this.collidesWith.push(CollideAble_1.EntityType.PLAYER);
         }
     }
-    Bullet.prototype.spawn = function (x, y, speed) {
+    spawn(x, y, speed) {
         this.position.set(x, y);
         this.speed = speed;
         this.alive = true;
-    };
-    Bullet.prototype.draw = function () {
+    }
+    draw() {
         this.context.clearRect(this.position.x - 1, this.position.y - 1, this.width + 1, this.height + 1);
         this.position.y -= this.speed;
         if (this.colliding) {
@@ -968,32 +1127,32 @@ var Bullet = (function () {
             this.context.drawImage(this.sprite, this.position.x, this.position.y);
             return false;
         }
-    };
-    Bullet.prototype.clear = function () {
+    }
+    clear() {
         this.position.set(0, 0);
         this.speed = 0;
         this.alive = false;
         this.colliding = false;
-    };
-    Bullet.prototype.isCollideAbleWith = function (other) {
-        return this.collidesWith.includes(other.type);
-    };
-    return Bullet;
-}());
+    }
+    isCollideAbleWith(other) {
+        return this.collidesWith.includes(other.type.toString());
+    }
+}
 exports.Bullet = Bullet;
 
 
 /***/ }),
-/* 14 */
+/* 17 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var Vector2_1 = __webpack_require__(2);
-var CollideAble_1 = __webpack_require__(0);
-var Enemy = (function () {
-    function Enemy(x, y, width, height, canvasWidth, canvasHeight, speed, context, sprite, type, bulletPool, game) {
+const Vector2_1 = __webpack_require__(1);
+const CollideAble_1 = __webpack_require__(0);
+const AssetManager_1 = __webpack_require__(3);
+class Enemy {
+    constructor(x, y, width, height, canvasWidth, canvasHeight, speed, context, sprite, type, bulletPool, game) {
         this.position = new Vector2_1.Vector2(x, y);
         this.width = width;
         this.height = height;
@@ -1012,7 +1171,7 @@ var Enemy = (function () {
         this.bulletPool = bulletPool;
         this.game = game;
     }
-    Enemy.prototype.spawn = function (x, y, speed) {
+    spawn(x, y, speed) {
         this.position.x = x;
         this.position.y = y;
         this.speed = speed;
@@ -1022,8 +1181,8 @@ var Enemy = (function () {
         this.leftEdge = this.position.x - 90;
         this.rightEdge = this.position.x + 90;
         this.bottomEdge = this.position.y + 140;
-    };
-    Enemy.prototype.draw = function () {
+    }
+    draw() {
         this.context.clearRect(this.position.x - 1, this.position.y, this.width + 1, this.height);
         this.position.x += this.speedX;
         this.position.y += this.speedY;
@@ -1049,13 +1208,15 @@ var Enemy = (function () {
         }
         else {
             this.game.scorePoints();
+            let sound = this.game.assetManager.getSound(CollideAble_1.EntityType.EXPLOSION_I, AssetManager_1.AssetType.AUDIO);
+            sound.play();
             return true;
         }
-    };
-    Enemy.prototype.fire = function () {
+    }
+    fire() {
         this.bulletPool.get(Math.floor(this.position.x + this.width / 2), Math.floor(this.position.y + this.height), -2.5);
-    };
-    Enemy.prototype.clear = function () {
+    }
+    clear() {
         this.position.x = 0;
         this.position.y = 0;
         this.speed = 0;
@@ -1063,183 +1224,36 @@ var Enemy = (function () {
         this.speedY = 0;
         this.alive = false;
         this.colliding = false;
-    };
-    Enemy.prototype.isCollideAbleWith = function (other) {
-        return this.collidesWith.includes(other.type);
-    };
-    return Enemy;
-}());
+    }
+    isCollideAbleWith(other) {
+        return this.collidesWith.includes(other.type.toString());
+    }
+}
 exports.Enemy = Enemy;
 
 
 /***/ }),
-/* 15 */
+/* 18 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var HitBox_1 = __webpack_require__(7);
-var QuadTree = (function () {
-    function QuadTree(hitBox, level) {
-        if (hitBox === void 0) { hitBox = new HitBox_1.HitBox(0, 0, 0, 0); }
-        if (level === void 0) { level = 0; }
-        this.level = level;
-        this.maxObjects = 10;
-        this.maxLevels = 5;
-        this.hitBox = hitBox;
-        this.objects = [];
-        this.nodes = [];
-    }
-    QuadTree.prototype.clear = function () {
-        this.objects = [];
-        this.nodes.forEach(function (node) { return node.clear(); });
-        this.nodes = [];
-    };
-    QuadTree.prototype.getAllObjects = function (returnedObjects) {
-        this.nodes.forEach(function (node) { return node.getAllObjects(returnedObjects); });
-        this.objects.forEach(function (object) { return returnedObjects.push(object); });
-        return returnedObjects;
-    };
-    QuadTree.prototype.findObjects = function (returnedObjects, object) {
-        if (typeof object === 'undefined') {
-            console.log('UNDEFINED OBJECT');
-            return;
-        }
-        var index = this.getIndex(object);
-        if (index !== -1 && this.nodes.length) {
-            this.nodes[index].findObjects(returnedObjects, object);
-        }
-        this.objects.forEach(function (obj) { return returnedObjects.push(obj); });
-        return returnedObjects;
-    };
-    QuadTree.prototype.insert = function (object) {
-        var _this = this;
-        if (typeof object === 'undefined') {
-            return;
-        }
-        if (object instanceof Array) {
-            object.forEach(function (element) { return _this.insert(element); });
-            return;
-        }
-        if (this.nodes.length > 0) {
-            var index = this.getIndex(object);
-            if (index !== -1) {
-                this.nodes[index].insert(object);
-                return;
-            }
-        }
-        this.objects.push(object);
-        if (this.objects.length > this.maxObjects && this.level < this.maxLevels) {
-            if (typeof this.nodes[0] === 'undefined') {
-                this.split();
-            }
-            var i = 0;
-            while (i < this.objects.length) {
-                var index = this.getIndex(this.objects[i]);
-                if (index !== -1) {
-                    this.nodes[index].insert((this.objects.splice(i, 1))[0]);
-                }
-                else {
-                    i++;
-                }
-            }
-        }
-    };
-    QuadTree.prototype.getIndex = function (object) {
-        var index = -1;
-        var verticalMidpoint = this.hitBox.position.x + this.hitBox.width / 2;
-        var horizontalMidpoint = this.hitBox.position.y + this.hitBox.height / 2;
-        var topQuadrant = (object.position.y < horizontalMidpoint && object.position.y + object.height < horizontalMidpoint);
-        var bottomQuadrant = (object.position.y > horizontalMidpoint);
-        if (object.position.x < verticalMidpoint && object.position.x + object.width < verticalMidpoint) {
-            if (topQuadrant) {
-                index = 1;
-            }
-            else if (bottomQuadrant) {
-                index = 2;
-            }
-        }
-        else if (object.position.x > verticalMidpoint) {
-            if (topQuadrant) {
-                index = 0;
-            }
-            else if (bottomQuadrant) {
-                index = 3;
-            }
-        }
-        return index;
-    };
-    QuadTree.prototype.split = function () {
-        var subWidth = (this.hitBox.width / 2) | 0;
-        var subHeight = (this.hitBox.height / 2) | 0;
-        this.nodes[0] = new QuadTree(new HitBox_1.HitBox(this.hitBox.position.x + subWidth, this.hitBox.position.y, subWidth, subHeight), this.level + 1);
-        this.nodes[1] = new QuadTree(new HitBox_1.HitBox(this.hitBox.position.x, this.hitBox.position.y, subWidth, subHeight), this.level + 1);
-        this.nodes[2] = new QuadTree(new HitBox_1.HitBox(this.hitBox.position.x, this.hitBox.position.y + subHeight, subWidth, subHeight), this.level + 1);
-        this.nodes[3] = new QuadTree(new HitBox_1.HitBox(this.hitBox.position.x + subWidth, this.hitBox.position.y + subHeight, subWidth, subHeight), this.level + 1);
-    };
-    return QuadTree;
-}());
-exports.QuadTree = QuadTree;
-
-
-/***/ }),
-/* 16 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-var CollisionManager = (function () {
-    function CollisionManager(quadTree) {
-        this.quadTree = quadTree;
-    }
-    CollisionManager.prototype.detectCollision = function () {
-        var objects = [];
-        this.quadTree.getAllObjects(objects);
-        for (var i = 0; i < objects.length; i++) {
-            var obj = [];
-            this.quadTree.findObjects(obj, objects[i]);
-            for (var j = 0; j < obj.length; j++) {
-                if (objects[i].isCollideAbleWith(obj[j]) &&
-                    (objects[i].position.x < obj[j].position.x + obj[j].width &&
-                        objects[i].position.x + objects[i].width > obj[j].position.x &&
-                        objects[i].position.y < obj[j].position.y + obj[j].height &&
-                        objects[i].position.y + objects[i].height > obj[j].position.y)) {
-                    objects[i].colliding = true;
-                    obj[j].colliding = true;
-                }
-            }
-        }
-    };
-    return CollisionManager;
-}());
-exports.CollisionManager = CollisionManager;
-
-
-/***/ }),
-/* 17 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-var InputManager_1 = __webpack_require__(1);
-var SettingsMenu = (function () {
-    function SettingsMenu(element, settings) {
+const InputManager_1 = __webpack_require__(2);
+class SettingsMenu {
+    constructor(element, settings, assetManager) {
         this.element = element;
         this.settings = settings;
+        this.assetManager = assetManager;
         this.showing = false;
-        this.init();
     }
-    SettingsMenu.prototype.init = function () {
-        var _this = this;
-        var title = document.createElement('h4');
-        var playerTitle = document.createElement('h4');
-        var form = document.createElement('form');
-        var submit = document.createElement('input');
-        var playerForm = document.createElement('form');
-        var playerSubmit = document.createElement('input');
+    init() {
+        let title = document.createElement('h4');
+        let playerTitle = document.createElement('h4');
+        let form = document.createElement('form');
+        let submit = document.createElement('input');
+        let playerForm = document.createElement('form');
+        let playerSubmit = document.createElement('input');
         title.appendChild(document.createTextNode('Keyboard'));
         playerTitle.appendChild(document.createTextNode('Player Settings'));
         form.setAttribute('id', 'keyboardSettings');
@@ -1252,41 +1266,91 @@ var SettingsMenu = (function () {
         playerSubmit.setAttribute('value', 'Save');
         this.element.appendChild(title);
         this.element.appendChild(form);
-        Object.keys(this.settings.keyBoard).forEach(function (setting) { return _this.addEntry(setting, form); });
+        Object.keys(this.settings.keyBoard).forEach(setting => this.addEntry(setting, form));
         form.appendChild(submit);
-        form.addEventListener('submit', function (event) {
+        form.addEventListener('submit', event => {
             event.preventDefault();
-            _this.settings.setKey(document.getElementById(InputManager_1.Actions.UP).value, InputManager_1.Actions.UP);
-            _this.settings.setKey(document.getElementById(InputManager_1.Actions.DOWN).value, InputManager_1.Actions.DOWN);
-            _this.settings.setKey(document.getElementById(InputManager_1.Actions.LEFT).value, InputManager_1.Actions.LEFT);
-            _this.settings.setKey(document.getElementById(InputManager_1.Actions.RIGHT).value, InputManager_1.Actions.RIGHT);
-            _this.settings.setKey(document.getElementById(InputManager_1.Actions.SHOOT).value, InputManager_1.Actions.SHOOT);
-            _this.clear();
+            this.settings.setKey(document.getElementById(InputManager_1.Actions.UP).value, InputManager_1.Actions.UP);
+            this.settings.setKey(document.getElementById(InputManager_1.Actions.DOWN).value, InputManager_1.Actions.DOWN);
+            this.settings.setKey(document.getElementById(InputManager_1.Actions.LEFT).value, InputManager_1.Actions.LEFT);
+            this.settings.setKey(document.getElementById(InputManager_1.Actions.RIGHT).value, InputManager_1.Actions.RIGHT);
+            this.settings.setKey(document.getElementById(InputManager_1.Actions.SHOOT).value, InputManager_1.Actions.SHOOT);
+            this.clear();
         });
         this.element.appendChild(document.createElement('hr'));
         this.element.appendChild(playerTitle);
         this.element.appendChild(playerForm);
-        Object.keys(this.settings.player).forEach(function (setting) { return _this.addPlayerSettingEntry(setting, playerForm); });
+        Object.keys(this.settings.player).forEach(setting => this.addPlayerSettingEntry(setting, playerForm));
         playerForm.appendChild(playerSubmit);
-        playerForm.addEventListener('submit', function (event) {
+        playerForm.addEventListener('submit', event => {
             event.preventDefault();
-            _this.settings.player.acceleration = Number(document.getElementById('acceleration').value);
-            _this.settings.player.maxVelocity = Number(document.getElementById('maxVelocity').value);
-            _this.settings.player.friction = Number(document.getElementById('friction').value);
-            _this.settings.player.fireDelay = Number(document.getElementById('fireDelay').value);
-            _this.clear();
+            this.settings.player.acceleration = Number(document.getElementById('acceleration').value);
+            this.settings.player.maxVelocity = Number(document.getElementById('maxVelocity').value);
+            this.settings.player.friction = Number(document.getElementById('friction').value);
+            this.settings.player.fireDelay = Number(document.getElementById('fireDelay').value);
+            this.clear();
         });
-    };
-    SettingsMenu.prototype.clear = function () {
+        let divider = document.createElement('hr');
+        let div = document.createElement('div');
+        let audioTitle = document.createElement('h4');
+        let audioLabel = document.createElement('label');
+        let audioSlide = document.createElement('input');
+        div.classList.add('row');
+        audioTitle.appendChild(document.createTextNode('Audio Settings'));
+        audioLabel.appendChild(document.createTextNode('Master Volume:'));
+        audioLabel.setAttribute('for', 'masterVolume');
+        audioSlide.setAttribute('id', 'masterVolume');
+        audioSlide.setAttribute('type', 'range');
+        audioSlide.setAttribute('min', '0');
+        audioSlide.setAttribute('max', '1');
+        audioSlide.setAttribute('step', '0.1');
+        audioSlide.addEventListener('change', event => this.assetManager.adjustMasterVolume(Number(audioSlide.value)));
+        div.appendChild(audioLabel);
+        div.appendChild(audioSlide);
+        this.element.appendChild(divider);
+        this.element.appendChild(audioTitle);
+        this.element.appendChild(div);
+        let ambientDiv = document.createElement('div');
+        let ambientLabel = document.createElement('label');
+        let ambientSlide = document.createElement('input');
+        ambientDiv.classList.add('row');
+        ambientLabel.appendChild(document.createTextNode('Ambient Volume:'));
+        ambientLabel.setAttribute('for', 'ambientVolume');
+        ambientSlide.setAttribute('id', 'ambientVolume');
+        ambientSlide.setAttribute('type', 'range');
+        ambientSlide.setAttribute('min', '0');
+        ambientSlide.setAttribute('max', '1');
+        ambientSlide.setAttribute('step', '0.1');
+        ambientSlide.addEventListener('change', event => this.assetManager.adjustAmbientVolume(Number(ambientSlide.value)));
+        ambientDiv.appendChild(ambientLabel);
+        ambientDiv.appendChild(ambientSlide);
+        this.element.appendChild(ambientDiv);
+        let effectsDiv = document.createElement('div');
+        let effectsLabel = document.createElement('label');
+        let effectsSlide = document.createElement('input');
+        effectsDiv.classList.add('row');
+        effectsLabel.appendChild(document.createTextNode('Effects Volume:'));
+        effectsLabel.setAttribute('for', 'effectsVolume');
+        effectsSlide.setAttribute('id', 'effectsVolume');
+        effectsSlide.setAttribute('type', 'range');
+        effectsSlide.setAttribute('min', '0');
+        effectsSlide.setAttribute('max', '1');
+        effectsSlide.setAttribute('step', '0.1');
+        effectsSlide.addEventListener('change', event => this.assetManager.adjustEffectsVolume(Number(effectsSlide.value)));
+        effectsDiv.appendChild(effectsLabel);
+        effectsDiv.appendChild(effectsSlide);
+        this.element.appendChild(effectsDiv);
+    }
+    clear() {
         while (this.element.firstChild) {
             this.element.removeChild(this.element.firstChild);
         }
         this.init();
-    };
-    SettingsMenu.prototype.addPlayerSettingEntry = function (setting, element) {
-        var label = document.createElement('label');
-        var input = document.createElement('input');
-        var row = document.createElement('div');
+    }
+    addPlayerSettingEntry(setting, element) {
+        let label = document.createElement('label');
+        let input = document.createElement('input');
+        let row = document.createElement('div');
         label.setAttribute('for', setting);
         label.appendChild(document.createTextNode(setting + ':'));
         input.setAttribute('id', setting);
@@ -1297,11 +1361,11 @@ var SettingsMenu = (function () {
         row.appendChild(label);
         row.appendChild(input);
         element.appendChild(row);
-    };
-    SettingsMenu.prototype.addEntry = function (setting, element) {
-        var row = document.createElement('div');
-        var label = document.createElement('label');
-        var input = document.createElement('input');
+    }
+    addEntry(setting, element) {
+        let row = document.createElement('div');
+        let label = document.createElement('label');
+        let input = document.createElement('input');
         row.classList.add('row');
         label.setAttribute('for', this.settings.keyBoard[setting]);
         label.appendChild(document.createTextNode(this.settings.keyBoard[setting] + ':'));
@@ -1312,8 +1376,8 @@ var SettingsMenu = (function () {
         row.appendChild(label);
         row.appendChild(input);
         element.appendChild(row);
-    };
-    SettingsMenu.prototype.toggleShow = function () {
+    }
+    toggleShow() {
         if (this.showing) {
             this.element.style.display = 'none';
             this.showing = false;
@@ -1322,9 +1386,8 @@ var SettingsMenu = (function () {
             this.element.style.display = 'block';
             this.showing = true;
         }
-    };
-    return SettingsMenu;
-}());
+    }
+}
 exports.SettingsMenu = SettingsMenu;
 
 

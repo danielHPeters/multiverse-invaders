@@ -4,12 +4,17 @@ import { InputManager } from '../../client/InputManager'
 import { Settings } from '../../client/Settings'
 import { Entity } from '../Entity'
 import { EntityType } from '../../game/interfaces/CollideAble'
+import { QuadTree } from '../collision/QuadTree'
+import { HitBox } from '../collision/HitBox'
+import { CollisionManager } from '../collision/CollisionManager'
 
 document.addEventListener('DOMContentLoaded', () => init())
 
 function init (): void {
   const canvas = document.getElementById('background') as HTMLCanvasElement
   const canvasPlayer = document.getElementById('player') as HTMLCanvasElement
+  const ctx = canvas.getContext('2d')
+  const playerCtx = canvasPlayer.getContext('2d')
   const assetManager = new AssetManager()
   const settings = new Settings()
   const inputManager = new InputManager(settings)
@@ -49,33 +54,39 @@ function init (): void {
       [0, 0, 0, 0, 0, 102, 97, 176, 177, 0, 0, 37, 0, 252, 0, 0, 0, 201, 202, 0, 0, 0, 0, 0, 80, 81, 190, 191, 83, 82, 70, 71],
       [0, 0, 0, 0, 0, 0, 0, 48, 49, 0, 0, 53, 0, 0, 0, 0, 0, 217, 218, 0, 0, 0, 0, 0, 96, 97, 222, 223, 99, 98, 86, 87],
       [201, 202, 0, 0, 0, 0, 0, 64, 65, 66, 68, 69, 0, 0, 0, 0, 0, 233, 234, 0, 0, 0, 0, 0, 238, 239, 0, 0, 238, 239, 102, 103],
-      [217, 218, 0, 0, 0, 0, 0, 80, 81, 82, 84, 85, 0, 0, 0, 0, 0, 249, 250, 0, 0, 0, 0, 0, 254, 255, 0, 0, 254, 255],
-      [233, 234, 0, 0, 0, 0, 0, 96, 97, 98, 100, 101, 0, 0, 0, 0, 0, 0, 0],
-      [249, 250, 0, 0, 201, 202, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 238, 239, 0, 0, 238, 239],
-      [0, 0, 0, 0, 217, 218, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 254, 255, 0, 0, 254, 255],
-      [0, 0, 0, 0, 233, 234, 196, 197, 198],
-      [2, 3, 4, 0, 249, 250, 228, 229, 230],
-      [18, 19, 20, 8, 0, 0, 244, 245, 246, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 201, 202],
-      [0, 35, 40, 24, 25, 8, 9, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 2, 3, 4, 0, 0, 0, 0, 0, 0, 0, 0, 217, 218],
-      [0, 0, 0, 40, 41, 20, 8, 9, 0, 0, 0, 0, 0, 0, 0, 16, 17, 18, 19, 20, 21, 0, 0, 0, 0, 0, 0, 0, 233, 234],
-      [0, 0, 0, 0, 40, 19, 24, 25, 8, 9, 0, 0, 0, 0, 0, 48, 49, 50, 51, 52, 115, 3, 4, 0, 0, 0, 0, 0, 249, 250],
-      [0, 0, 0, 0, 0, 0, 40, 41, 20, 21, 0, 0, 0, 0, 0, 64, 65, 66, 67, 52, 19, 19, 20, 21]
+      [217, 218, 0, 0, 0, 0, 0, 80, 81, 82, 84, 85, 0, 0, 0, 0, 0, 249, 250, 0, 0, 0, 0, 0, 254, 255, 0, 0, 254, 255, 0, 0],
+      [233, 234, 0, 0, 0, 0, 0, 96, 97, 98, 100, 101, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+      [249, 250, 0, 0, 201, 202, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 238, 239, 0, 0, 238, 239, 0, 0],
+      [0, 0, 0, 0, 217, 218, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 254, 255, 0, 0, 254, 255, 0, 0],
+      [0, 0, 0, 0, 233, 234, 196, 197, 198, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+      [2, 3, 4, 0, 249, 250, 228, 229, 230, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+      [18, 19, 20, 8, 0, 0, 244, 245, 246, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 201, 202, 0, 0],
+      [0, 35, 40, 24, 25, 8, 9, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 2, 3, 4, 0, 0, 0, 0, 0, 0, 0, 0, 217, 218, 0, 0],
+      [0, 0, 0, 40, 41, 20, 8, 9, 0, 0, 0, 0, 0, 0, 0, 16, 17, 18, 19, 20, 21, 0, 0, 0, 0, 0, 0, 0, 233, 234, 0, 0],
+      [0, 0, 0, 0, 40, 19, 24, 25, 8, 9, 0, 0, 0, 0, 0, 48, 49, 50, 51, 52, 115, 3, 4, 0, 0, 0, 0, 0, 249, 250, 0, 0],
+      [0, 0, 0, 0, 0, 0, 40, 41, 20, 21, 0, 0, 0, 0, 0, 64, 65, 66, 67, 52, 19, 19, 20, 21, 0, 0, 0, 0, 0, 0, 0, 0]
     ]
-
+    let quadTree = new QuadTree(new HitBox(0, 0, canvas.width, canvas.height))
+    let collisionManager = new CollisionManager(quadTree)
+    let player = new Entity(350, 370, assetManager.getSprite(EntityType.PLAYER), playerCtx)
     let tileMap = new TileSetMap(
       assetManager.getSprite(EntityType.MAP),
       [ground, topLayer],
-      canvas.getContext('2d'),
+      ctx,
       32, ground.length,
       ground[0].length,
       16
     )
-    let player = new Entity(190, 250, assetManager.getSprite(EntityType.PLAYER), canvasPlayer.getContext('2d'))
-    inputManager.register(player)
     tileMap.draw()
+    inputManager.register(player)
 
     function render (): void {
+      quadTree.clear()
+      quadTree.insert(player)
+      quadTree.insert(tileMap.hitBoxes)
+      collisionManager.detectCollision()
       player.move()
+      player.render()
       window.requestAnimationFrame(() => render())
     }
 

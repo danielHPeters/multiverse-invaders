@@ -4,6 +4,7 @@ import { Pool } from '../structures/Pool'
 import { Observer } from '../../lib/Observer'
 import { CollideAble, EntityType } from '../interfaces/CollideAble'
 import { Actions } from '../../client/InputManager'
+import { AssetManager, AssetType } from '../../client/AssetManager'
 
 /**
  *
@@ -28,6 +29,7 @@ export class Ship implements Drawable, Observer, CollideAble {
   maxTop: number
   startPosition
   settings
+  assetManager: AssetManager
 
   /**
    *
@@ -37,12 +39,12 @@ export class Ship implements Drawable, Observer, CollideAble {
    * @param {number} height
    * @param {number} canvasWidth
    * @param {number} canvasHeight
-   * @param {number} speed
-   * @param {any} context
-   * @param {any} sprite
+   * @param context
+   * @param {AssetManager} assetManager
    * @param {Pool} pool
+   * @param settings
    */
-  constructor (x: number, y: number, width: number, height: number, canvasWidth: number, canvasHeight: number, context: any, sprite: any, pool: Pool, settings) {
+  constructor (x: number, y: number, width: number, height: number, canvasWidth: number, canvasHeight: number, context: any, assetManager: AssetManager, pool: Pool, settings) {
     this.position = new Vector2(x, y)
     this.startPosition = new Vector2(x, y)
     this.acceleration = new Vector2(0, 0)
@@ -52,7 +54,7 @@ export class Ship implements Drawable, Observer, CollideAble {
     this.canvasWidth = canvasWidth
     this.canvasHeight = canvasHeight
     this.context = context
-    this.sprite = sprite
+    this.sprite = assetManager.getSprite(EntityType.PLAYER)
     this.type = EntityType.PLAYER
     this.pool = pool
     this.counter = 0
@@ -62,6 +64,7 @@ export class Ship implements Drawable, Observer, CollideAble {
     this.state = {}
     this.settings = settings
     this.maxTop = Math.floor(this.canvasHeight / 4 * 3)
+    this.assetManager = assetManager
   }
 
   reset (): void {
@@ -94,7 +97,6 @@ export class Ship implements Drawable, Observer, CollideAble {
       this.velocity.addVector(this.acceleration)
       this.velocity.limit(this.settings.maxVelocity)
       this.position.addVector(this.velocity)
-      this.position.subtractVector(this.acceleration)
       if (this.position.x <= 0) {
         this.position.x = 0
         this.velocity.x += -1
@@ -136,6 +138,8 @@ export class Ship implements Drawable, Observer, CollideAble {
       Math.floor(this.position.x) + 6, Math.floor(this.position.y), 3,
       Math.floor(this.position.x) + 33, Math.floor(this.position.y), 3
     )
+    let laser = this.assetManager.getSound(EntityType.LASER, AssetType.AUDIO)
+    laser.play()
   }
 
   /**
@@ -144,6 +148,6 @@ export class Ship implements Drawable, Observer, CollideAble {
    * @returns {boolean}
    */
   isCollideAbleWith (other: CollideAble): boolean {
-    return this.collidesWith.includes(other.type)
+    return this.collidesWith.includes(other.type.toString())
   }
 }

@@ -3,6 +3,7 @@ import { Bullet } from '../entities/Bullet'
 import { Enemy } from '../entities/Enemy'
 import { Game } from '../Game'
 import { EntityType } from '../interfaces/CollideAble'
+import { Drawable } from '../interfaces/Drawable'
 
 /**
  *
@@ -47,17 +48,18 @@ export class Pool {
    */
   init (): void {
     if (this.type === EntityType.ENEMY) {
+      let sprite = this.assetManager.getSprite(this.type)
       for (let i = 0; i < this.maxSize; i++) {
         this.pool[i] = new Enemy(
           0,
           0,
-          this.assetManager.getSprite(this.type).width,
-          this.assetManager.getSprite(this.type).height,
+          sprite.width,
+          sprite.height,
           this.canvasWidth,
           this.canvasHeight,
           0,
           this.context,
-          this.assetManager.getSprite(this.type),
+          sprite,
           this.type,
           this.subPool,
           this.game
@@ -65,16 +67,17 @@ export class Pool {
       }
     } else {
       for (let i = 0; i < this.maxSize; i++) {
+        let sprite = this.assetManager.getSprite(this.type)
         this.pool[i] = new Bullet(
           0,
           0,
-          this.assetManager.getSprite(this.type).width,
-          this.assetManager.getSprite(this.type).height,
+          sprite.width,
+          sprite.height,
           this.canvasWidth,
           this.canvasHeight,
           0,
           this.context,
-          this.assetManager.getSprite(this.type),
+          sprite,
           this.type
         )
       }
@@ -129,11 +132,11 @@ export class Pool {
     }
   }
 
-  clearAll () {
+  clearAll (): void {
     this.pool.forEach(object => object.clear())
   }
 
-  getPool () {
+  getPool (): Drawable[] {
     let objects = []
     this.pool.forEach(object => {
       if (object.alive) {

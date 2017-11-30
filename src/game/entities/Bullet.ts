@@ -90,6 +90,6 @@ export class Bullet implements Drawable, CollideAble {
   }
 
   isCollideAbleWith (other: CollideAble): boolean {
-    return this.collidesWith.includes(other.type)
+    return this.collidesWith.includes(other.type.toString())
   }
 }

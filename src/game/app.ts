@@ -13,15 +13,19 @@ const canvases = {
 }
 const settings = new Settings()
 const inputManager = new InputManager(settings)
-const settingsMenu = new SettingsMenu(document.getElementById('settings-menu'), settings)
+const settingsMenu = new SettingsMenu(document.getElementById('settings-menu'), settings, assetManager)
 assetManager.queueDownload(EntityType.BACKGROUND, 'assets/textures/background.png', AssetType.SPRITE)
 assetManager.queueDownload(EntityType.PLAYER, 'assets/sprites/ship.png', AssetType.SPRITE)
 assetManager.queueDownload(EntityType.PLAYER_BULLET, 'assets/sprites/bullet.png', AssetType.SPRITE)
 assetManager.queueDownload(EntityType.ENEMY, 'assets/sprites/enemy.png', AssetType.SPRITE)
 assetManager.queueDownload(EntityType.ENEMY_BULLET, 'assets/sprites/bullet_enemy.png', AssetType.SPRITE)
 assetManager.queueDownload(EntityType.MAIN_THEME, 'assets/audio/kick_shock.wav', AssetType.AUDIO)
+assetManager.queueDownload(EntityType.LASER, 'assets/audio/laser.wav', AssetType.AUDIO)
+assetManager.queueDownload(EntityType.EXPLOSION_I, 'assets/audio/explosion.wav', AssetType.AUDIO)
+assetManager.queueDownload(EntityType.GAME_OVER, 'assets/audio/game_over.wav', AssetType.AUDIO)
 assetManager.downloadAll(() => {
   const game = new Game(assetManager, inputManager, settings, canvases)
+  settingsMenu.init()
   document.getElementById('game-over').addEventListener('click', () => game.restart())
   document.getElementById('settings').addEventListener('click', () => {
     settingsMenu.toggleShow()

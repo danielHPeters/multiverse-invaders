@@ -9,7 +9,8 @@ export enum EntityType {
   LASER = 'laser',
   MAIN_THEME = 'shockWave',
   EXPLOSION_I = 'explosion1',
-  EXPLOSION_II = 'explosion2'
+  EXPLOSION_II = 'explosion2',
+  BOX = 'BOX'
 }
 
 export interface CollideAble {

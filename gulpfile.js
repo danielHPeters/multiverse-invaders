@@ -19,7 +19,7 @@ const configuration = {
  * with the addition of server.io globals
  */
 gulp.task('lint', () => {
-  return gulp.src([configuration.js.source, '!node_modules/**'])
+  return gulp.src([configuration.js.source, '!node_modules/**', '!public/**'])
     .pipe(esLint({
       configFile: configuration.esLint.config
     }))

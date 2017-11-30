@@ -242,6 +242,11 @@ export class Vector2 {
     return this.x * vector.x + this.y * vector.y
   }
 
+  floor (): void {
+    this.x = Math.floor(this.x)
+    this.x = Math.floor(this.x)
+  }
+
   /**
    * Create a clone of this vector.
    *

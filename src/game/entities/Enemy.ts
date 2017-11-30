@@ -3,6 +3,7 @@ import { Vector2 } from '../../lib/vector/Vector2'
 import { Pool } from '../structures/Pool'
 import { CollideAble, EntityType } from '../interfaces/CollideAble'
 import { Game } from '../Game'
+import { AssetType } from '../../client/AssetManager'
 
 /**
  *
@@ -71,7 +72,7 @@ export class Enemy implements Drawable, CollideAble {
    * @param {number} y
    * @param {number} speed
    */
-  spawn (x: number, y: number, speed: number) {
+  spawn (x: number, y: number, speed: number): void {
     this.position.x = x
     this.position.y = y
     this.speed = speed
@@ -110,6 +111,8 @@ export class Enemy implements Drawable, CollideAble {
       return false
     } else {
       this.game.scorePoints()
+      let sound = this.game.assetManager.getSound(EntityType.EXPLOSION_I, AssetType.AUDIO)
+      sound.play()
       return true
     }
   }
@@ -139,6 +142,6 @@ export class Enemy implements Drawable, CollideAble {
    * @param {CollideAble} other
    */
   isCollideAbleWith (other: CollideAble): boolean {
-    return this.collidesWith.includes(other.type)
+    return this.collidesWith.includes(other.type.toString())
   }
 }
