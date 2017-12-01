@@ -2,8 +2,12 @@ import { Vector2 } from '../vector/Vector2'
 import { Actions } from '../../client/InputManager'
 import { Observer } from '../observer/Observer'
 import { CollideAble, EntityType } from '../../game/interfaces/CollideAble'
+import { Drawable } from '../../game/interfaces/Drawable'
 
-export class Entity implements Observer, CollideAble {
+export class Entity implements Observer, CollideAble, Drawable {
+  speed: number
+  canvasWidth: number
+  canvasHeight: number
   type: EntityType
   collidesWith
   colliding: boolean
@@ -33,7 +37,7 @@ export class Entity implements Observer, CollideAble {
     this.previousPosition = new Vector2(x, y)
   }
 
-  move (): void {
+  move (worldWidth, worldHeight): void {
     if (!this.colliding) {
       this.previousPosition.setVector(this.position)
       this.acceleration.set(0, 0)
@@ -53,14 +57,27 @@ export class Entity implements Observer, CollideAble {
       this.velocity.addVector(this.acceleration)
       this.velocity.limit(15)
       this.position.addVector(this.velocity)
+
+      if (this.position.x - this.width / 2 < 0) {
+        this.position.x = this.width / 2
+      }
+      if (this.position.y - this.height / 2 < 0) {
+        this.position.y = this.height / 2
+      }
+      if (this.position.x + this.width / 2 > worldWidth) {
+        this.position.x = worldWidth - this.width / 2
+      }
+      if (this.position.y + this.height / 2 > worldHeight) {
+        this.position.y = worldHeight - this.height / 2
+      }
     } else {
       this.goBack()
     }
   }
 
-  render (): void {
-    this.context.clearRect(Math.floor(this.previousPosition.x), Math.floor(this.previousPosition.y), this.width, this.height)
-    this.context.drawImage(this.sprite, Math.floor(this.position.x), Math.floor(this.position.y), this.sprite.width, this.sprite.height)
+  draw (xView: number, yView: number, prevXView: number, prevYView: number): void {
+    this.context.clearRect((Math.floor(this.previousPosition.x) - this.width / 2) - prevXView, (Math.floor(this.previousPosition.y) - this.height / 2) - prevYView, this.width, this.height)
+    this.context.drawImage(this.sprite,(Math.floor(this.position.x) - this.width / 2) - xView, (Math.floor(this.position.y) - this.height / 2) - yView, this.width, this.height)
   }
 
   goBack (): void {

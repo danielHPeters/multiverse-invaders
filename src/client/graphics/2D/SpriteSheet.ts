@@ -35,7 +35,7 @@ export class SpriteSheet {
    */
   set image (image: HTMLImageElement) {
     if (!(image instanceof Image)) {
-      throw new Error('Param image must be of type Image!')
+      throw new Error('Param tileSetImage must be of type Image!')
     }
     this._image = image
   }

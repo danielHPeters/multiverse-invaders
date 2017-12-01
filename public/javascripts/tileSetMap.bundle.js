@@ -416,7 +416,7 @@ class SpriteSheet {
     }
     set image(image) {
         if (!(image instanceof Image)) {
-            throw new Error('Param image must be of type Image!');
+            throw new Error('Param tileSetImage must be of type Image!');
         }
         this._image = image;
     }
@@ -717,6 +717,7 @@ const CollideAble_1 = __webpack_require__(0);
 const QuadTree_1 = __webpack_require__(8);
 const HitBox_1 = __webpack_require__(4);
 const CollisionManager_1 = __webpack_require__(9);
+const Camera_1 = __webpack_require__(22);
 document.addEventListener('DOMContentLoaded', () => init());
 function init() {
     const canvas = document.getElementById('background');
@@ -749,7 +750,12 @@ function init() {
             [34, 34, 79, 79, 79, 79, 79, 79, 79, 79, 79, 171, 172, 172, 173, 79, 79, 79, 79, 79, 79, 79, 79, 79, 79, 79, 79, 79, 79, 155, 142, 172],
             [34, 34, 34, 79, 79, 79, 79, 79, 79, 79, 79, 171, 172, 172, 173, 79, 79, 79, 79, 79, 79, 79, 79, 79, 79, 79, 79, 79, 79, 171, 172, 172],
             [34, 34, 34, 34, 79, 79, 79, 79, 79, 79, 155, 172, 172, 159, 189, 79, 79, 79, 79, 79, 79, 79, 79, 79, 79, 79, 79, 79, 79, 171, 172, 172],
-            [34, 34, 34, 34, 34, 34, 79, 79, 79, 79, 171, 172, 172, 173, 79, 79, 79, 79, 79, 79, 79, 79, 79, 79, 79, 79, 79, 79, 155, 142, 172, 172]
+            [34, 34, 34, 34, 34, 34, 79, 79, 79, 79, 171, 172, 172, 173, 79, 79, 79, 79, 79, 79, 79, 79, 79, 79, 79, 79, 79, 79, 155, 142, 172, 172],
+            [34, 34, 34, 34, 34, 34, 34, 79, 79, 79, 171, 172, 172, 173, 79, 79, 79, 79, 79, 79, 79, 79, 79, 79, 79, 79, 79, 79, 155, 142, 172, 172],
+            [34, 34, 34, 34, 34, 34, 34, 79, 79, 79, 171, 172, 172, 173, 79, 79, 79, 79, 79, 79, 79, 79, 79, 79, 79, 79, 79, 79, 155, 142, 172, 172],
+            [34, 34, 34, 34, 34, 34, 34, 79, 79, 79, 171, 172, 172, 173, 79, 79, 79, 79, 79, 79, 79, 79, 79, 79, 79, 79, 79, 79, 155, 142, 172, 172],
+            [34, 34, 34, 34, 34, 34, 34, 79, 79, 79, 171, 172, 172, 173, 79, 79, 79, 79, 79, 79, 79, 79, 79, 79, 79, 79, 79, 79, 155, 142, 172, 172],
+            [34, 34, 34, 34, 34, 34, 34, 79, 79, 79, 171, 172, 172, 173, 79, 79, 79, 79, 79, 79, 79, 79, 79, 79, 79, 79, 79, 79, 155, 142, 172, 172]
         ];
         let topLayer = [
             [0, 0, 32, 33, 0, 220, 0, 0, 220, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 69, 0, 0, 0, 0, 0, 32, 33],
@@ -771,21 +777,32 @@ function init() {
             [0, 35, 40, 24, 25, 8, 9, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 2, 3, 4, 0, 0, 0, 0, 0, 0, 0, 0, 217, 218, 0, 0],
             [0, 0, 0, 40, 41, 20, 8, 9, 0, 0, 0, 0, 0, 0, 0, 16, 17, 18, 19, 20, 21, 0, 0, 0, 0, 0, 0, 0, 233, 234, 0, 0],
             [0, 0, 0, 0, 40, 19, 24, 25, 8, 9, 0, 0, 0, 0, 0, 48, 49, 50, 51, 52, 115, 3, 4, 0, 0, 0, 0, 0, 249, 250, 0, 0],
-            [0, 0, 0, 0, 0, 0, 40, 41, 20, 21, 0, 0, 0, 0, 0, 64, 65, 66, 67, 52, 19, 19, 20, 21, 0, 0, 0, 0, 0, 0, 0, 0]
+            [0, 0, 0, 0, 0, 0, 40, 41, 20, 21, 0, 0, 0, 0, 0, 64, 65, 66, 67, 52, 19, 19, 20, 21, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         ];
         let quadTree = new QuadTree_1.QuadTree(new HitBox_1.HitBox(0, 0, canvas.width, canvas.height));
         let collisionManager = new CollisionManager_1.CollisionManager(quadTree);
         let player = new Entity_1.Entity(350, 370, assetManager.getSprite(CollideAble_1.EntityType.PLAYER), playerCtx);
-        let tileMap = new TileSetMap_1.TileSetMap(assetManager.getSprite(CollideAble_1.EntityType.MAP), [ground, topLayer], ctx, 32, ground.length, ground[0].length, 16);
-        tileMap.draw();
+        let area = {
+            map: new TileSetMap_1.TileSetMap(assetManager.getSprite(CollideAble_1.EntityType.MAP), [ground, topLayer], ctx, 32, ground[0].length, ground.length, 16)
+        };
+        let camera = new Camera_1.Camera(0, 0, canvasPlayer.width, canvasPlayer.height, area.map.width, area.map.height);
+        area.map.generate();
         inputManager.register(player);
+        camera.follow(player, canvas.width / 2, canvas.height / 2);
         function render() {
             quadTree.clear();
             quadTree.insert(player);
-            quadTree.insert(tileMap.hitBoxes);
+            quadTree.insert(area.map.hitBoxes);
             collisionManager.detectCollision();
-            player.move();
-            player.render();
+            camera.update();
+            player.move(area.map.width, area.map.height);
+            player.draw(Math.floor(camera.position.x), Math.floor(camera.position.y), Math.floor(camera.previousPosition.x), Math.floor(camera.previousPosition.y));
+            area.map.draw(Math.floor(camera.position.x), Math.floor(camera.position.y));
             window.requestAnimationFrame(() => render());
         }
         render();
@@ -803,7 +820,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const HitBox_1 = __webpack_require__(4);
 class TileSetMap {
     constructor(image, mapLayers, context, tileSize, tilesPerRow, tilesPerColumn, imageTilesPerRow) {
-        this.image = image;
+        this.tileSetImage = image;
+        this.width = tilesPerRow * tileSize;
+        this.height = tilesPerColumn * tileSize;
         this.mapLayers = mapLayers;
         this.context = context;
         this.tileSize = tileSize;
@@ -811,22 +830,33 @@ class TileSetMap {
         this.tilesPerColumn = tilesPerColumn;
         this.imageTilesPerRow = imageTilesPerRow;
         this.hitBoxes = [];
+        console.log(this.width);
+        console.log(this.height);
     }
-    drawLayer(layer) {
-        for (let row = 0; row < this.tilesPerRow; row++) {
-            for (let col = 0; col < this.tilesPerColumn; col++) {
+    generate() {
+        let ctx = document.createElement('canvas').getContext('2d');
+        ctx.canvas.width = this.width;
+        ctx.canvas.height = this.height;
+        this.mapLayers.forEach(layer => this.generateLayer(ctx, layer));
+        this.image = new Image();
+        this.image.src = ctx.canvas.toDataURL('image/png');
+        ctx = null;
+    }
+    generateLayer(ctx, layer) {
+        for (let row = 0; row < this.tilesPerColumn; row++) {
+            for (let col = 0; col < this.tilesPerRow; col++) {
                 let tile = layer[row][col];
                 if (tile !== 0 && this.mapLayers.indexOf(layer) === this.mapLayers.length - 1) {
                     this.hitBoxes.push(new HitBox_1.HitBox((col * this.tileSize), (row * this.tileSize), this.tileSize, this.tileSize));
                 }
                 let tileRow = (tile / this.imageTilesPerRow) | 0;
                 let tileCol = (tile % this.imageTilesPerRow) | 0;
-                this.context.drawImage(this.image, (tileCol * this.tileSize), (tileRow * this.tileSize), this.tileSize, this.tileSize, (col * this.tileSize), (row * this.tileSize), this.tileSize, this.tileSize);
+                ctx.drawImage(this.tileSetImage, (tileCol * this.tileSize), (tileRow * this.tileSize), this.tileSize, this.tileSize, (col * this.tileSize), (row * this.tileSize), this.tileSize, this.tileSize);
             }
         }
     }
-    draw() {
-        this.mapLayers.forEach(layer => this.drawLayer(layer));
+    draw(xView, yView) {
+        this.context.drawImage(this.image, 0, 0, this.image.width, this.image.height, -xView, -yView, this.image.width, this.image.height);
     }
 }
 exports.TileSetMap = TileSetMap;
@@ -858,7 +888,7 @@ class Entity {
         this.height = sprite.height;
         this.previousPosition = new Vector2_1.Vector2(x, y);
     }
-    move() {
+    move(worldWidth, worldHeight) {
         if (!this.colliding) {
             this.previousPosition.setVector(this.position);
             this.acceleration.set(0, 0);
@@ -878,14 +908,26 @@ class Entity {
             this.velocity.addVector(this.acceleration);
             this.velocity.limit(15);
             this.position.addVector(this.velocity);
+            if (this.position.x - this.width / 2 < 0) {
+                this.position.x = this.width / 2;
+            }
+            if (this.position.y - this.height / 2 < 0) {
+                this.position.y = this.height / 2;
+            }
+            if (this.position.x + this.width / 2 > worldWidth) {
+                this.position.x = worldWidth - this.width / 2;
+            }
+            if (this.position.y + this.height / 2 > worldHeight) {
+                this.position.y = worldHeight - this.height / 2;
+            }
         }
         else {
             this.goBack();
         }
     }
-    render() {
-        this.context.clearRect(Math.floor(this.previousPosition.x), Math.floor(this.previousPosition.y), this.width, this.height);
-        this.context.drawImage(this.sprite, Math.floor(this.position.x), Math.floor(this.position.y), this.sprite.width, this.sprite.height);
+    draw(xView, yView, prevXView, prevYView) {
+        this.context.clearRect((Math.floor(this.previousPosition.x) - this.width / 2) - prevXView, (Math.floor(this.previousPosition.y) - this.height / 2) - prevYView, this.width, this.height);
+        this.context.drawImage(this.sprite, (Math.floor(this.position.x) - this.width / 2) - xView, (Math.floor(this.position.y) - this.height / 2) - yView, this.width, this.height);
     }
     goBack() {
         let temp = this.position.clone();
@@ -901,6 +943,118 @@ class Entity {
     }
 }
 exports.Entity = Entity;
+
+
+/***/ }),
+/* 22 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+const Vector2_1 = __webpack_require__(1);
+const Rectangle_1 = __webpack_require__(23);
+var AXIS;
+(function (AXIS) {
+    AXIS["NONE"] = "none";
+    AXIS["HORIZONTAL"] = "horizontal";
+    AXIS["VERTICAL"] = "vertical";
+    AXIS["BOTH"] = "both";
+})(AXIS = exports.AXIS || (exports.AXIS = {}));
+class Camera {
+    constructor(x, y, viewWidth, viewHeight, worldWidth, worldHeight) {
+        this.position = new Vector2_1.Vector2(x, y);
+        this.previousPosition = new Vector2_1.Vector2(x, y);
+        this.deadZone = new Vector2_1.Vector2(0, 0);
+        this.viewWidth = viewWidth;
+        this.viewHeight = viewHeight;
+        this.axis = AXIS.BOTH;
+        this.following = null;
+        this.viewportRect = new Rectangle_1.Rectangle(this.position.x, this.position.y, this.viewWidth, this.viewHeight);
+        this.worldRect = new Rectangle_1.Rectangle(0, 0, worldWidth, worldHeight);
+    }
+    follow(following, xDeadZone, yDeadZone) {
+        this.following = following;
+        this.deadZone.set(xDeadZone, yDeadZone);
+    }
+    update() {
+        this.previousPosition.setVector(this.position);
+        if (this.following != null) {
+            if (this.axis === AXIS.HORIZONTAL || this.axis === AXIS.BOTH) {
+                if (this.following.position.x - this.position.x + this.deadZone.x > this.viewWidth) {
+                    this.position.x = this.following.position.x - (this.viewWidth - this.deadZone.x);
+                }
+                else if (this.following.position.x - this.deadZone.x < this.position.x) {
+                    this.position.x = this.following.position.x - this.deadZone.x;
+                }
+            }
+            if (this.axis === AXIS.VERTICAL || this.axis === AXIS.BOTH) {
+                if (this.following.position.y - this.position.y + this.deadZone.y > this.viewHeight) {
+                    this.position.y = this.following.position.y - (this.viewHeight - this.deadZone.y);
+                }
+                else if (this.following.position.y - this.deadZone.y < this.position.y) {
+                    this.position.y = this.following.position.y - this.deadZone.y;
+                }
+            }
+        }
+        this.viewportRect.set(this.position.x, this.position.y);
+        if (!this.viewportRect.within(this.worldRect)) {
+            if (this.viewportRect.left < this.worldRect.left) {
+                this.position.x = this.worldRect.left;
+            }
+            if (this.viewportRect.top < this.worldRect.top) {
+                this.position.y = this.worldRect.top;
+            }
+            if (this.viewportRect.right > this.worldRect.right) {
+                this.position.x = this.worldRect.right - this.viewWidth;
+            }
+            if (this.viewportRect.bottom > this.worldRect.bottom) {
+                this.position.y = this.worldRect.bottom - this.viewHeight;
+            }
+        }
+    }
+}
+exports.Camera = Camera;
+
+
+/***/ }),
+/* 23 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+class Rectangle {
+    constructor(left, top, width, height) {
+        this.left = left;
+        this.top = top;
+        this.width = width;
+        this.height = height;
+        this.right = this.left + this.width;
+        this.bottom = this.top + this.height;
+    }
+    set(left, top, width, height) {
+        this.left = left;
+        this.top = top;
+        this.width = width || this.width;
+        this.height = height || this.height;
+        this.right = (this.left + this.width);
+        this.bottom = (this.top + this.height);
+    }
+    within(other) {
+        return (other.left <= this.left &&
+            other.right >= this.right &&
+            other.top <= this.top &&
+            other.bottom >= this.bottom);
+    }
+    overlaps(other) {
+        return (this.left < other.right &&
+            other.left < this.right &&
+            this.top < other.bottom &&
+            other.top < this.bottom);
+    }
+}
+exports.Rectangle = Rectangle;
 
 
 /***/ })

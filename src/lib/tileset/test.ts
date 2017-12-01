@@ -7,6 +7,7 @@ import { EntityType } from '../../game/interfaces/CollideAble'
 import { QuadTree } from '../collision/QuadTree'
 import { HitBox } from '../collision/HitBox'
 import { CollisionManager } from '../collision/CollisionManager'
+import { Camera } from '../../client/graphics/2D/Camera'
 
 document.addEventListener('DOMContentLoaded', () => init())
 
@@ -41,7 +42,13 @@ function init (): void {
       [34, 34, 79, 79, 79, 79, 79, 79, 79, 79, 79, 171, 172, 172, 173, 79, 79, 79, 79, 79, 79, 79, 79, 79, 79, 79, 79, 79, 79, 155, 142, 172],
       [34, 34, 34, 79, 79, 79, 79, 79, 79, 79, 79, 171, 172, 172, 173, 79, 79, 79, 79, 79, 79, 79, 79, 79, 79, 79, 79, 79, 79, 171, 172, 172],
       [34, 34, 34, 34, 79, 79, 79, 79, 79, 79, 155, 172, 172, 159, 189, 79, 79, 79, 79, 79, 79, 79, 79, 79, 79, 79, 79, 79, 79, 171, 172, 172],
-      [34, 34, 34, 34, 34, 34, 79, 79, 79, 79, 171, 172, 172, 173, 79, 79, 79, 79, 79, 79, 79, 79, 79, 79, 79, 79, 79, 79, 155, 142, 172, 172]
+      [34, 34, 34, 34, 34, 34, 79, 79, 79, 79, 171, 172, 172, 173, 79, 79, 79, 79, 79, 79, 79, 79, 79, 79, 79, 79, 79, 79, 155, 142, 172, 172],
+      [34, 34, 34, 34, 34, 34, 34, 79, 79, 79, 171, 172, 172, 173, 79, 79, 79, 79, 79, 79, 79, 79, 79, 79, 79, 79, 79, 79, 155, 142, 172, 172],
+      [34, 34, 34, 34, 34, 34, 34, 79, 79, 79, 171, 172, 172, 173, 79, 79, 79, 79, 79, 79, 79, 79, 79, 79, 79, 79, 79, 79, 155, 142, 172, 172],
+      [34, 34, 34, 34, 34, 34, 34, 79, 79, 79, 171, 172, 172, 173, 79, 79, 79, 79, 79, 79, 79, 79, 79, 79, 79, 79, 79, 79, 155, 142, 172, 172],
+      [34, 34, 34, 34, 34, 34, 34, 79, 79, 79, 171, 172, 172, 173, 79, 79, 79, 79, 79, 79, 79, 79, 79, 79, 79, 79, 79, 79, 155, 142, 172, 172],
+      [34, 34, 34, 34, 34, 34, 34, 79, 79, 79, 171, 172, 172, 173, 79, 79, 79, 79, 79, 79, 79, 79, 79, 79, 79, 79, 79, 79, 155, 142, 172, 172]
+
     ]
 
     let topLayer = [
@@ -64,29 +71,42 @@ function init (): void {
       [0, 35, 40, 24, 25, 8, 9, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 2, 3, 4, 0, 0, 0, 0, 0, 0, 0, 0, 217, 218, 0, 0],
       [0, 0, 0, 40, 41, 20, 8, 9, 0, 0, 0, 0, 0, 0, 0, 16, 17, 18, 19, 20, 21, 0, 0, 0, 0, 0, 0, 0, 233, 234, 0, 0],
       [0, 0, 0, 0, 40, 19, 24, 25, 8, 9, 0, 0, 0, 0, 0, 48, 49, 50, 51, 52, 115, 3, 4, 0, 0, 0, 0, 0, 249, 250, 0, 0],
-      [0, 0, 0, 0, 0, 0, 40, 41, 20, 21, 0, 0, 0, 0, 0, 64, 65, 66, 67, 52, 19, 19, 20, 21, 0, 0, 0, 0, 0, 0, 0, 0]
+      [0, 0, 0, 0, 0, 0, 40, 41, 20, 21, 0, 0, 0, 0, 0, 64, 65, 66, 67, 52, 19, 19, 20, 21, 0, 0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     ]
     let quadTree = new QuadTree(new HitBox(0, 0, canvas.width, canvas.height))
     let collisionManager = new CollisionManager(quadTree)
     let player = new Entity(350, 370, assetManager.getSprite(EntityType.PLAYER), playerCtx)
-    let tileMap = new TileSetMap(
-      assetManager.getSprite(EntityType.MAP),
-      [ground, topLayer],
-      ctx,
-      32, ground.length,
-      ground[0].length,
-      16
-    )
-    tileMap.draw()
+    let area = {
+      map: new TileSetMap(
+        assetManager.getSprite(EntityType.MAP),
+        [ground, topLayer],
+        ctx,
+        32, ground[0].length,
+        ground.length,
+        16
+      )
+    }
+    let camera = new Camera(0, 0, canvasPlayer.width, canvasPlayer.height, area.map.width, area.map.height)
+
+    // generate a large tileSetImage texture for the room
+    area.map.generate()
     inputManager.register(player)
+    camera.follow(player, canvas.width / 2, canvas.height / 2)
 
     function render (): void {
       quadTree.clear()
       quadTree.insert(player)
-      quadTree.insert(tileMap.hitBoxes)
+      quadTree.insert(area.map.hitBoxes)
       collisionManager.detectCollision()
-      player.move()
-      player.render()
+      camera.update()
+      player.move(area.map.width, area.map.height)
+      player.draw(Math.floor(camera.position.x), Math.floor(camera.position.y), Math.floor(camera.previousPosition.x), Math.floor(camera.previousPosition.y))
+      area.map.draw(Math.floor(camera.position.x), Math.floor(camera.position.y))
       window.requestAnimationFrame(() => render())
     }
 

@@ -13,5 +13,5 @@ export interface Drawable {
   context: any
   sprite: any
 
-  draw (): void
+  draw (xView?: number, yView?: number, prevXView?: number, prevYView?: number): void
 }

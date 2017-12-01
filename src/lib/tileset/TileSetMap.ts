@@ -1,8 +1,10 @@
 import { HitBox } from '../collision/HitBox'
-import { Vector2 } from '../vector/Vector2'
 
 export class TileSetMap {
-  image
+  tileSetImage: HTMLImageElement
+  image: HTMLImageElement
+  width: number
+  height: number
   context
   mapLayers
   tileSize: number
@@ -12,7 +14,9 @@ export class TileSetMap {
   hitBoxes: Array<HitBox>
 
   constructor (image, mapLayers, context, tileSize: number, tilesPerRow: number, tilesPerColumn: number, imageTilesPerRow: number) {
-    this.image = image
+    this.tileSetImage = image
+    this.width = tilesPerRow * tileSize
+    this.height = tilesPerColumn * tileSize
     this.mapLayers = mapLayers
     this.context = context
     this.tileSize = tileSize
@@ -20,19 +24,36 @@ export class TileSetMap {
     this.tilesPerColumn = tilesPerColumn
     this.imageTilesPerRow = imageTilesPerRow
     this.hitBoxes = []
+    console.log(this.width)
+    console.log(this.height)
   }
 
-  drawLayer (layer): void {
-    for (let row = 0; row < this.tilesPerRow; row++) {
-      for (let col = 0; col < this.tilesPerColumn; col++) {
+  generate (): void {
+    let ctx = document.createElement('canvas').getContext('2d')
+    ctx.canvas.width = this.width
+    ctx.canvas.height = this.height
+
+    this.mapLayers.forEach(layer => this.generateLayer(ctx, layer))
+
+    // store the generate map as this tileSetImage texture
+    this.image = new Image()
+    this.image.src = ctx.canvas.toDataURL('image/png')
+
+    // clear context
+    ctx = null
+  }
+
+  generateLayer (ctx, layer): void {
+    for (let row = 0; row < this.tilesPerColumn; row++) {
+      for (let col = 0; col < this.tilesPerRow; col++) {
         let tile = layer[row][col]
         if (tile !== 0 && this.mapLayers.indexOf(layer) === this.mapLayers.length - 1) {
           this.hitBoxes.push(new HitBox((col * this.tileSize), (row * this.tileSize), this.tileSize, this.tileSize))
         }
         let tileRow = (tile / this.imageTilesPerRow) | 0
         let tileCol = (tile % this.imageTilesPerRow) | 0
-        this.context.drawImage(
-          this.image,
+        ctx.drawImage(
+          this.tileSetImage,
           (tileCol * this.tileSize),
           (tileRow * this.tileSize),
           this.tileSize,
@@ -46,7 +67,12 @@ export class TileSetMap {
     }
   }
 
-  draw (): void {
-    this.mapLayers.forEach(layer => this.drawLayer(layer))
+  /**
+   * draw the map adjusted to camera
+   * @param xView
+   * @param yView
+   */
+  draw (xView, yView): void {
+    this.context.drawImage(this.image, 0, 0, this.image.width, this.image.height, -xView, -yView, this.image.width, this.image.height)
   }
 }
