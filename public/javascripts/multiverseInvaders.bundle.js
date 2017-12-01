@@ -211,12 +211,14 @@ var Actions;
     Actions["LEFT"] = "LEFT";
     Actions["RIGHT"] = "RIGHT";
     Actions["SHOOT"] = "SHOOT";
+    Actions["RESTART"] = "RESTART";
 })(Actions = exports.Actions || (exports.Actions = {}));
 class InputManager extends Observable_1.Observable {
     constructor(settings) {
         super();
         this.inputMap = settings.keyBoard;
         this.init();
+        this.initializeTouchHandler();
     }
     init() {
         window.addEventListener('keydown', event => {
@@ -228,8 +230,53 @@ class InputManager extends Observable_1.Observable {
             this.notify();
         });
     }
+    initializeTouchHandler() {
+        window.addEventListener('touchstart', handleTouchStart, false);
+        window.addEventListener('touchmove', handleTouchMove, false);
+        window.addEventListener('touchend', handleTouchEnd, false);
+        let xDown = null;
+        let yDown = null;
+        let thisInstance = this;
+        function handleTouchStart(evt) {
+            evt.preventDefault();
+            xDown = evt.touches[0].clientX;
+            yDown = evt.touches[0].clientY;
+        }
+        function handleTouchMove(evt) {
+            evt.preventDefault();
+            if (!xDown || !yDown) {
+                return;
+            }
+            let xUp = evt.touches[0].clientX;
+            let yUp = evt.touches[0].clientY;
+            let xDiff = xDown - xUp;
+            let yDiff = yDown - yUp;
+            if (xDiff > 0) {
+                thisInstance.state[thisInstance.inputMap['a']] = true;
+            }
+            else if (xDiff < 0) {
+                thisInstance.state[thisInstance.inputMap['d']] = true;
+            }
+            else if (yDiff > 0) {
+                thisInstance.state[thisInstance.inputMap['w']] = true;
+            }
+            else if (yDiff < 0) {
+                thisInstance.state[thisInstance.inputMap['s']] = true;
+            }
+            thisInstance.notify();
+            xDown = null;
+            yDown = null;
+        }
+        function handleTouchEnd(evt) {
+            evt.preventDefault();
+            thisInstance.reset();
+        }
+    }
     reset() {
-        Object.keys(this.state).forEach(key => this.state[key] = false);
+        Object.keys(this.state).forEach(key => {
+            this.state[key] = false;
+            this.notify();
+        });
     }
 }
 exports.InputManager = InputManager;
@@ -669,7 +716,8 @@ class Settings {
             's': InputManager_1.Actions.DOWN,
             'a': InputManager_1.Actions.LEFT,
             'd': InputManager_1.Actions.RIGHT,
-            ' ': InputManager_1.Actions.SHOOT
+            ' ': InputManager_1.Actions.SHOOT,
+            'r': InputManager_1.Actions.RESTART
         };
         this.player = {
             maxVelocity: 15,
@@ -727,11 +775,14 @@ assetManager.queueDownload(CollideAble_1.EntityType.GAME_OVER, 'assets/audio/gam
 assetManager.downloadAll(() => {
     const game = new Game_1.Game(assetManager, inputManager, settings, canvases);
     settingsMenu.init();
-    document.getElementById('game-over').addEventListener('click', () => game.restart());
-    document.getElementById('settings').addEventListener('click', () => {
+    let gameOver = document.getElementById('game-over');
+    let set = document.getElementById('settings');
+    let events = ['click', 'touchstart'];
+    events.forEach(event => gameOver.addEventListener(event, () => game.restart()));
+    events.forEach(event => set.addEventListener(event, () => {
         settingsMenu.toggleShow();
         game.togglePause();
-    });
+    }));
 });
 
 
@@ -744,6 +795,7 @@ assetManager.downloadAll(() => {
 Object.defineProperty(exports, "__esModule", { value: true });
 const Background_1 = __webpack_require__(13);
 const AssetManager_1 = __webpack_require__(3);
+const InputManager_1 = __webpack_require__(2);
 const Ship_1 = __webpack_require__(14);
 const Pool_1 = __webpack_require__(15);
 const QuadTree_1 = __webpack_require__(8);
@@ -772,6 +824,7 @@ class Game {
             this.enemyPool = new Pool_1.Pool(assetManager, this.mainContext, this.canvases.main.width, this.canvases.main.height, 30, CollideAble_1.EntityType.ENEMY, this.enemyBulletPool, this);
             this.spawnWave();
             inputManager.register(this.ship);
+            inputManager.register(this);
             this.quadTree = new QuadTree_1.QuadTree(new HitBox_1.HitBox(0, 0, this.canvases.main.width, this.canvases.main.height));
             this.collisionManager = new CollisionManager_1.CollisionManager(this.quadTree);
             this.backgroundAudio = this.assetManager.getSound(CollideAble_1.EntityType.MAIN_THEME, AssetManager_1.AssetType.AUDIO_LOOP);
@@ -822,11 +875,16 @@ class Game {
                     this.gameOver();
                 }
             }
-            window.requestAnimationFrame(() => this.render());
+            this.animReqID = window.requestAnimationFrame(() => this.render());
         }
     }
     scorePoints() {
         this.playerScore += 10;
+    }
+    update(state) {
+        if (state[InputManager_1.Actions.RESTART]) {
+            this.restart();
+        }
     }
     start() {
         this.playing = true;
@@ -840,9 +898,17 @@ class Game {
         this.gameOverAudio.play(true);
     }
     restart() {
-        this.gameOverAudio.stop();
-        this.backgroundAudio.play(true);
-        document.getElementById('game-over').style.display = 'none';
+        if (!this.playing) {
+            this.gameOverAudio.stop();
+            this.backgroundAudio.play(true);
+            document.getElementById('game-over').style.display = 'none';
+        }
+        else {
+            window.cancelAnimationFrame(this.animReqID);
+            this.playing = false;
+            this.backgroundAudio.stop();
+            this.backgroundAudio.play(true);
+        }
         this.backgroundContext.clearRect(0, 0, this.canvases.background.width, this.canvases.background.height);
         this.shipContext.clearRect(0, 0, this.canvases.ship.width, this.canvases.ship.height);
         this.mainContext.clearRect(0, 0, this.canvases.main.width, this.canvases.main.height);

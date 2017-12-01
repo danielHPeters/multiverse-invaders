@@ -10,7 +10,8 @@ export class Settings {
       's': Actions.DOWN,
       'a': Actions.LEFT,
       'd': Actions.RIGHT,
-      ' ': Actions.SHOOT
+      ' ': Actions.SHOOT,
+      'r': Actions.RESTART
     }
     this.player = {
       maxVelocity: 15,

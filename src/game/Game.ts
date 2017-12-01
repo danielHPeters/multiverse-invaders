@@ -1,6 +1,6 @@
 import { Background } from './entities/Background'
 import { AssetManager, AssetType } from '../client/AssetManager'
-import { InputManager } from '../client/InputManager'
+import { Actions, InputManager } from '../client/InputManager'
 import { Ship } from './entities/Ship'
 import { Pool } from './structures/Pool'
 import { QuadTree } from '../lib/collision/QuadTree'
@@ -9,11 +9,12 @@ import { Settings } from '../client/Settings'
 import { EntityType } from './interfaces/CollideAble'
 import { CollisionManager } from '../lib/collision/CollisionManager'
 import { Sound } from '../client/audio/Sound'
+import { Observer } from '../lib/observer/Observer'
 
 /**
  *
  */
-export class Game {
+export class Game implements Observer {
   background: Background
   ship: Ship
   enemyPool: Pool
@@ -35,6 +36,7 @@ export class Game {
   canvases
   backgroundAudio: Sound
   gameOverAudio: Sound
+  animReqID
 
   /**
    *
@@ -83,6 +85,7 @@ export class Game {
       this.enemyPool = new Pool(assetManager, this.mainContext, this.canvases.main.width, this.canvases.main.height, 30, EntityType.ENEMY, this.enemyBulletPool, this)
       this.spawnWave()
       inputManager.register(this.ship)
+      inputManager.register(this)
       this.quadTree = new QuadTree(new HitBox(0, 0, this.canvases.main.width, this.canvases.main.height))
       this.collisionManager = new CollisionManager(this.quadTree)
       this.backgroundAudio = this.assetManager.getSound(EntityType.MAIN_THEME, AssetType.AUDIO_LOOP)
@@ -144,12 +147,18 @@ export class Game {
           this.gameOver()
         }
       }
-      window.requestAnimationFrame(() => this.render())
+      this.animReqID = window.requestAnimationFrame(() => this.render())
     }
   }
 
   scorePoints (): void {
     this.playerScore += 10
+  }
+
+  update (state: any): void {
+    if (state[Actions.RESTART]) {
+      this.restart()
+    }
   }
 
   /**
@@ -169,9 +178,16 @@ export class Game {
   }
 
   restart (): void {
-    this.gameOverAudio.stop()
-    this.backgroundAudio.play(true)
-    document.getElementById('game-over').style.display = 'none'
+    if (!this.playing) {
+      this.gameOverAudio.stop()
+      this.backgroundAudio.play(true)
+      document.getElementById('game-over').style.display = 'none'
+    } else {
+      window.cancelAnimationFrame(this.animReqID)
+      this.playing = false
+      this.backgroundAudio.stop()
+      this.backgroundAudio.play(true)
+    }
     this.backgroundContext.clearRect(0, 0, this.canvases.background.width, this.canvases.background.height)
     this.shipContext.clearRect(0, 0, this.canvases.ship.width, this.canvases.ship.height)
     this.mainContext.clearRect(0, 0, this.canvases.main.width, this.canvases.main.height)

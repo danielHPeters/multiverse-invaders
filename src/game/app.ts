@@ -26,9 +26,12 @@ assetManager.queueDownload(EntityType.GAME_OVER, 'assets/audio/game_over.wav', A
 assetManager.downloadAll(() => {
   const game = new Game(assetManager, inputManager, settings, canvases)
   settingsMenu.init()
-  document.getElementById('game-over').addEventListener('click', () => game.restart())
-  document.getElementById('settings').addEventListener('click', () => {
+  let gameOver = document.getElementById('game-over')
+  let set = document.getElementById('settings')
+  let events = ['click', 'touchstart']
+  events.forEach(event => gameOver.addEventListener(event, () => game.restart()))
+  events.forEach(event => set.addEventListener(event, () => {
     settingsMenu.toggleShow()
     game.togglePause()
-  })
+  }))
 })

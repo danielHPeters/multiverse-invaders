@@ -76,8 +76,19 @@ export class Entity implements Observer, CollideAble, Drawable {
   }
 
   draw (xView: number, yView: number, prevXView: number, prevYView: number): void {
-    this.context.clearRect((Math.floor(this.previousPosition.x) - this.width / 2) - prevXView, (Math.floor(this.previousPosition.y) - this.height / 2) - prevYView, this.width, this.height)
-    this.context.drawImage(this.sprite,(Math.floor(this.position.x) - this.width / 2) - xView, (Math.floor(this.position.y) - this.height / 2) - yView, this.width, this.height)
+    this.context.clearRect(
+      (Math.floor(this.previousPosition.x) - this.width / 2) - prevXView,
+      (Math.floor(this.previousPosition.y) - this.height / 2) - prevYView,
+      this.width,
+      this.height
+    )
+    this.context.drawImage(
+      this.sprite,
+      (Math.floor(this.position.x) - this.width / 2) - xView,
+      (Math.floor(this.position.y) - this.height / 2) - yView,
+      this.width,
+      this.height
+    )
   }
 
   goBack (): void {
