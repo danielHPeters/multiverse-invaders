@@ -1247,25 +1247,46 @@ class SettingsMenu {
         this.assetManager = assetManager;
         this.showing = false;
     }
-    init() {
+    createMainMenu() {
+        this.mainMenu = document.createElement('div');
+        this.mainMenu.classList.add('tab');
+        this.element.appendChild(this.mainMenu);
+    }
+    openTab(event, tabId) {
+        let tabContent;
+        let tabLink;
+        tabContent = document.getElementsByClassName('tabContent');
+        for (let i = 0; i < tabContent.length; i++) {
+            tabContent[i].style.display = 'none';
+        }
+        tabLink = document.getElementsByClassName('tabLink');
+        for (let i = 0; i < tabLink.length; i++) {
+            tabLink[i].className = tabLink[i].className.replace(' active', '');
+        }
+        document.getElementById(tabId).style.display = 'block';
+        event.currentTarget.className += ' active';
+    }
+    createKeyboardMenu() {
+        let keyboardMenuId = 'keyboardMenu';
+        let keyboardLink = document.createElement('button');
+        let keyboardDiv = document.createElement('div');
         let title = document.createElement('h4');
-        let playerTitle = document.createElement('h4');
         let form = document.createElement('form');
         let submit = document.createElement('input');
-        let playerForm = document.createElement('form');
-        let playerSubmit = document.createElement('input');
+        keyboardLink.addEventListener('click', event => this.openTab(event, keyboardMenuId));
+        keyboardLink.appendChild(document.createTextNode('Keyboard'));
+        keyboardLink.classList.add('tabLink');
+        this.mainMenu.appendChild(keyboardLink);
+        keyboardDiv.setAttribute('id', keyboardMenuId);
+        keyboardDiv.classList.add('tabContent');
         title.appendChild(document.createTextNode('Keyboard'));
-        playerTitle.appendChild(document.createTextNode('Player Settings'));
         form.setAttribute('id', 'keyboardSettings');
         form.setAttribute('method', 'post');
-        playerForm.setAttribute('id', 'playerSettings');
-        playerForm.setAttribute('method', 'post');
         submit.setAttribute('type', 'submit');
         submit.setAttribute('value', 'Save');
-        playerSubmit.setAttribute('type', 'submit');
-        playerSubmit.setAttribute('value', 'Save');
-        this.element.appendChild(title);
-        this.element.appendChild(form);
+        keyboardDiv.appendChild(title);
+        keyboardDiv.appendChild(form);
+        this.element.appendChild(keyboardDiv);
         Object.keys(this.settings.keyBoard).forEach(setting => this.addEntry(setting, form));
         form.appendChild(submit);
         form.addEventListener('submit', event => {
@@ -1277,9 +1298,28 @@ class SettingsMenu {
             this.settings.setKey(document.getElementById(InputManager_1.Actions.SHOOT).value, InputManager_1.Actions.SHOOT);
             this.clear();
         });
-        this.element.appendChild(document.createElement('hr'));
-        this.element.appendChild(playerTitle);
-        this.element.appendChild(playerForm);
+    }
+    createPlayerMenu() {
+        let playerMenuId = 'playerMenu';
+        let playerLink = document.createElement('button');
+        let playerDiv = document.createElement('div');
+        let playerTitle = document.createElement('h4');
+        let playerForm = document.createElement('form');
+        let playerSubmit = document.createElement('input');
+        playerLink.addEventListener('click', event => this.openTab(event, playerMenuId));
+        playerLink.appendChild(document.createTextNode('Player'));
+        playerLink.classList.add('tabLink');
+        this.mainMenu.appendChild(playerLink);
+        playerDiv.setAttribute('id', playerMenuId);
+        playerDiv.classList.add('tabContent');
+        playerTitle.appendChild(document.createTextNode('Player Settings'));
+        playerForm.setAttribute('id', 'playerSettings');
+        playerForm.setAttribute('method', 'post');
+        playerSubmit.setAttribute('type', 'submit');
+        playerSubmit.setAttribute('value', 'Save');
+        playerDiv.appendChild(playerTitle);
+        playerDiv.appendChild(playerForm);
+        this.element.appendChild(playerDiv);
         Object.keys(this.settings.player).forEach(setting => this.addPlayerSettingEntry(setting, playerForm));
         playerForm.appendChild(playerSubmit);
         playerForm.addEventListener('submit', event => {
@@ -1290,11 +1330,21 @@ class SettingsMenu {
             this.settings.player.fireDelay = Number(document.getElementById('fireDelay').value);
             this.clear();
         });
-        let divider = document.createElement('hr');
+    }
+    createAudioMenu() {
+        let audioMenuId = 'audioMenu';
+        let audioLink = document.createElement('button');
+        let audioDiv = document.createElement('div');
         let div = document.createElement('div');
         let audioTitle = document.createElement('h4');
         let audioLabel = document.createElement('label');
         let audioSlide = document.createElement('input');
+        audioLink.addEventListener('click', event => this.openTab(event, audioMenuId));
+        audioLink.classList.add('tabLink');
+        audioLink.appendChild(document.createTextNode('Audio'));
+        this.mainMenu.appendChild(audioLink);
+        audioDiv.setAttribute('id', audioMenuId);
+        audioDiv.classList.add('tabContent');
         div.classList.add('row');
         audioTitle.appendChild(document.createTextNode('Audio Settings'));
         audioLabel.appendChild(document.createTextNode('Master Volume:'));
@@ -1305,11 +1355,10 @@ class SettingsMenu {
         audioSlide.setAttribute('max', '1');
         audioSlide.setAttribute('step', '0.1');
         audioSlide.addEventListener('change', event => this.assetManager.adjustMasterVolume(Number(audioSlide.value)));
+        div.appendChild(audioTitle);
         div.appendChild(audioLabel);
         div.appendChild(audioSlide);
-        this.element.appendChild(divider);
-        this.element.appendChild(audioTitle);
-        this.element.appendChild(div);
+        audioDiv.appendChild(div);
         let ambientDiv = document.createElement('div');
         let ambientLabel = document.createElement('label');
         let ambientSlide = document.createElement('input');
@@ -1324,7 +1373,7 @@ class SettingsMenu {
         ambientSlide.addEventListener('change', event => this.assetManager.adjustAmbientVolume(Number(ambientSlide.value)));
         ambientDiv.appendChild(ambientLabel);
         ambientDiv.appendChild(ambientSlide);
-        this.element.appendChild(ambientDiv);
+        audioDiv.appendChild(ambientDiv);
         let effectsDiv = document.createElement('div');
         let effectsLabel = document.createElement('label');
         let effectsSlide = document.createElement('input');
@@ -1339,7 +1388,14 @@ class SettingsMenu {
         effectsSlide.addEventListener('change', event => this.assetManager.adjustEffectsVolume(Number(effectsSlide.value)));
         effectsDiv.appendChild(effectsLabel);
         effectsDiv.appendChild(effectsSlide);
-        this.element.appendChild(effectsDiv);
+        audioDiv.appendChild(effectsDiv);
+        this.element.appendChild(audioDiv);
+    }
+    init() {
+        this.createMainMenu();
+        this.createKeyboardMenu();
+        this.createPlayerMenu();
+        this.createAudioMenu();
     }
     clear() {
         while (this.element.firstChild) {
