@@ -1,6 +1,8 @@
 import { ListNode } from './ListNode'
+import { IList } from '../interfaces/IList'
+import { IQueue } from '../interfaces/IQueue'
 
-export class SinglyList {
+export class SinglyList implements IList, IQueue {
   private _elementsCount: number
   private _head: ListNode
   private _errorMessages
@@ -9,12 +11,29 @@ export class SinglyList {
     this._elementsCount = 0
     this._head = null
     this._errorMessages = {
-      indexOutOfBounds: 'Failure: non-existent index.'
+      indexOutOfBounds: 'Failure: non-existent index.',
+      notImplemented: 'This feature is not yet implemented.'
     }
   }
 
-  add (value): void {
-    let node = new ListNode(value)
+  size (): number {
+    return this.elementsCount
+  }
+
+  isEmpty (): boolean {
+    return this._elementsCount === 0
+  }
+
+  contains (object: any): boolean {
+    throw new Error(this._errorMessages.notImplemented)
+  }
+
+  remove (object: any): void {
+    throw new Error(this._errorMessages.notImplemented)
+  }
+
+  add (object: any): void {
+    let node = new ListNode(object)
     let currentNode = this._head
 
     if (this._elementsCount === 0) {
@@ -28,7 +47,19 @@ export class SinglyList {
     this._elementsCount++
   }
 
-  searchAt (index: number): ListNode {
+  addAll (objects: any[]): void {
+    objects.forEach(object => this.add(object))
+  }
+
+  clear (): void {
+    this.head = null
+  }
+
+  set (index: number, value: any): void {
+    throw new Error(this._errorMessages.notImplemented)
+  }
+
+  get (index: number): ListNode {
     let current = this._head
 
     if (this._elementsCount === 0 || index < 0 || index > this._elementsCount - 1) {
@@ -60,6 +91,16 @@ export class SinglyList {
     this._elementsCount--
   }
 
+  poll (): any {
+    let node = this.head
+    this.head = this.head.next
+    return node
+  }
+
+  peek (): any {
+    return this.head
+  }
+
   get elementsCount (): number {
     return this._elementsCount
   }
@@ -74,9 +115,5 @@ export class SinglyList {
 
   set head (value: ListNode) {
     this._head = value
-  }
-
-  length () {
-    return this.elementsCount
   }
 }
