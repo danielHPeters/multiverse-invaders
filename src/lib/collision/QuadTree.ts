@@ -30,7 +30,7 @@ export class QuadTree {
   /**
    * Clears the QuadTree and its sub nodes from all game objects.
    */
-  clear () {
+  clear (): void {
     this.objects = []
     this.nodes.forEach(node => node.clear())
     this.nodes = []

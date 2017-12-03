@@ -60,7 +60,7 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 11);
+/******/ 	return __webpack_require__(__webpack_require__.s = 13);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -203,7 +203,7 @@ exports.Vector2 = Vector2;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-const Observable_1 = __webpack_require__(7);
+const Observable_1 = __webpack_require__(8);
 var Actions;
 (function (Actions) {
     Actions["UP"] = "UP";
@@ -219,14 +219,20 @@ class InputManager extends Observable_1.Observable {
         this.inputMap = settings.keyBoard;
         this.init();
         this.initializeTouchHandler();
+        this.touches = {
+            start: [],
+            move: []
+        };
     }
     init() {
         window.addEventListener('keydown', event => {
-            this.state[this.inputMap[event.key]] = true;
+            let key = event.key !== ' ' ? event.key : 'space';
+            this.state[this.inputMap[key]] = true;
             this.notify();
         });
         window.addEventListener('keyup', event => {
-            this.state[this.inputMap[event.key]] = false;
+            let key = event.key !== ' ' ? event.key : 'space';
+            this.state[this.inputMap[key]] = false;
             this.notify();
         });
     }
@@ -234,38 +240,40 @@ class InputManager extends Observable_1.Observable {
         window.addEventListener('touchstart', handleTouchStart, false);
         window.addEventListener('touchmove', handleTouchMove, false);
         window.addEventListener('touchend', handleTouchEnd, false);
-        let xDown = null;
-        let yDown = null;
+        let start = [];
+        let move = [];
+        let touchstartX = 0;
+        let touchstartY = 0;
+        let toucheMoveX = 0;
+        let touchMoveY = 0;
         let thisInstance = this;
         function handleTouchStart(evt) {
             evt.preventDefault();
-            xDown = evt.touches[0].clientX;
-            yDown = evt.touches[0].clientY;
+            start = evt.touches;
+            touchstartX = evt.touches[0].pageX;
+            touchstartY = evt.touches[0].pageY;
         }
         function handleTouchMove(evt) {
+            thisInstance.reset();
             evt.preventDefault();
-            if (!xDown || !yDown) {
-                return;
+            move = evt.changedTouches;
+            toucheMoveX = evt.touches[0].pageX;
+            touchMoveY = evt.touches[0].pageY;
+            for (let i = 0; i < evt.touches.length; i++) {
+                if (move[i].pageX < start[i].pageX) {
+                    thisInstance.state[thisInstance.inputMap['a']] = true;
+                }
+                if (move[i].pageX > start[i].pageX) {
+                    thisInstance.state[thisInstance.inputMap['d']] = true;
+                }
+                if (move[i].pageY < start[i].pageY) {
+                    thisInstance.state[thisInstance.inputMap['w']] = true;
+                }
+                if (move[i].pageY > start[i].pageY) {
+                    thisInstance.state[thisInstance.inputMap['s']] = true;
+                }
+                thisInstance.notify();
             }
-            let xUp = evt.touches[0].clientX;
-            let yUp = evt.touches[0].clientY;
-            let xDiff = xDown - xUp;
-            let yDiff = yDown - yUp;
-            if (xDiff > 0) {
-                thisInstance.state[thisInstance.inputMap['a']] = true;
-            }
-            else if (xDiff < 0) {
-                thisInstance.state[thisInstance.inputMap['d']] = true;
-            }
-            else if (yDiff > 0) {
-                thisInstance.state[thisInstance.inputMap['w']] = true;
-            }
-            else if (yDiff < 0) {
-                thisInstance.state[thisInstance.inputMap['s']] = true;
-            }
-            thisInstance.notify();
-            xDown = null;
-            yDown = null;
         }
         function handleTouchEnd(evt) {
             evt.preventDefault();
@@ -291,6 +299,7 @@ exports.InputManager = InputManager;
 Object.defineProperty(exports, "__esModule", { value: true });
 const SpriteSheet_1 = __webpack_require__(5);
 const Sound_1 = __webpack_require__(6);
+const Ajax_1 = __webpack_require__(7);
 var AssetType;
 (function (AssetType) {
     AssetType["SPRITE"] = "SPRITE";
@@ -347,21 +356,23 @@ class AssetManager {
             opts: opts
         });
     }
-    loadAudio(item, callback) {
-        let request = new XMLHttpRequest();
-        request.open('GET', item.path, true);
-        request.responseType = 'arraybuffer';
-        request.addEventListener('load', () => {
-            let audioData = request.response;
-            this.audioContext.decodeAudioData(audioData).then(buffer => {
-                this.cache.audio[item.id] = buffer;
-                this.downloadCount += 1;
-                if (this.done()) {
-                    callback();
-                }
-            }, error => { console.log('Error with decoding audio data' + error); });
+    loadAudioFromUrl(item, callback) {
+        Ajax_1.Ajax.create({
+            method: 'GET',
+            url: item.path,
+            responseType: 'arraybuffer'
+        }, response => {
+            this.decodeAudio(response, item.id, callback);
         });
-        request.send();
+    }
+    decodeAudio(data, id, callback) {
+        this.audioContext.decodeAudioData(data).then(buffer => {
+            this.cache.audio[id] = buffer;
+            this.downloadCount += 1;
+            if (this.done()) {
+                callback();
+            }
+        }, error => { console.log('Error with decoding audio data' + error); });
     }
     loadSprite(item, callback) {
         let sprite = new Image();
@@ -388,7 +399,7 @@ class AssetManager {
     downloadAll(callback) {
         this.queue.forEach(item => {
             if (item.type === AssetType.AUDIO) {
-                this.loadAudio(item, callback);
+                this.loadAudioFromUrl(item, callback);
             }
             else if (item.type === AssetType.SPRITE) {
                 this.loadSprite(item, callback);
@@ -527,6 +538,42 @@ exports.Sound = Sound;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
+class Ajax {
+    static create(opts, callback) {
+        let xHttp = new XMLHttpRequest();
+        xHttp.addEventListener('load', () => {
+            callback(xHttp.response);
+        });
+        xHttp.open(opts.method ? opts.method : Ajax.defaults.method, opts.url ? opts.url : Ajax.defaults.url, opts.async ? opts.async : Ajax.defaults.async);
+        if (opts.hasOwnProperty('contentType')) {
+            xHttp.setRequestHeader('Content-Type', opts.contentType ? opts.contentType : Ajax.defaults.contentType);
+        }
+        if (opts.hasOwnProperty('responseType')) {
+            xHttp.responseType = opts.responseType;
+        }
+        if (opts.hasOwnProperty('data') && typeof opts.data === 'object') {
+            opts.data = JSON.stringify(opts.data);
+        }
+        xHttp.send(opts.data ? opts.data : null);
+    }
+}
+Ajax.defaults = {
+    url: '',
+    method: 'GET',
+    contentType: 'text/html',
+    async: true,
+    data: null
+};
+exports.Ajax = Ajax;
+
+
+/***/ }),
+/* 8 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
 class Observable {
     constructor() {
         this._observers = [];
@@ -562,7 +609,7 @@ exports.Observable = Observable;
 
 
 /***/ }),
-/* 8 */
+/* 9 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -669,7 +716,7 @@ exports.QuadTree = QuadTree;
 
 
 /***/ }),
-/* 9 */
+/* 10 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -702,7 +749,7 @@ exports.CollisionManager = CollisionManager;
 
 
 /***/ }),
-/* 10 */
+/* 11 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -716,7 +763,7 @@ class Settings {
             's': InputManager_1.Actions.DOWN,
             'a': InputManager_1.Actions.LEFT,
             'd': InputManager_1.Actions.RIGHT,
-            ' ': InputManager_1.Actions.SHOOT,
+            'space': InputManager_1.Actions.SHOOT,
             'r': InputManager_1.Actions.RESTART
         };
         this.player = {
@@ -724,6 +771,11 @@ class Settings {
             fireDelay: 15,
             friction: 0.7,
             acceleration: 3
+        };
+        this.audio = {
+            master: 1,
+            ambient: 1,
+            effects: 1
         };
     }
     findKey(value) {
@@ -742,18 +794,34 @@ exports.Settings = Settings;
 
 
 /***/ }),
-/* 11 */
+/* 12 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+class EventHandler {
+    static registerOnElement(element, events, listener) {
+        events.forEach(event => element.addEventListener(event, listener));
+    }
+}
+exports.EventHandler = EventHandler;
+
+
+/***/ }),
+/* 13 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
 const AssetManager_1 = __webpack_require__(3);
-const Game_1 = __webpack_require__(12);
+const Game_1 = __webpack_require__(14);
 const InputManager_1 = __webpack_require__(2);
-const Settings_1 = __webpack_require__(10);
-const SettingsMenu_1 = __webpack_require__(18);
+const Settings_1 = __webpack_require__(11);
+const SettingsMenu_1 = __webpack_require__(20);
 const CollideAble_1 = __webpack_require__(0);
+const EventHandler_1 = __webpack_require__(12);
 const assetManager = new AssetManager_1.AssetManager();
 const canvases = {
     background: document.getElementById('background'),
@@ -778,30 +846,30 @@ assetManager.downloadAll(() => {
     let gameOver = document.getElementById('game-over');
     let set = document.getElementById('settings');
     let events = ['click', 'touchstart'];
-    events.forEach(event => gameOver.addEventListener(event, () => game.restart()));
-    events.forEach(event => set.addEventListener(event, () => {
+    EventHandler_1.EventHandler.registerOnElement(gameOver, events, () => game.restart());
+    EventHandler_1.EventHandler.registerOnElement(set, events, () => {
         settingsMenu.toggleShow();
         game.togglePause();
-    }));
+    });
 });
 
 
 /***/ }),
-/* 12 */
+/* 14 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-const Background_1 = __webpack_require__(13);
+const Background_1 = __webpack_require__(15);
 const AssetManager_1 = __webpack_require__(3);
 const InputManager_1 = __webpack_require__(2);
-const Ship_1 = __webpack_require__(14);
-const Pool_1 = __webpack_require__(15);
-const QuadTree_1 = __webpack_require__(8);
+const Ship_1 = __webpack_require__(16);
+const Pool_1 = __webpack_require__(17);
+const QuadTree_1 = __webpack_require__(9);
 const HitBox_1 = __webpack_require__(4);
 const CollideAble_1 = __webpack_require__(0);
-const CollisionManager_1 = __webpack_require__(9);
+const CollisionManager_1 = __webpack_require__(10);
 class Game {
     constructor(assetManager, inputManager, settings, canvases) {
         this.playing = false;
@@ -838,14 +906,14 @@ class Game {
     spawnWave() {
         const height = this.assetManager.getSprite(CollideAble_1.EntityType.ENEMY).height;
         const width = this.assetManager.getSprite(CollideAble_1.EntityType.ENEMY).width;
-        let x = 100;
+        let x = 200;
         let y = -height;
         const spacer = y * 1.5;
-        for (let i = 1; i <= 18; i++) {
-            this.enemyPool.get(x, y, 2);
+        for (let i = 1; i <= 21; i++) {
+            this.enemyPool.get(x, y, 4);
             x += width + 25;
-            if (i % 6 === 0) {
-                x = 100;
+            if (i % 7 === 0) {
+                x = 200;
                 y += spacer;
             }
         }
@@ -926,7 +994,7 @@ exports.Game = Game;
 
 
 /***/ }),
-/* 13 */
+/* 15 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -962,7 +1030,7 @@ exports.Background = Background;
 
 
 /***/ }),
-/* 14 */
+/* 16 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -993,7 +1061,7 @@ class Ship {
         this.state = {};
         this.settings = settings;
         this.maxTop = Math.floor(this.canvasHeight / 4 * 3);
-        this.assetManager = assetManager;
+        this.laserSound = assetManager.getSound(CollideAble_1.EntityType.LASER, AssetManager_1.AssetType.AUDIO);
     }
     reset() {
         this.position.setVector(this.startPosition);
@@ -1051,9 +1119,8 @@ class Ship {
         this.state = state;
     }
     fire() {
-        this.pool.getTwo(Math.floor(this.position.x) + 6, Math.floor(this.position.y), 3, Math.floor(this.position.x) + 33, Math.floor(this.position.y), 3);
-        let laser = this.assetManager.getSound(CollideAble_1.EntityType.LASER, AssetManager_1.AssetType.AUDIO);
-        laser.play();
+        this.pool.getTwo(Math.floor(this.position.x) + 12, Math.floor(this.position.y), 6, Math.floor(this.position.x) + 66, Math.floor(this.position.y), 6);
+        this.laserSound.play();
     }
     isCollideAbleWith(other) {
         return this.collidesWith.includes(other.type.toString());
@@ -1063,14 +1130,14 @@ exports.Ship = Ship;
 
 
 /***/ }),
-/* 15 */
+/* 17 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-const Bullet_1 = __webpack_require__(16);
-const Enemy_1 = __webpack_require__(17);
+const Bullet_1 = __webpack_require__(18);
+const Enemy_1 = __webpack_require__(19);
 const CollideAble_1 = __webpack_require__(0);
 class Pool {
     constructor(assetManager, context, canvasWidth, canvasHeight, maxSize, type, pool = null, game = null) {
@@ -1143,7 +1210,7 @@ exports.Pool = Pool;
 
 
 /***/ }),
-/* 16 */
+/* 18 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1208,7 +1275,7 @@ exports.Bullet = Bullet;
 
 
 /***/ }),
-/* 17 */
+/* 19 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1236,6 +1303,7 @@ class Enemy {
         this.colliding = false;
         this.bulletPool = bulletPool;
         this.game = game;
+        this.explosionSound = this.game.assetManager.getSound(CollideAble_1.EntityType.EXPLOSION_I, AssetManager_1.AssetType.AUDIO);
     }
     spawn(x, y, speed) {
         this.position.x = x;
@@ -1244,9 +1312,9 @@ class Enemy {
         this.speedX = 0;
         this.speedY = speed;
         this.alive = true;
-        this.leftEdge = this.position.x - 90;
-        this.rightEdge = this.position.x + 90;
-        this.bottomEdge = this.position.y + 140;
+        this.leftEdge = this.position.x - 180;
+        this.rightEdge = this.position.x + 180;
+        this.bottomEdge = this.position.y + 280;
     }
     draw() {
         this.context.clearRect(this.position.x - 1, this.position.y, this.width + 1, this.height);
@@ -1274,13 +1342,12 @@ class Enemy {
         }
         else {
             this.game.scorePoints();
-            let sound = this.game.assetManager.getSound(CollideAble_1.EntityType.EXPLOSION_I, AssetManager_1.AssetType.AUDIO);
-            sound.play();
+            this.explosionSound.play();
             return true;
         }
     }
     fire() {
-        this.bulletPool.get(Math.floor(this.position.x + this.width / 2), Math.floor(this.position.y + this.height), -2.5);
+        this.bulletPool.get(Math.floor(this.position.x + this.width / 2), Math.floor(this.position.y + this.height), -5);
     }
     clear() {
         this.position.x = 0;
@@ -1299,13 +1366,14 @@ exports.Enemy = Enemy;
 
 
 /***/ }),
-/* 18 */
+/* 20 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
 const InputManager_1 = __webpack_require__(2);
+const EventHandler_1 = __webpack_require__(12);
 class SettingsMenu {
     constructor(element, settings, assetManager) {
         this.element = element;
@@ -1339,7 +1407,7 @@ class SettingsMenu {
         let title = document.createElement('h4');
         let form = document.createElement('form');
         let submit = document.createElement('input');
-        keyboardLink.addEventListener('click', event => this.openTab(event, keyboardMenuId));
+        EventHandler_1.EventHandler.registerOnElement(keyboardLink, ['click', 'touchstart'], event => this.openTab(event, keyboardMenuId));
         keyboardLink.appendChild(document.createTextNode('Keyboard'));
         keyboardLink.classList.add('tabLink');
         this.mainMenu.appendChild(keyboardLink);
@@ -1362,6 +1430,7 @@ class SettingsMenu {
             this.settings.setKey(document.getElementById(InputManager_1.Actions.LEFT).value, InputManager_1.Actions.LEFT);
             this.settings.setKey(document.getElementById(InputManager_1.Actions.RIGHT).value, InputManager_1.Actions.RIGHT);
             this.settings.setKey(document.getElementById(InputManager_1.Actions.SHOOT).value, InputManager_1.Actions.SHOOT);
+            this.settings.setKey(document.getElementById(InputManager_1.Actions.RESTART).value, InputManager_1.Actions.RESTART);
             this.clear();
         });
     }
@@ -1372,7 +1441,7 @@ class SettingsMenu {
         let playerTitle = document.createElement('h4');
         let playerForm = document.createElement('form');
         let playerSubmit = document.createElement('input');
-        playerLink.addEventListener('click', event => this.openTab(event, playerMenuId));
+        EventHandler_1.EventHandler.registerOnElement(playerLink, ['click', 'touchstart'], event => this.openTab(event, playerMenuId));
         playerLink.appendChild(document.createTextNode('Player'));
         playerLink.classList.add('tabLink');
         this.mainMenu.appendChild(playerLink);
@@ -1405,7 +1474,7 @@ class SettingsMenu {
         let audioTitle = document.createElement('h4');
         let audioLabel = document.createElement('label');
         let audioSlide = document.createElement('input');
-        audioLink.addEventListener('click', event => this.openTab(event, audioMenuId));
+        EventHandler_1.EventHandler.registerOnElement(audioLink, ['click', 'touchstart'], event => this.openTab(event, audioMenuId));
         audioLink.classList.add('tabLink');
         audioLink.appendChild(document.createTextNode('Audio'));
         this.mainMenu.appendChild(audioLink);

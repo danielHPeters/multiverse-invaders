@@ -104,14 +104,14 @@ export class Game implements Observer {
   spawnWave (): void {
     const height = this.assetManager.getSprite(EntityType.ENEMY).height
     const width = this.assetManager.getSprite(EntityType.ENEMY).width
-    let x = 100
+    let x = 200
     let y = -height
     const spacer = y * 1.5
-    for (let i = 1; i <= 18; i++) {
-      this.enemyPool.get(x, y, 2)
+    for (let i = 1; i <= 21; i++) {
+      this.enemyPool.get(x, y, 4)
       x += width + 25
-      if (i % 6 === 0) {
-        x = 100
+      if (i % 7 === 0) {
+        x = 200
         y += spacer
       }
     }

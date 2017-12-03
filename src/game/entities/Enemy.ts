@@ -4,6 +4,7 @@ import { Pool } from '../structures/Pool'
 import { CollideAble, EntityType } from '../interfaces/CollideAble'
 import { Game } from '../Game'
 import { AssetType } from '../../client/AssetManager'
+import { Sound } from '../../client/audio/Sound'
 
 /**
  *
@@ -30,6 +31,7 @@ export class Enemy implements Drawable, CollideAble {
   type: EntityType
   colliding: boolean
   game: Game
+  explosionSound: Sound
 
   /**
    *
@@ -64,6 +66,7 @@ export class Enemy implements Drawable, CollideAble {
     this.colliding = false
     this.bulletPool = bulletPool
     this.game = game
+    this.explosionSound = this.game.assetManager.getSound(EntityType.EXPLOSION_I, AssetType.AUDIO)
   }
 
   /**
@@ -79,9 +82,9 @@ export class Enemy implements Drawable, CollideAble {
     this.speedX = 0
     this.speedY = speed
     this.alive = true
-    this.leftEdge = this.position.x - 90
-    this.rightEdge = this.position.x + 90
-    this.bottomEdge = this.position.y + 140
+    this.leftEdge = this.position.x - 180
+    this.rightEdge = this.position.x + 180
+    this.bottomEdge = this.position.y + 280
   }
 
   /**
@@ -111,8 +114,7 @@ export class Enemy implements Drawable, CollideAble {
       return false
     } else {
       this.game.scorePoints()
-      let sound = this.game.assetManager.getSound(EntityType.EXPLOSION_I, AssetType.AUDIO)
-      sound.play()
+      this.explosionSound.play()
       return true
     }
   }
@@ -121,7 +123,7 @@ export class Enemy implements Drawable, CollideAble {
    *
    */
   fire (): void {
-    this.bulletPool.get(Math.floor(this.position.x + this.width / 2), Math.floor(this.position.y + this.height), -2.5)
+    this.bulletPool.get(Math.floor(this.position.x + this.width / 2), Math.floor(this.position.y + this.height), -5)
   }
 
   /**

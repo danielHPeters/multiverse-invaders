@@ -10,6 +10,7 @@ export enum Actions {
  */
 export class InputManager extends Observable {
   inputMap
+  touches
 
   /**
    *
@@ -19,6 +20,10 @@ export class InputManager extends Observable {
     this.inputMap = settings.keyBoard
     this.init()
     this.initializeTouchHandler()
+    this.touches = {
+      start: [],
+      move: []
+    }
   }
 
   /**
@@ -26,11 +31,13 @@ export class InputManager extends Observable {
    */
   init (): void {
     window.addEventListener('keydown', event => {
-      this.state[this.inputMap[event.key]] = true
+      let key = event.key !== ' ' ? event.key : 'space'
+      this.state[this.inputMap[key]] = true
       this.notify()
     })
     window.addEventListener('keyup', event => {
-      this.state[this.inputMap[event.key]] = false
+      let key = event.key !== ' ' ? event.key : 'space'
+      this.state[this.inputMap[key]] = false
       this.notify()
     })
   }
@@ -45,50 +52,46 @@ export class InputManager extends Observable {
     window.addEventListener('touchmove', handleTouchMove, false)
     window.addEventListener('touchend', handleTouchEnd, false)
 
-    let xDown = null
-    let yDown = null
+    let start = []
+    let move = []
+    let touchstartX = 0
+    let touchstartY = 0
+    let toucheMoveX = 0
+    let touchMoveY = 0
     let thisInstance = this
 
     function handleTouchStart (evt): void {
-      // Prevent divide scrolling
       evt.preventDefault()
-      xDown = evt.touches[0].clientX
-      yDown = evt.touches[0].clientY
+      start = evt.touches
+      touchstartX = evt.touches[0].pageX
+      touchstartY = evt.touches[0].pageY
     }
 
     function handleTouchMove (evt): void {
-      // Prevent divide scrolling
+      thisInstance.reset()
       evt.preventDefault()
-      // do nothing if no touch direction is registered
-      if (!xDown || !yDown) {
-        return
+      move = evt.changedTouches
+      toucheMoveX = evt.touches[0].pageX
+      touchMoveY = evt.touches[0].pageY
+      for (let i = 0; i < evt.touches.length; i++) {
+        // Positive values equals left. Negative values equals right
+        if (move[i].pageX < start[i].pageX) {
+          thisInstance.state[thisInstance.inputMap['a']] = true
+        }
+        if (move[i].pageX > start[i].pageX) {
+          thisInstance.state[thisInstance.inputMap['d']] = true
+        }
+        if (move[i].pageY < start[i].pageY) {
+          thisInstance.state[thisInstance.inputMap['w']] = true
+        }
+        if (move[i].pageY > start[i].pageY) {
+          thisInstance.state[thisInstance.inputMap['s']] = true
+        }
+        thisInstance.notify()
       }
-
-      let xUp = evt.touches[0].clientX
-      let yUp = evt.touches[0].clientY
-
-      // Subtract start currently touched location from start location
-      let xDiff = xDown - xUp
-      let yDiff = yDown - yUp
-
-      // Positive values equals left. Negative values equals right
-      if (xDiff > 0) {
-        thisInstance.state[thisInstance.inputMap['a']] = true
-      } else if (xDiff < 0) {
-        thisInstance.state[thisInstance.inputMap['d']] = true
-      } else if (yDiff > 0) {
-        thisInstance.state[thisInstance.inputMap['w']] = true
-      } else if (yDiff < 0) {
-        thisInstance.state[thisInstance.inputMap['s']] = true
-      }
-      thisInstance.notify()
-      /* reset values */
-      xDown = null
-      yDown = null
     }
 
     function handleTouchEnd (evt): void {
-      // Prevent divide scrolling
       evt.preventDefault()
       thisInstance.reset()
     }

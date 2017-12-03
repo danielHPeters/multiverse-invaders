@@ -4,6 +4,7 @@ import { InputManager } from '../client/InputManager'
 import { Settings } from '../client/Settings'
 import { SettingsMenu } from '../client/SettingsMenu'
 import { EntityType } from './interfaces/CollideAble'
+import { EventHandler } from '../lib/event/EventHandler'
 
 const assetManager = new AssetManager()
 const canvases = {
@@ -29,9 +30,9 @@ assetManager.downloadAll(() => {
   let gameOver = document.getElementById('game-over')
   let set = document.getElementById('settings')
   let events = ['click', 'touchstart']
-  events.forEach(event => gameOver.addEventListener(event, () => game.restart()))
-  events.forEach(event => set.addEventListener(event, () => {
+  EventHandler.registerOnElement(gameOver, events, () => game.restart())
+  EventHandler.registerOnElement(set, events, () => {
     settingsMenu.toggleShow()
     game.togglePause()
-  }))
+  })
 })

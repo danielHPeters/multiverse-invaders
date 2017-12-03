@@ -34,7 +34,7 @@ export class Background implements Drawable {
     this.type = EntityType.BACKGROUND
   }
 
-  reset () {
+  reset (): void {
     this.position.set(0, 0)
   }
 

@@ -34,6 +34,7 @@ export class Rpg {
   init (): void {
     this.assetManager.queueDownload(EntityType.MAP, 'assets/tilesets/tileset.png', AssetType.SPRITE)
     this.assetManager.queueDownload(EntityType.PLAYER, 'assets/sprites/player.png', AssetType.SPRITE)
+    this.assetManager.queueDownload(EntityType.BACKGROUND, 'assets/audio/amb_wilderness.mp3', AssetType.AUDIO)
     this.assetManager.downloadAll(() => {
       let ground = [
         [172, 172, 172, 79, 34, 34, 34, 34, 34, 34, 34, 34, 56, 57, 54, 55, 56, 147, 67, 67, 68, 79, 79, 171, 172, 172, 173, 79, 79, 55, 55, 55, 55, 55, 55, 55, 55, 55, 55, 55, 55, 55, 55, 55, 55, 55, 55, 55, 55, 55, 55, 55, 55, 55, 55, 55],
@@ -138,6 +139,8 @@ export class Rpg {
       this.area.map.generate()
       this.inputManager.register(this.player)
       this.camera.follow(this.player, this.canvas.width / 2, this.canvas.height / 2)
+      let ambient = this.assetManager.getSound(EntityType.BACKGROUND, AssetType.AUDIO_LOOP)
+      ambient.play(true)
       this.loop()
     })
   }

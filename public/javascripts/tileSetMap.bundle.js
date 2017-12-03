@@ -60,7 +60,7 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 19);
+/******/ 	return __webpack_require__(__webpack_require__.s = 21);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -203,7 +203,7 @@ exports.Vector2 = Vector2;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-const Observable_1 = __webpack_require__(7);
+const Observable_1 = __webpack_require__(8);
 var Actions;
 (function (Actions) {
     Actions["UP"] = "UP";
@@ -219,14 +219,20 @@ class InputManager extends Observable_1.Observable {
         this.inputMap = settings.keyBoard;
         this.init();
         this.initializeTouchHandler();
+        this.touches = {
+            start: [],
+            move: []
+        };
     }
     init() {
         window.addEventListener('keydown', event => {
-            this.state[this.inputMap[event.key]] = true;
+            let key = event.key !== ' ' ? event.key : 'space';
+            this.state[this.inputMap[key]] = true;
             this.notify();
         });
         window.addEventListener('keyup', event => {
-            this.state[this.inputMap[event.key]] = false;
+            let key = event.key !== ' ' ? event.key : 'space';
+            this.state[this.inputMap[key]] = false;
             this.notify();
         });
     }
@@ -234,38 +240,40 @@ class InputManager extends Observable_1.Observable {
         window.addEventListener('touchstart', handleTouchStart, false);
         window.addEventListener('touchmove', handleTouchMove, false);
         window.addEventListener('touchend', handleTouchEnd, false);
-        let xDown = null;
-        let yDown = null;
+        let start = [];
+        let move = [];
+        let touchstartX = 0;
+        let touchstartY = 0;
+        let toucheMoveX = 0;
+        let touchMoveY = 0;
         let thisInstance = this;
         function handleTouchStart(evt) {
             evt.preventDefault();
-            xDown = evt.touches[0].clientX;
-            yDown = evt.touches[0].clientY;
+            start = evt.touches;
+            touchstartX = evt.touches[0].pageX;
+            touchstartY = evt.touches[0].pageY;
         }
         function handleTouchMove(evt) {
+            thisInstance.reset();
             evt.preventDefault();
-            if (!xDown || !yDown) {
-                return;
+            move = evt.changedTouches;
+            toucheMoveX = evt.touches[0].pageX;
+            touchMoveY = evt.touches[0].pageY;
+            for (let i = 0; i < evt.touches.length; i++) {
+                if (move[i].pageX < start[i].pageX) {
+                    thisInstance.state[thisInstance.inputMap['a']] = true;
+                }
+                if (move[i].pageX > start[i].pageX) {
+                    thisInstance.state[thisInstance.inputMap['d']] = true;
+                }
+                if (move[i].pageY < start[i].pageY) {
+                    thisInstance.state[thisInstance.inputMap['w']] = true;
+                }
+                if (move[i].pageY > start[i].pageY) {
+                    thisInstance.state[thisInstance.inputMap['s']] = true;
+                }
+                thisInstance.notify();
             }
-            let xUp = evt.touches[0].clientX;
-            let yUp = evt.touches[0].clientY;
-            let xDiff = xDown - xUp;
-            let yDiff = yDown - yUp;
-            if (xDiff > 0) {
-                thisInstance.state[thisInstance.inputMap['a']] = true;
-            }
-            else if (xDiff < 0) {
-                thisInstance.state[thisInstance.inputMap['d']] = true;
-            }
-            else if (yDiff > 0) {
-                thisInstance.state[thisInstance.inputMap['w']] = true;
-            }
-            else if (yDiff < 0) {
-                thisInstance.state[thisInstance.inputMap['s']] = true;
-            }
-            thisInstance.notify();
-            xDown = null;
-            yDown = null;
         }
         function handleTouchEnd(evt) {
             evt.preventDefault();
@@ -291,6 +299,7 @@ exports.InputManager = InputManager;
 Object.defineProperty(exports, "__esModule", { value: true });
 const SpriteSheet_1 = __webpack_require__(5);
 const Sound_1 = __webpack_require__(6);
+const Ajax_1 = __webpack_require__(7);
 var AssetType;
 (function (AssetType) {
     AssetType["SPRITE"] = "SPRITE";
@@ -347,21 +356,23 @@ class AssetManager {
             opts: opts
         });
     }
-    loadAudio(item, callback) {
-        let request = new XMLHttpRequest();
-        request.open('GET', item.path, true);
-        request.responseType = 'arraybuffer';
-        request.addEventListener('load', () => {
-            let audioData = request.response;
-            this.audioContext.decodeAudioData(audioData).then(buffer => {
-                this.cache.audio[item.id] = buffer;
-                this.downloadCount += 1;
-                if (this.done()) {
-                    callback();
-                }
-            }, error => { console.log('Error with decoding audio data' + error); });
+    loadAudioFromUrl(item, callback) {
+        Ajax_1.Ajax.create({
+            method: 'GET',
+            url: item.path,
+            responseType: 'arraybuffer'
+        }, response => {
+            this.decodeAudio(response, item.id, callback);
         });
-        request.send();
+    }
+    decodeAudio(data, id, callback) {
+        this.audioContext.decodeAudioData(data).then(buffer => {
+            this.cache.audio[id] = buffer;
+            this.downloadCount += 1;
+            if (this.done()) {
+                callback();
+            }
+        }, error => { console.log('Error with decoding audio data' + error); });
     }
     loadSprite(item, callback) {
         let sprite = new Image();
@@ -388,7 +399,7 @@ class AssetManager {
     downloadAll(callback) {
         this.queue.forEach(item => {
             if (item.type === AssetType.AUDIO) {
-                this.loadAudio(item, callback);
+                this.loadAudioFromUrl(item, callback);
             }
             else if (item.type === AssetType.SPRITE) {
                 this.loadSprite(item, callback);
@@ -527,6 +538,42 @@ exports.Sound = Sound;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
+class Ajax {
+    static create(opts, callback) {
+        let xHttp = new XMLHttpRequest();
+        xHttp.addEventListener('load', () => {
+            callback(xHttp.response);
+        });
+        xHttp.open(opts.method ? opts.method : Ajax.defaults.method, opts.url ? opts.url : Ajax.defaults.url, opts.async ? opts.async : Ajax.defaults.async);
+        if (opts.hasOwnProperty('contentType')) {
+            xHttp.setRequestHeader('Content-Type', opts.contentType ? opts.contentType : Ajax.defaults.contentType);
+        }
+        if (opts.hasOwnProperty('responseType')) {
+            xHttp.responseType = opts.responseType;
+        }
+        if (opts.hasOwnProperty('data') && typeof opts.data === 'object') {
+            opts.data = JSON.stringify(opts.data);
+        }
+        xHttp.send(opts.data ? opts.data : null);
+    }
+}
+Ajax.defaults = {
+    url: '',
+    method: 'GET',
+    contentType: 'text/html',
+    async: true,
+    data: null
+};
+exports.Ajax = Ajax;
+
+
+/***/ }),
+/* 8 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
 class Observable {
     constructor() {
         this._observers = [];
@@ -562,7 +609,7 @@ exports.Observable = Observable;
 
 
 /***/ }),
-/* 8 */
+/* 9 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -669,7 +716,7 @@ exports.QuadTree = QuadTree;
 
 
 /***/ }),
-/* 9 */
+/* 10 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -702,7 +749,7 @@ exports.CollisionManager = CollisionManager;
 
 
 /***/ }),
-/* 10 */
+/* 11 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -716,7 +763,7 @@ class Settings {
             's': InputManager_1.Actions.DOWN,
             'a': InputManager_1.Actions.LEFT,
             'd': InputManager_1.Actions.RIGHT,
-            ' ': InputManager_1.Actions.SHOOT,
+            'space': InputManager_1.Actions.SHOOT,
             'r': InputManager_1.Actions.RESTART
         };
         this.player = {
@@ -724,6 +771,11 @@ class Settings {
             fireDelay: 15,
             friction: 0.7,
             acceleration: 3
+        };
+        this.audio = {
+            master: 1,
+            ambient: 1,
+            effects: 1
         };
     }
     findKey(value) {
@@ -742,7 +794,6 @@ exports.Settings = Settings;
 
 
 /***/ }),
-/* 11 */,
 /* 12 */,
 /* 13 */,
 /* 14 */,
@@ -750,32 +801,34 @@ exports.Settings = Settings;
 /* 16 */,
 /* 17 */,
 /* 18 */,
-/* 19 */
+/* 19 */,
+/* 20 */,
+/* 21 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-const Rpg_1 = __webpack_require__(20);
+const Rpg_1 = __webpack_require__(22);
 document.addEventListener('DOMContentLoaded', () => new Rpg_1.Rpg());
 
 
 /***/ }),
-/* 20 */
+/* 22 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-const QuadTree_1 = __webpack_require__(8);
-const Entity_1 = __webpack_require__(21);
-const CollisionManager_1 = __webpack_require__(9);
-const Area_1 = __webpack_require__(22);
-const Camera_1 = __webpack_require__(23);
+const QuadTree_1 = __webpack_require__(9);
+const Entity_1 = __webpack_require__(23);
+const CollisionManager_1 = __webpack_require__(10);
+const Area_1 = __webpack_require__(24);
+const Camera_1 = __webpack_require__(25);
 const InputManager_1 = __webpack_require__(2);
-const Settings_1 = __webpack_require__(10);
+const Settings_1 = __webpack_require__(11);
 const AssetManager_1 = __webpack_require__(3);
-const TileSetMap_1 = __webpack_require__(25);
+const TileSetMap_1 = __webpack_require__(27);
 const CollideAble_1 = __webpack_require__(0);
 const HitBox_1 = __webpack_require__(4);
 class Rpg {
@@ -790,6 +843,7 @@ class Rpg {
     init() {
         this.assetManager.queueDownload(CollideAble_1.EntityType.MAP, 'assets/tilesets/tileset.png', AssetManager_1.AssetType.SPRITE);
         this.assetManager.queueDownload(CollideAble_1.EntityType.PLAYER, 'assets/sprites/player.png', AssetManager_1.AssetType.SPRITE);
+        this.assetManager.queueDownload(CollideAble_1.EntityType.BACKGROUND, 'assets/audio/amb_wilderness.mp3', AssetManager_1.AssetType.AUDIO);
         this.assetManager.downloadAll(() => {
             let ground = [
                 [172, 172, 172, 79, 34, 34, 34, 34, 34, 34, 34, 34, 56, 57, 54, 55, 56, 147, 67, 67, 68, 79, 79, 171, 172, 172, 173, 79, 79, 55, 55, 55, 55, 55, 55, 55, 55, 55, 55, 55, 55, 55, 55, 55, 55, 55, 55, 55, 55, 55, 55, 55, 55, 55, 55, 55],
@@ -881,6 +935,8 @@ class Rpg {
             this.area.map.generate();
             this.inputManager.register(this.player);
             this.camera.follow(this.player, this.canvas.width / 2, this.canvas.height / 2);
+            let ambient = this.assetManager.getSound(CollideAble_1.EntityType.BACKGROUND, AssetManager_1.AssetType.AUDIO_LOOP);
+            ambient.play(true);
             this.loop();
         });
     }
@@ -906,7 +962,7 @@ exports.Rpg = Rpg;
 
 
 /***/ }),
-/* 21 */
+/* 23 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -989,7 +1045,7 @@ exports.Entity = Entity;
 
 
 /***/ }),
-/* 22 */
+/* 24 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1004,14 +1060,14 @@ exports.Area = Area;
 
 
 /***/ }),
-/* 23 */
+/* 25 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
 const Vector2_1 = __webpack_require__(1);
-const Rectangle_1 = __webpack_require__(24);
+const Rectangle_1 = __webpack_require__(26);
 var AXIS;
 (function (AXIS) {
     AXIS["NONE"] = "none";
@@ -1076,7 +1132,7 @@ exports.Camera = Camera;
 
 
 /***/ }),
-/* 24 */
+/* 26 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1116,7 +1172,7 @@ exports.Rectangle = Rectangle;
 
 
 /***/ }),
-/* 25 */
+/* 27 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";

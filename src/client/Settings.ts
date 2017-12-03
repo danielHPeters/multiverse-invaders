@@ -3,6 +3,7 @@ import { Actions } from './InputManager'
 export class Settings {
   keyBoard
   player
+  audio
 
   constructor () {
     this.keyBoard = {
@@ -10,7 +11,7 @@ export class Settings {
       's': Actions.DOWN,
       'a': Actions.LEFT,
       'd': Actions.RIGHT,
-      ' ': Actions.SHOOT,
+      'space': Actions.SHOOT,
       'r': Actions.RESTART
     }
     this.player = {
@@ -18,6 +19,11 @@ export class Settings {
       fireDelay: 15,
       friction: 0.7,
       acceleration: 3
+    }
+    this.audio = {
+      master: 1,
+      ambient: 1,
+      effects: 1
     }
   }
 

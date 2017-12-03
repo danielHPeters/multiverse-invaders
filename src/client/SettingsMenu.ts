@@ -1,6 +1,7 @@
 import { Settings } from './Settings'
 import { Actions } from './InputManager'
 import { AssetManager } from './AssetManager'
+import { EventHandler } from '../lib/event/EventHandler'
 
 export class SettingsMenu {
   element: HTMLDivElement
@@ -44,7 +45,11 @@ export class SettingsMenu {
     let title = document.createElement('h4')
     let form = document.createElement('form')
     let submit = document.createElement('input')
-    keyboardLink.addEventListener('click', event => this.openTab(event, keyboardMenuId))
+    EventHandler.registerOnElement(
+      keyboardLink,
+      ['click', 'touchstart'],
+      event => this.openTab(event, keyboardMenuId)
+    )
     keyboardLink.appendChild(document.createTextNode('Keyboard'))
     keyboardLink.classList.add('tabLink')
     this.mainMenu.appendChild(keyboardLink)
@@ -67,6 +72,7 @@ export class SettingsMenu {
       this.settings.setKey((document.getElementById(Actions.LEFT) as HTMLInputElement).value, Actions.LEFT)
       this.settings.setKey((document.getElementById(Actions.RIGHT) as HTMLInputElement).value, Actions.RIGHT)
       this.settings.setKey((document.getElementById(Actions.SHOOT) as HTMLInputElement).value, Actions.SHOOT)
+      this.settings.setKey((document.getElementById(Actions.RESTART) as HTMLInputElement).value, Actions.RESTART)
       this.clear()
     })
   }
@@ -78,7 +84,11 @@ export class SettingsMenu {
     let playerTitle = document.createElement('h4')
     let playerForm = document.createElement('form')
     let playerSubmit = document.createElement('input')
-    playerLink.addEventListener('click', event => this.openTab(event, playerMenuId))
+    EventHandler.registerOnElement(
+      playerLink,
+      ['click', 'touchstart'],
+      event => this.openTab(event, playerMenuId)
+    )
     playerLink.appendChild(document.createTextNode('Player'))
     playerLink.classList.add('tabLink')
     this.mainMenu.appendChild(playerLink)
@@ -112,7 +122,11 @@ export class SettingsMenu {
     let audioTitle = document.createElement('h4')
     let audioLabel = document.createElement('label')
     let audioSlide = document.createElement('input')
-    audioLink.addEventListener('click', event => this.openTab(event, audioMenuId))
+    EventHandler.registerOnElement(
+      audioLink,
+      ['click', 'touchstart'],
+      event => this.openTab(event, audioMenuId)
+    )
     audioLink.classList.add('tabLink')
     audioLink.appendChild(document.createTextNode('Audio'))
     this.mainMenu.appendChild(audioLink)

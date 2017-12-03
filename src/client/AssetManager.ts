@@ -1,6 +1,7 @@
 import { EntityType } from '../game/interfaces/CollideAble'
 import { SpriteSheet } from './graphics/2D/SpriteSheet'
 import { Sound } from './audio/Sound'
+import { Ajax } from '../lib/ajax/Ajax'
 
 export enum AssetType {
   SPRITE = 'SPRITE', SPRITE_SHEET = 'SPRITE_SHEET', AUDIO = 'AUDIO', AUDIO_LOOP = 'LOOP'
@@ -85,32 +86,32 @@ export class AssetManager {
   }
 
   /**
-   * Build an AJAX Request to loadAudio audio file into the buffer cache.
+   * Build an AJAX Request to loadAudioFromUrl audio file into the buffer cache.
    *
    * @param item object with name of file and path to file
    * @param callback function to execute on done
    */
-  loadAudio (item, callback): void {
-    let request = new XMLHttpRequest()
-
-    request.open('GET', item.path, true)
-    request.responseType = 'arraybuffer'
-
-    // Decode asynchronously
-    request.addEventListener('load', () => {
-      let audioData = request.response
-      this.audioContext.decodeAudioData(audioData).then(
-        buffer => {
-          this.cache.audio[item.id] = buffer
-          this.downloadCount += 1
-          if (this.done()) {
-            callback()
-          }
-        },
-        error => { console.log('Error with decoding audio data' + error) }
-      )
+  loadAudioFromUrl (item, callback): void {
+    Ajax.create({
+      method: 'GET',
+      url: item.path,
+      responseType: 'arraybuffer'
+    }, response => {
+      this.decodeAudio(response, item.id, callback)
     })
-    request.send()
+  }
+
+  decodeAudio (data, id, callback): void {
+    this.audioContext.decodeAudioData(data).then(
+      buffer => {
+        this.cache.audio[id] = buffer
+        this.downloadCount += 1
+        if (this.done()) {
+          callback()
+        }
+      },
+      error => { console.log('Error with decoding audio data' + error) }
+    )
   }
 
   /**
@@ -155,7 +156,7 @@ export class AssetManager {
   downloadAll (callback): void {
     this.queue.forEach(item => {
       if (item.type === AssetType.AUDIO) {
-        this.loadAudio(item, callback)
+        this.loadAudioFromUrl(item, callback)
       } else if (item.type === AssetType.SPRITE) {
         this.loadSprite(item, callback)
       } else if (item.type === AssetType.SPRITE_SHEET) {

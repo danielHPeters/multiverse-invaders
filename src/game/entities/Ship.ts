@@ -5,6 +5,7 @@ import { Observer } from '../../lib/observer/Observer'
 import { CollideAble, EntityType } from '../interfaces/CollideAble'
 import { Actions } from '../../client/InputManager'
 import { AssetManager, AssetType } from '../../client/AssetManager'
+import { Sound } from '../../client/audio/Sound'
 
 /**
  *
@@ -29,7 +30,7 @@ export class Ship implements Drawable, Observer, CollideAble {
   maxTop: number
   startPosition
   settings
-  assetManager: AssetManager
+  laserSound: Sound
 
   /**
    *
@@ -64,7 +65,7 @@ export class Ship implements Drawable, Observer, CollideAble {
     this.state = {}
     this.settings = settings
     this.maxTop = Math.floor(this.canvasHeight / 4 * 3)
-    this.assetManager = assetManager
+    this.laserSound = assetManager.getSound(EntityType.LASER, AssetType.AUDIO)
   }
 
   reset (): void {
@@ -135,11 +136,10 @@ export class Ship implements Drawable, Observer, CollideAble {
 
   fire (): void {
     this.pool.getTwo(
-      Math.floor(this.position.x) + 6, Math.floor(this.position.y), 3,
-      Math.floor(this.position.x) + 33, Math.floor(this.position.y), 3
+      Math.floor(this.position.x) + 12, Math.floor(this.position.y), 6,
+      Math.floor(this.position.x) + 66, Math.floor(this.position.y), 6
     )
-    let laser = this.assetManager.getSound(EntityType.LASER, AssetType.AUDIO)
-    laser.play()
+    this.laserSound.play()
   }
 
   /**

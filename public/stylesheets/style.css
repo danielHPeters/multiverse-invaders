@@ -1,15 +1,14 @@
 body {
   padding: 50px;
-  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif; }
+  font: 28px "Lucida Grande", Helvetica, Arial, sans-serif; }
 
 a {
   color: #00B7FF; }
 
 .center {
   margin: auto;
-  width: 600px;
-  height: 360px;
-  border: 3px solid green;
+  width: 1200px;
+  height: 720px;
   padding: 10px; }
   .center iframe {
     width: 100%;
@@ -41,34 +40,40 @@ canvas {
 .score {
   position: absolute;
   top: 5px;
-  left: 480px;
+  left: 960px;
   color: #FF7F00;
   font-family: Helvetica, sans-serif; }
   .score span {
     cursor: default; }
 
 #settings-menu {
-  width: 300px;
+  width: 600px;
   padding: 10px;
   position: absolute;
   background-color: #FF7F00;
   color: #fff;
-  display: none; }
+  display: none;
+  z-index: 10; }
+
+label {
+  display: inline-block;
+  width: 230px; }
 
 #game-over {
   position: absolute;
-  top: 100px;
-  left: 210px;
+  top: 200px;
+  left: 420px;
+  width: 400px;
   color: #FF7F00;
   font-family: Helvetica, sans-serif;
-  font-size: 30px;
+  font-size: 60px;
   cursor: default;
   display: none; }
   #game-over span {
-    font-size: 20px;
+    font-size: 40px;
     cursor: pointer;
     position: relative;
-    left: 50px; }
+    left: 100px; }
   #game-over span:hover {
     color: #FFD700; }
 
@@ -99,6 +104,7 @@ div.tab button.active {
 
 /* Style the tab content */
 .tabContent {
+  height: 350px;
   display: none;
   padding: 6px 12px;
   -webkit-animation: fadeEffect 1s;
