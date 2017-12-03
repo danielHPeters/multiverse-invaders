@@ -48,9 +48,15 @@ export class InputManager extends Observable {
    */
   initializeTouchHandler (): void {
     // Register the event listeners
-    window.addEventListener('touchstart', handleTouchStart, false)
-    window.addEventListener('touchmove', handleTouchMove, false)
-    window.addEventListener('touchend', handleTouchEnd, false)
+    let button = document.getElementById('move')
+    let el = button ? button : window
+    el.addEventListener('touchstart', handleTouchStart, false)
+    el.addEventListener('touchmove', handleTouchMove, false)
+    el.addEventListener('touchend', handleTouchEnd, false)
+    el.addEventListener('contextmenu', event => {
+      event.preventDefault()
+      return false
+    })
 
     let start = []
     let move = []
@@ -97,10 +103,18 @@ export class InputManager extends Observable {
     }
   }
 
+  shoot (): void {
+    this.state[this.inputMap['space']] = true
+  }
+
+  cancelShoot (): void {
+    this.state[this.inputMap['space']] = false
+  }
+
   reset (): void {
-    Object.keys(this.state).forEach(key => {
-      this.state[key] = false
-      this.notify()
-    })
+    this.state[this.inputMap['w']] = false
+    this.state[this.inputMap['a']] = false
+    this.state[this.inputMap['s']] = false
+    this.state[this.inputMap['d']] = false
   }
 }

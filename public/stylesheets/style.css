@@ -46,6 +46,16 @@ canvas {
   .score span {
     cursor: default; }
 
+.shoot-button {
+  position: absolute;
+  left: 1100px;
+  top: 620px; }
+
+.move-button {
+  position: absolute;
+  left: 60px;
+  top: 620px; }
+
 #settings-menu {
   width: 600px;
   padding: 10px;

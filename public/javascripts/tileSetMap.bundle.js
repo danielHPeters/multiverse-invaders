@@ -237,9 +237,15 @@ class InputManager extends Observable_1.Observable {
         });
     }
     initializeTouchHandler() {
-        window.addEventListener('touchstart', handleTouchStart, false);
-        window.addEventListener('touchmove', handleTouchMove, false);
-        window.addEventListener('touchend', handleTouchEnd, false);
+        let button = document.getElementById('move');
+        let el = button ? button : window;
+        el.addEventListener('touchstart', handleTouchStart, false);
+        el.addEventListener('touchmove', handleTouchMove, false);
+        el.addEventListener('touchend', handleTouchEnd, false);
+        el.addEventListener('contextmenu', event => {
+            event.preventDefault();
+            return false;
+        });
         let start = [];
         let move = [];
         let touchstartX = 0;
@@ -280,11 +286,17 @@ class InputManager extends Observable_1.Observable {
             thisInstance.reset();
         }
     }
+    shoot() {
+        this.state[this.inputMap['space']] = true;
+    }
+    cancelShoot() {
+        this.state[this.inputMap['space']] = false;
+    }
     reset() {
-        Object.keys(this.state).forEach(key => {
-            this.state[key] = false;
-            this.notify();
-        });
+        this.state[this.inputMap['w']] = false;
+        this.state[this.inputMap['a']] = false;
+        this.state[this.inputMap['s']] = false;
+        this.state[this.inputMap['d']] = false;
     }
 }
 exports.InputManager = InputManager;

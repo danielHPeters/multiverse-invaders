@@ -29,7 +29,14 @@ assetManager.downloadAll(() => {
   settingsMenu.init()
   let gameOver = document.getElementById('game-over')
   let set = document.getElementById('settings')
+  let shoot = document.getElementById('shoot')
   let events = ['click', 'touchstart']
+  shoot.addEventListener('touchstart', () => inputManager.shoot())
+  shoot.addEventListener('touchend', () => inputManager.cancelShoot())
+  shoot.addEventListener('contextmenu', event => {
+    event.preventDefault()
+    return false
+  })
   EventHandler.registerOnElement(gameOver, events, () => game.restart())
   EventHandler.registerOnElement(set, events, () => {
     settingsMenu.toggleShow()

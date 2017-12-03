@@ -3,7 +3,7 @@ const router = express.Router()
 
 /* GET home page. */
 router.get('/', (req, res, next) => {
-  res.render('map', {title: 'RectMap test'})
+  res.render('map', {title: 'RPG'})
 })
 
 module.exports = router
