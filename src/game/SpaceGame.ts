@@ -14,7 +14,7 @@ import { Observer } from '../lib/observer/Observer'
 /**
  *
  */
-export class Game implements Observer {
+export class SpaceGame implements Observer {
   background: Background
   ship: Ship
   enemyPool: Pool

@@ -1,7 +1,7 @@
 import { AssetManager } from '../../client/AssetManager'
 import { Bullet } from '../entities/Bullet'
 import { Enemy } from '../entities/Enemy'
-import { Game } from '../Game'
+import { SpaceGame } from '../SpaceGame'
 import { EntityType } from '../interfaces/CollideAble'
 import { Drawable } from '../interfaces/Drawable'
 
@@ -17,7 +17,7 @@ export class Pool {
   type: EntityType
   pool: any[]
   subPool: Pool
-  game: Game
+  game: SpaceGame
 
   /**
    *
@@ -28,9 +28,9 @@ export class Pool {
    * @param {number} maxSize
    * @param {string} type
    * @param {Pool} pool
-   * @param {Game} game
+   * @param {SpaceGame} game
    */
-  constructor (assetManager: AssetManager, context: any, canvasWidth: number, canvasHeight: number, maxSize: number, type: EntityType, pool: Pool = null, game: Game = null) {
+  constructor (assetManager: AssetManager, context: any, canvasWidth: number, canvasHeight: number, maxSize: number, type: EntityType, pool: Pool = null, game: SpaceGame = null) {
     this.assetManager = assetManager
     this.context = context
     this.canvasWidth = canvasWidth

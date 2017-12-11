@@ -828,7 +828,7 @@ exports.EventHandler = EventHandler;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 const AssetManager_1 = __webpack_require__(3);
-const Game_1 = __webpack_require__(14);
+const SpaceGame_1 = __webpack_require__(14);
 const InputManager_1 = __webpack_require__(2);
 const Settings_1 = __webpack_require__(11);
 const SettingsMenu_1 = __webpack_require__(20);
@@ -853,7 +853,7 @@ assetManager.queueDownload(CollideAble_1.EntityType.LASER, 'assets/audio/laser.w
 assetManager.queueDownload(CollideAble_1.EntityType.EXPLOSION_I, 'assets/audio/explosion.wav', AssetManager_1.AssetType.AUDIO);
 assetManager.queueDownload(CollideAble_1.EntityType.GAME_OVER, 'assets/audio/game_over.wav', AssetManager_1.AssetType.AUDIO);
 assetManager.downloadAll(() => {
-    const game = new Game_1.Game(assetManager, inputManager, settings, canvases);
+    const game = new SpaceGame_1.SpaceGame(assetManager, inputManager, settings, canvases);
     settingsMenu.init();
     let gameOver = document.getElementById('game-over');
     let set = document.getElementById('settings');
@@ -889,7 +889,7 @@ const QuadTree_1 = __webpack_require__(9);
 const HitBox_1 = __webpack_require__(4);
 const CollideAble_1 = __webpack_require__(0);
 const CollisionManager_1 = __webpack_require__(10);
-class Game {
+class SpaceGame {
     constructor(assetManager, inputManager, settings, canvases) {
         this.playing = false;
         this.paused = false;
@@ -1009,7 +1009,7 @@ class Game {
         this.start();
     }
 }
-exports.Game = Game;
+exports.SpaceGame = SpaceGame;
 
 
 /***/ }),
