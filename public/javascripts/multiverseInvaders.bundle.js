@@ -1461,12 +1461,12 @@ class SettingsMenu {
         let playerForm = document.createElement('form');
         let playerSubmit = document.createElement('input');
         EventHandler_1.EventHandler.registerOnElement(playerLink, ['click', 'touchstart'], event => this.openTab(event, playerMenuId));
-        playerLink.appendChild(document.createTextNode('Player'));
+        playerLink.appendChild(document.createTextNode('Snake'));
         playerLink.classList.add('tabLink');
         this.mainMenu.appendChild(playerLink);
         playerDiv.setAttribute('id', playerMenuId);
         playerDiv.classList.add('tabContent');
-        playerTitle.appendChild(document.createTextNode('Player Settings'));
+        playerTitle.appendChild(document.createTextNode('Snake Settings'));
         playerForm.setAttribute('id', 'playerSettings');
         playerForm.setAttribute('method', 'post');
         playerSubmit.setAttribute('type', 'submit');

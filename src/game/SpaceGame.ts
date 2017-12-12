@@ -10,6 +10,7 @@ import { EntityType } from './interfaces/CollideAble'
 import { CollisionManager } from '../lib/collision/CollisionManager'
 import { Sound } from '../client/audio/Sound'
 import { Observer } from '../lib/observer/Observer'
+import { IGame } from '../lib/interfaces/IGame'
 
 /**
  *
