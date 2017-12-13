@@ -2,7 +2,7 @@ import { Drawable } from '../interfaces/Drawable'
 import { Vector2 } from '../../lib/vector/Vector2'
 import { Pool } from '../structures/Pool'
 import { CollideAble, EntityType } from '../interfaces/CollideAble'
-import { Game } from '../Game'
+import { SpaceGame } from '../SpaceGame'
 import { AssetType } from '../../client/AssetManager'
 import { Sound } from '../../client/audio/Sound'
 
@@ -30,7 +30,7 @@ export class Enemy implements Drawable, CollideAble {
   collidesWith
   type: EntityType
   colliding: boolean
-  game: Game
+  game: SpaceGame
   explosionSound: Sound
 
   /**
@@ -46,9 +46,9 @@ export class Enemy implements Drawable, CollideAble {
    * @param {any} sprite
    * @param {string} type
    * @param {Pool} bulletPool
-   * @param {Game} game
+   * @param {SpaceGame} game
    */
-  constructor (x: number, y: number, width: number, height: number, canvasWidth: number, canvasHeight: number, speed: number, context, sprite, type: EntityType, bulletPool: Pool, game: Game) {
+  constructor (x: number, y: number, width: number, height: number, canvasWidth: number, canvasHeight: number, speed: number, context, sprite, type: EntityType, bulletPool: Pool, game: SpaceGame) {
     this.position = new Vector2(x, y)
     this.width = width
     this.height = height

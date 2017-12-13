@@ -1,5 +1,5 @@
 import { AssetManager, AssetType } from '../client/AssetManager'
-import { Game } from './Game'
+import { SpaceGame } from './SpaceGame'
 import { InputManager } from '../client/InputManager'
 import { Settings } from '../client/Settings'
 import { SettingsMenu } from '../client/SettingsMenu'
@@ -25,7 +25,7 @@ assetManager.queueDownload(EntityType.LASER, 'assets/audio/laser.wav', AssetType
 assetManager.queueDownload(EntityType.EXPLOSION_I, 'assets/audio/explosion.wav', AssetType.AUDIO)
 assetManager.queueDownload(EntityType.GAME_OVER, 'assets/audio/game_over.wav', AssetType.AUDIO)
 assetManager.downloadAll(() => {
-  const game = new Game(assetManager, inputManager, settings, canvases)
+  const game = new SpaceGame(assetManager, inputManager, settings, canvases)
   settingsMenu.init()
   let gameOver = document.getElementById('game-over')
   let set = document.getElementById('settings')

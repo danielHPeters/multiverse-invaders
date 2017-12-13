@@ -9,9 +9,12 @@ import { AssetManager, AssetType } from '../client/AssetManager'
 import { TileSetMap } from '../lib/tileset/TileSetMap'
 import { EntityType } from './interfaces/CollideAble'
 import { HitBox } from '../lib/collision/HitBox'
+import { IGame } from '../lib/interfaces/IGame'
 
-export class Rpg {
+export class Rpg implements IGame {
+  playing: boolean
   canvas: HTMLCanvasElement
+  context: CanvasRenderingContext2D
   canvasPlayer: HTMLCanvasElement
   assetManager: AssetManager
   inputManager: InputManager
@@ -141,8 +144,16 @@ export class Rpg {
       this.camera.follow(this.player, this.canvas.width / 2, this.canvas.height / 2)
       let ambient = this.assetManager.getSound(EntityType.BACKGROUND, AssetType.AUDIO_LOOP)
       ambient.play(true)
-      this.loop()
+      this.run()
     })
+  }
+
+  start (): void {
+
+  }
+
+  stop (): void {
+
   }
 
   update (): void {
@@ -164,9 +175,9 @@ export class Rpg {
     this.area.map.draw(Math.floor(this.camera.position.x), Math.floor(this.camera.position.y))
   }
 
-  loop (): void {
+  run (): void {
     this.update()
     this.render()
-    window.requestAnimationFrame(() => this.loop())
+    window.requestAnimationFrame(() => this.run())
   }
 }
