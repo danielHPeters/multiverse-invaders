@@ -949,8 +949,12 @@ class Rpg {
             this.camera.follow(this.player, this.canvas.width / 2, this.canvas.height / 2);
             let ambient = this.assetManager.getSound(CollideAble_1.EntityType.BACKGROUND, AssetManager_1.AssetType.AUDIO_LOOP);
             ambient.play(true);
-            this.loop();
+            this.run();
         });
+    }
+    start() {
+    }
+    stop() {
     }
     update() {
         this.quadTree.clear();
@@ -964,10 +968,10 @@ class Rpg {
         this.player.draw(Math.floor(this.camera.position.x), Math.floor(this.camera.position.y), Math.floor(this.camera.previousPosition.x), Math.floor(this.camera.previousPosition.y));
         this.area.map.draw(Math.floor(this.camera.position.x), Math.floor(this.camera.position.y));
     }
-    loop() {
+    run() {
         this.update();
         this.render();
-        window.requestAnimationFrame(() => this.loop());
+        window.requestAnimationFrame(() => this.run());
     }
 }
 exports.Rpg = Rpg;
@@ -1037,6 +1041,8 @@ class Entity {
         }
     }
     draw(xView, yView, prevXView, prevYView) {
+        console.log('prev x' + Math.floor(this.previousPosition.x) + ' y' + Math.floor(this.previousPosition.y));
+        console.log('cur y' + Math.floor(this.position.x) + ' ' + Math.floor(this.position.y));
         this.context.clearRect((Math.floor(this.previousPosition.x) - this.width / 2) - prevXView, (Math.floor(this.previousPosition.y) - this.height / 2) - prevYView, this.width, this.height);
         this.context.drawImage(this.sprite, (Math.floor(this.position.x) - this.width / 2) - xView, (Math.floor(this.position.y) - this.height / 2) - yView, this.width, this.height);
     }
