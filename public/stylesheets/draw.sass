@@ -1,0 +1,42 @@
+$menuHeight: 40px
+
+*
+  margin: 0
+  padding: 0
+
+#menuBar
+  position: absolute
+  top: 0
+  left: 0
+  height: $menuHeight
+  width: 100%
+  background-color: #00B7FF
+  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2)
+.submenu
+  width: 110px
+  min-height: $menuHeight
+  display: inline-block
+  text-align: center
+  cursor: pointer
+  li
+    a
+      display: block
+.submenu:hover
+  background-color: white
+  .submenu-content
+    display: block
+.submenu-content
+  width: 110px
+  position: absolute
+  display: none
+  box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2)
+ul
+  list-style-type: none
+
+.menuEntry
+  height: $menuHeight
+  cursor: pointer
+  background-color: #00B7FF
+  z-index: 3
+#pane
+  top: $menuHeight

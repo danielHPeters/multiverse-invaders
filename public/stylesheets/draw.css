@@ -1,0 +1,47 @@
+* {
+  margin: 0;
+  padding: 0; }
+
+#menuBar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 40px;
+  width: 100%;
+  background-color: #00B7FF;
+  box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2); }
+
+.submenu {
+  width: 110px;
+  min-height: 40px;
+  display: inline-block;
+  text-align: center;
+  cursor: pointer; }
+  .submenu li a {
+    display: block; }
+
+.submenu:hover {
+  height: 400px;
+  background-color: white; }
+  .submenu:hover .submenu-content {
+    display: block; }
+
+.submenu-content {
+  width: 110px;
+  position: absolute;
+  display: none;
+  box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2); }
+
+ul {
+  list-style-type: none; }
+
+.menuEntry {
+  height: 40px;
+  cursor: pointer;
+  background-color: #00B7FF;
+  z-index: 3; }
+
+#pane {
+  top: 40px; }
+
+/*# sourceMappingURL=draw.css.map */

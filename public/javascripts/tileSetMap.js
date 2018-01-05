@@ -70,30 +70,6 @@
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var EntityType;
-(function (EntityType) {
-    EntityType["PLAYER"] = "ship";
-    EntityType["ENEMY"] = "enmey";
-    EntityType["ENEMY_BULLET"] = "bulletEnemy";
-    EntityType["PLAYER_BULLET"] = "bullet";
-    EntityType["BACKGROUND"] = "background";
-    EntityType["MAP"] = "map";
-    EntityType["GAME_OVER"] = "gameOver";
-    EntityType["LASER"] = "laser";
-    EntityType["MAIN_THEME"] = "shockWave";
-    EntityType["EXPLOSION_I"] = "explosion1";
-    EntityType["EXPLOSION_II"] = "explosion2";
-    EntityType["BOX"] = "BOX";
-})(EntityType = exports.EntityType || (exports.EntityType = {}));
-
-
-/***/ }),
-/* 1 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
 class Vector2 {
     constructor(x, y) {
         this.x = x;
@@ -194,6 +170,30 @@ class Vector2 {
     }
 }
 exports.Vector2 = Vector2;
+
+
+/***/ }),
+/* 1 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var EntityType;
+(function (EntityType) {
+    EntityType["PLAYER"] = "ship";
+    EntityType["ENEMY"] = "enmey";
+    EntityType["ENEMY_BULLET"] = "bulletEnemy";
+    EntityType["PLAYER_BULLET"] = "bullet";
+    EntityType["BACKGROUND"] = "background";
+    EntityType["MAP"] = "map";
+    EntityType["GAME_OVER"] = "gameOver";
+    EntityType["LASER"] = "laser";
+    EntityType["MAIN_THEME"] = "shockWave";
+    EntityType["EXPLOSION_I"] = "explosion1";
+    EntityType["EXPLOSION_II"] = "explosion2";
+    EntityType["BOX"] = "BOX";
+})(EntityType = exports.EntityType || (exports.EntityType = {}));
 
 
 /***/ }),
@@ -448,8 +448,8 @@ exports.AssetManager = AssetManager;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-const Vector2_1 = __webpack_require__(1);
-const CollideAble_1 = __webpack_require__(0);
+const Vector2_1 = __webpack_require__(0);
+const CollideAble_1 = __webpack_require__(1);
 class HitBox {
     constructor(x, y, width, height) {
         this.position = new Vector2_1.Vector2(x, y);
@@ -841,7 +841,7 @@ const InputManager_1 = __webpack_require__(2);
 const Settings_1 = __webpack_require__(11);
 const AssetManager_1 = __webpack_require__(3);
 const TileSetMap_1 = __webpack_require__(27);
-const CollideAble_1 = __webpack_require__(0);
+const CollideAble_1 = __webpack_require__(1);
 const HitBox_1 = __webpack_require__(4);
 class Rpg {
     constructor() {
@@ -984,9 +984,9 @@ exports.Rpg = Rpg;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-const Vector2_1 = __webpack_require__(1);
+const Vector2_1 = __webpack_require__(0);
 const InputManager_1 = __webpack_require__(2);
-const CollideAble_1 = __webpack_require__(0);
+const CollideAble_1 = __webpack_require__(1);
 class Entity {
     constructor(x, y, sprite, context) {
         this.position = new Vector2_1.Vector2(x, y);
@@ -1041,8 +1041,6 @@ class Entity {
         }
     }
     draw(xView, yView, prevXView, prevYView) {
-        console.log('prev x' + Math.floor(this.previousPosition.x) + ' y' + Math.floor(this.previousPosition.y));
-        console.log('cur y' + Math.floor(this.position.x) + ' ' + Math.floor(this.position.y));
         this.context.clearRect((Math.floor(this.previousPosition.x) - this.width / 2) - prevXView, (Math.floor(this.previousPosition.y) - this.height / 2) - prevYView, this.width, this.height);
         this.context.drawImage(this.sprite, (Math.floor(this.position.x) - this.width / 2) - xView, (Math.floor(this.position.y) - this.height / 2) - yView, this.width, this.height);
     }
@@ -1084,7 +1082,7 @@ exports.Area = Area;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-const Vector2_1 = __webpack_require__(1);
+const Vector2_1 = __webpack_require__(0);
 const Rectangle_1 = __webpack_require__(26);
 var AXIS;
 (function (AXIS) {
@@ -1243,3 +1241,4 @@ exports.TileSetMap = TileSetMap;
 
 /***/ })
 /******/ ]);
+//# sourceMappingURL=tileSetMap.js.map

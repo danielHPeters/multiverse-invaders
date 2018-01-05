@@ -10,6 +10,7 @@ const index = require('./routes/index')
 const users = require('./routes/users')
 const game = require('./routes/game')
 const map = require('./routes/map')
+const draw = require('./routes/draw')
 const matrix = require('./routes/matrix')
 
 const app = express()
@@ -37,6 +38,7 @@ app.use('/users', users)
 app.use('/game', game)
 app.use('/map', map)
 app.use('/matrix', matrix)
+app.use('/draw', draw)
 
 // catch 404 and forward to error handler
 app.use((req, res, next) => {

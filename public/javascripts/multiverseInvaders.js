@@ -70,30 +70,6 @@
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var EntityType;
-(function (EntityType) {
-    EntityType["PLAYER"] = "ship";
-    EntityType["ENEMY"] = "enmey";
-    EntityType["ENEMY_BULLET"] = "bulletEnemy";
-    EntityType["PLAYER_BULLET"] = "bullet";
-    EntityType["BACKGROUND"] = "background";
-    EntityType["MAP"] = "map";
-    EntityType["GAME_OVER"] = "gameOver";
-    EntityType["LASER"] = "laser";
-    EntityType["MAIN_THEME"] = "shockWave";
-    EntityType["EXPLOSION_I"] = "explosion1";
-    EntityType["EXPLOSION_II"] = "explosion2";
-    EntityType["BOX"] = "BOX";
-})(EntityType = exports.EntityType || (exports.EntityType = {}));
-
-
-/***/ }),
-/* 1 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
 class Vector2 {
     constructor(x, y) {
         this.x = x;
@@ -194,6 +170,30 @@ class Vector2 {
     }
 }
 exports.Vector2 = Vector2;
+
+
+/***/ }),
+/* 1 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var EntityType;
+(function (EntityType) {
+    EntityType["PLAYER"] = "ship";
+    EntityType["ENEMY"] = "enmey";
+    EntityType["ENEMY_BULLET"] = "bulletEnemy";
+    EntityType["PLAYER_BULLET"] = "bullet";
+    EntityType["BACKGROUND"] = "background";
+    EntityType["MAP"] = "map";
+    EntityType["GAME_OVER"] = "gameOver";
+    EntityType["LASER"] = "laser";
+    EntityType["MAIN_THEME"] = "shockWave";
+    EntityType["EXPLOSION_I"] = "explosion1";
+    EntityType["EXPLOSION_II"] = "explosion2";
+    EntityType["BOX"] = "BOX";
+})(EntityType = exports.EntityType || (exports.EntityType = {}));
 
 
 /***/ }),
@@ -448,8 +448,8 @@ exports.AssetManager = AssetManager;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-const Vector2_1 = __webpack_require__(1);
-const CollideAble_1 = __webpack_require__(0);
+const Vector2_1 = __webpack_require__(0);
+const CollideAble_1 = __webpack_require__(1);
 class HitBox {
     constructor(x, y, width, height) {
         this.position = new Vector2_1.Vector2(x, y);
@@ -832,7 +832,7 @@ const SpaceGame_1 = __webpack_require__(14);
 const InputManager_1 = __webpack_require__(2);
 const Settings_1 = __webpack_require__(11);
 const SettingsMenu_1 = __webpack_require__(20);
-const CollideAble_1 = __webpack_require__(0);
+const CollideAble_1 = __webpack_require__(1);
 const EventHandler_1 = __webpack_require__(12);
 const assetManager = new AssetManager_1.AssetManager();
 const canvases = {
@@ -887,7 +887,7 @@ const Ship_1 = __webpack_require__(16);
 const Pool_1 = __webpack_require__(17);
 const QuadTree_1 = __webpack_require__(9);
 const HitBox_1 = __webpack_require__(4);
-const CollideAble_1 = __webpack_require__(0);
+const CollideAble_1 = __webpack_require__(1);
 const CollisionManager_1 = __webpack_require__(10);
 class SpaceGame {
     constructor(assetManager, inputManager, settings, canvases) {
@@ -1019,8 +1019,8 @@ exports.SpaceGame = SpaceGame;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-const Vector2_1 = __webpack_require__(1);
-const CollideAble_1 = __webpack_require__(0);
+const Vector2_1 = __webpack_require__(0);
+const CollideAble_1 = __webpack_require__(1);
 class Background {
     constructor(x, y, width, height, context, sprite) {
         this.position = new Vector2_1.Vector2(x, y);
@@ -1055,8 +1055,8 @@ exports.Background = Background;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-const Vector2_1 = __webpack_require__(1);
-const CollideAble_1 = __webpack_require__(0);
+const Vector2_1 = __webpack_require__(0);
+const CollideAble_1 = __webpack_require__(1);
 const InputManager_1 = __webpack_require__(2);
 const AssetManager_1 = __webpack_require__(3);
 class Ship {
@@ -1157,7 +1157,7 @@ exports.Ship = Ship;
 Object.defineProperty(exports, "__esModule", { value: true });
 const Bullet_1 = __webpack_require__(18);
 const Enemy_1 = __webpack_require__(19);
-const CollideAble_1 = __webpack_require__(0);
+const CollideAble_1 = __webpack_require__(1);
 class Pool {
     constructor(assetManager, context, canvasWidth, canvasHeight, maxSize, type, pool = null, game = null) {
         this.assetManager = assetManager;
@@ -1235,8 +1235,8 @@ exports.Pool = Pool;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-const Vector2_1 = __webpack_require__(1);
-const CollideAble_1 = __webpack_require__(0);
+const Vector2_1 = __webpack_require__(0);
+const CollideAble_1 = __webpack_require__(1);
 class Bullet {
     constructor(x, y, width, height, canvasWidth, canvasHeight, speed, context, sprite, type) {
         this.position = new Vector2_1.Vector2(x, y);
@@ -1300,8 +1300,8 @@ exports.Bullet = Bullet;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-const Vector2_1 = __webpack_require__(1);
-const CollideAble_1 = __webpack_require__(0);
+const Vector2_1 = __webpack_require__(0);
+const CollideAble_1 = __webpack_require__(1);
 const AssetManager_1 = __webpack_require__(3);
 class Enemy {
     constructor(x, y, width, height, canvasWidth, canvasHeight, speed, context, sprite, type, bulletPool, game) {
@@ -1461,12 +1461,12 @@ class SettingsMenu {
         let playerForm = document.createElement('form');
         let playerSubmit = document.createElement('input');
         EventHandler_1.EventHandler.registerOnElement(playerLink, ['click', 'touchstart'], event => this.openTab(event, playerMenuId));
-        playerLink.appendChild(document.createTextNode('Snake'));
+        playerLink.appendChild(document.createTextNode('Player'));
         playerLink.classList.add('tabLink');
         this.mainMenu.appendChild(playerLink);
         playerDiv.setAttribute('id', playerMenuId);
         playerDiv.classList.add('tabContent');
-        playerTitle.appendChild(document.createTextNode('Snake Settings'));
+        playerTitle.appendChild(document.createTextNode('Player Settings'));
         playerForm.setAttribute('id', 'playerSettings');
         playerForm.setAttribute('method', 'post');
         playerSubmit.setAttribute('type', 'submit');
@@ -1603,3 +1603,4 @@ exports.SettingsMenu = SettingsMenu;
 
 /***/ })
 /******/ ]);
+//# sourceMappingURL=multiverseInvaders.js.map
