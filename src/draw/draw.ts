@@ -1,6 +1,6 @@
 import Pane from './gui/Pane'
 import MenuBar from './gui/MenuBar'
-import { Color } from './enum/Color'
+import { Color } from './Line'
 
 document.addEventListener('DOMContentLoaded', () => {
   const canvas = document.getElementById('pane') as HTMLCanvasElement
