@@ -10,7 +10,7 @@ module.exports = {
     'multiverseInvaders.min': './src/game/app.ts',
     'tileSetMap.min': './src/lib/tileset/test.ts',
     'matrix.min': './src/matrix/main.ts',
-    'draw.min': './src/draw/draw.ts',
+    'draw.min': './src/draw/draw.ts'
   },
   devtool: 'source-map',
   output: {

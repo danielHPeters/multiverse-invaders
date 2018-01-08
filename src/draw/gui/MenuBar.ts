@@ -9,7 +9,10 @@ export default class MenuBar {
 
   addMenu (title: string, entries: HTMLElement[] = []): void {
     let submenu = document.createElement('li') as HTMLElement
-    submenu.appendChild(document.createTextNode(title))
+    let menuLink = document.createElement('a')
+    menuLink.setAttribute('href', '#')
+    menuLink.appendChild(document.createTextNode(title))
+    submenu.appendChild(menuLink)
     submenu.classList.add('submenu')
     submenu.setAttribute('id', title.toLowerCase())
     if (entries.length > 0) {

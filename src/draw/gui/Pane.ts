@@ -9,13 +9,14 @@ export default class Pane {
   pen: Pen
   mouse: Mouse
   mousePosition: Vector2
+  settings
 
-  constructor (canvas: HTMLCanvasElement, menuBar: HTMLElement) {
+  constructor (canvas: HTMLCanvasElement, menuBar: HTMLElement, context: CanvasRenderingContext2D) {
     this.menuBar = menuBar
     this.canvas = canvas
     this.canvas.width = window.innerWidth
     this.canvas.height = window.innerHeight - this.menuBar.offsetHeight
-    this.context = canvas.getContext('2d')
+    this.context = context
     this.pen = new Pen(10, 0.5)
     this.mousePosition = new Vector2(0, 0)
     this.mouse = new Mouse(this.menuBar.offsetHeight)

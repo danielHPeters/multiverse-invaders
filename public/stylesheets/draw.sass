@@ -8,21 +8,24 @@ $menuHeight: 40px
   position: absolute
   top: 0
   left: 0
-  height: $menuHeight
   width: 100%
   background-color: #00B7FF
-  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2)
+  box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2)
+  a
+    width: 100%
+    height: $menuHeight
+    display: block
+    text-decoration: none
+    color: white
+  a:hover
+    color: black
+    background-color: white
 .submenu
-  width: 110px
-  min-height: $menuHeight
   display: inline-block
+  width: 110px
   text-align: center
   cursor: pointer
-  li
-    a
-      display: block
 .submenu:hover
-  background-color: white
   .submenu-content
     display: block
 .submenu-content
@@ -30,6 +33,7 @@ $menuHeight: 40px
   position: absolute
   display: none
   box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2)
+  z-index: 1
 ul
   list-style-type: none
 

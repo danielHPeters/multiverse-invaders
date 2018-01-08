@@ -183,16 +183,27 @@ exports.Vector2 = Vector2;
 Object.defineProperty(exports, "__esModule", { value: true });
 const Pane_1 = __webpack_require__(32);
 const MenuBar_1 = __webpack_require__(37);
+const Color_1 = __webpack_require__(38);
 document.addEventListener('DOMContentLoaded', () => {
     const canvas = document.getElementById('pane');
+    const context = canvas.getContext('2d');
     const menuBar = document.getElementById('menuBar');
     const menu = new MenuBar_1.default(menuBar);
     const colors = ['Red', 'Black', 'Blue', 'Yellow'];
+    const settings = { activeColor: '000000' };
     const colorEntries = [];
     colors.forEach(color => {
         const menuEntry = document.createElement('li');
-        menuEntry.appendChild(document.createTextNode(color));
+        const menuLink = document.createElement('a');
+        menuLink.setAttribute('href', '#');
+        menuLink.setAttribute('id', color.toLowerCase());
+        menuLink.appendChild(document.createTextNode(color));
+        menuEntry.appendChild(menuLink);
         menuEntry.classList.add('menuEntry');
+        menuEntry.addEventListener('click', () => {
+            context.strokeStyle = Color_1.Color[color.toUpperCase()].toString();
+            console.log(Color_1.Color[color.toUpperCase()]);
+        });
         colorEntries.push(menuEntry);
     });
     menu.addMenu('File');
@@ -200,7 +211,7 @@ document.addEventListener('DOMContentLoaded', () => {
     menu.addMenu('Color', colorEntries);
     menu.addMenu('Options');
     menu.addMenu('Help');
-    new Pane_1.default(canvas, menuBar).init();
+    new Pane_1.default(canvas, menuBar, context).init();
 });
 
 
@@ -216,12 +227,12 @@ const Pen_1 = __webpack_require__(33);
 const Vector2_1 = __webpack_require__(0);
 const Mouse_1 = __webpack_require__(34);
 class Pane {
-    constructor(canvas, menuBar) {
+    constructor(canvas, menuBar, context) {
         this.menuBar = menuBar;
         this.canvas = canvas;
         this.canvas.width = window.innerWidth;
         this.canvas.height = window.innerHeight - this.menuBar.offsetHeight;
-        this.context = canvas.getContext('2d');
+        this.context = context;
         this.pen = new Pen_1.default(10, 0.5);
         this.mousePosition = new Vector2_1.Vector2(0, 0);
         this.mouse = new Mouse_1.default(this.menuBar.offsetHeight);
@@ -373,7 +384,10 @@ class MenuBar {
     }
     addMenu(title, entries = []) {
         let submenu = document.createElement('li');
-        submenu.appendChild(document.createTextNode(title));
+        let menuLink = document.createElement('a');
+        menuLink.setAttribute('href', '#');
+        menuLink.appendChild(document.createTextNode(title));
+        submenu.appendChild(menuLink);
         submenu.classList.add('submenu');
         submenu.setAttribute('id', title.toLowerCase());
         if (entries.length > 0) {
@@ -398,6 +412,24 @@ class MenuBar {
     }
 }
 exports.default = MenuBar;
+
+
+/***/ }),
+
+/***/ 38:
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var Color;
+(function (Color) {
+    Color["RED"] = "#FF0000";
+    Color["GREEN"] = "#00FF00";
+    Color["BLUE"] = "#0000FF";
+    Color["YELLOW"] = "#FFFF00";
+    Color["BLACK"] = "#000000";
+})(Color = exports.Color || (exports.Color = {}));
 
 
 /***/ })
