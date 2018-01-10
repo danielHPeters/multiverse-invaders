@@ -22,6 +22,7 @@ export default class Triangle implements Shape {
     context.moveTo(this.start.x, this.start.y)
     context.lineTo(this.start.x, this.end.y)
     context.lineTo(this.end.x, this.start.y)
+    context.closePath()
     if (this.fill) {
       context.fill()
     } else {
