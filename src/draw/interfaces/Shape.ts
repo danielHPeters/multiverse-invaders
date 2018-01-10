@@ -1,5 +1,5 @@
-import Point from '../Point'
-import { Color } from '../Line'
+import Point from '../geometry/Point'
+import { Color } from '../geometry/Line'
 
 export default interface Shape {
   start: Point

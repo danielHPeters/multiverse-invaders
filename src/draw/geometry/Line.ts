@@ -1,5 +1,5 @@
 import Point from './Point'
-import Shape from './interfaces/Shape'
+import Shape from '../interfaces/Shape'
 
 export enum Color {
   RED = '#FF0000',

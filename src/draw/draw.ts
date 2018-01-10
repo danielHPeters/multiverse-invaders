@@ -1,7 +1,7 @@
 import Pane from './gui/Pane'
 import MenuBar from './gui/MenuBar'
 import Settings from './config/Settings'
-import { Color } from './Line'
+import { Color } from './geometry/Line'
 import ShapeTool from './tools/ShapeTool'
 
 document.addEventListener('DOMContentLoaded', () => {

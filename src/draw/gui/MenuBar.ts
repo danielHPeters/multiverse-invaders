@@ -1,4 +1,4 @@
-import { Color, VALID_COLOR } from '../Line'
+import { Color, VALID_COLOR } from '../geometry/Line'
 import { ShapeType } from '../factory/ShapeFactory'
 import Tool from '../interfaces/Tool'
 import Settings from '../config/Settings'
@@ -60,7 +60,7 @@ export default class MenuBar {
   }
 
   static createShapesMenu (settings): HTMLElement[] {
-    const tools = ['Line', 'Rectangle', 'Triangle', 'Circle']
+    const tools = ['Line', 'Rectangle', 'Triangle', 'Circle', 'Smiley']
     const toolEntries = []
     tools.forEach(shape => {
       const menuEntry = document.createElement('li') as HTMLElement

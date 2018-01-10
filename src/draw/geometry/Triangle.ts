@@ -1,8 +1,8 @@
-import Point from './Point'
+import Shape from '../interfaces/Shape'
 import { Color } from './Line'
-import Shape from './interfaces/Shape'
+import Point from './Point'
 
-export default class Rectangle implements Shape {
+export default class Triangle implements Shape {
   start: Point
   end: Point
   color: Color
@@ -15,20 +15,18 @@ export default class Rectangle implements Shape {
     this.fill = fill
   }
 
-  /**
-   * Draw this line on the canvas.
-   *
-   * @param {CanvasRenderingContext2D} context drawing context
-   */
   render (context: CanvasRenderingContext2D): void {
     context.beginPath()
-    context.rect(this.start.x, this.start.y, this.end.x - this.start.x, this.end.y - this.start.y)
+    context.strokeStyle = this.color
+    context.fillStyle = this.color
+    context.moveTo(this.start.x, this.start.y)
+    context.lineTo(this.start.x, this.end.y)
+    context.lineTo(this.end.x, this.start.y)
     if (this.fill) {
-      context.fillStyle = this.color
       context.fill()
     } else {
-      context.strokeStyle = this.color
       context.stroke()
     }
   }
+
 }

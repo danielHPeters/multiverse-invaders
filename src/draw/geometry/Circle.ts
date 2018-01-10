@@ -1,4 +1,4 @@
-import Shape from './interfaces/Shape'
+import Shape from '../interfaces/Shape'
 import Point from './Point'
 import { Color } from './Line'
 

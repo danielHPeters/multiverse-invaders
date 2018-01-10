@@ -8,7 +8,6 @@ export default class Pane {
   canvas: HTMLCanvasElement
   context: CanvasRenderingContext2D
   tool: Tool
-  mousePosition: Vector2
   settings
 
   constructor (canvas: HTMLCanvasElement, menuBar: HTMLElement, context: CanvasRenderingContext2D, tool: LineTool) {
@@ -17,7 +16,6 @@ export default class Pane {
     this.canvas.width = window.innerWidth
     this.canvas.height = window.innerHeight - this.menuBar.offsetHeight
     this.context = context
-    this.mousePosition = new Vector2(0, 0)
     this.tool = tool
   }
 

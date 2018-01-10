@@ -1,12 +1,13 @@
 import Shape from '../interfaces/Shape'
-import Line, { Color } from '../Line'
-import Point from '../Point'
-import Rectangle from '../Rectangle'
-import Triangle from '../Triangle'
-import Circle from '../Circle'
+import Line, { Color } from '../geometry/Line'
+import Point from '../geometry/Point'
+import Rectangle from '../geometry/Rectangle'
+import Triangle from '../geometry/Triangle'
+import Circle from '../geometry/Circle'
+import Smiley from '../geometry/Smiley'
 
 export enum ShapeType {
-  LINE, RECTANGLE, TRIANGLE, CIRCLE
+  LINE, RECTANGLE, TRIANGLE, CIRCLE, SMILEY
 }
 
 export default class ShapeFactory {
@@ -24,6 +25,9 @@ export default class ShapeFactory {
         break
       case ShapeType.CIRCLE:
         shape = new Circle(start, end, color, fill)
+        break
+      case ShapeType.SMILEY:
+        shape = new Smiley(start, end, color, fill)
         break
       default:
         throw new Error('Invalid Shape Type!')
