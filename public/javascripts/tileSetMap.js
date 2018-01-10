@@ -60,11 +60,35 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 22);
+/******/ 	return __webpack_require__(__webpack_require__.s = 23);
 /******/ })
 /************************************************************************/
 /******/ ([
 /* 0 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var EntityType;
+(function (EntityType) {
+    EntityType["PLAYER"] = "ship";
+    EntityType["ENEMY"] = "enmey";
+    EntityType["ENEMY_BULLET"] = "bulletEnemy";
+    EntityType["PLAYER_BULLET"] = "bullet";
+    EntityType["BACKGROUND"] = "background";
+    EntityType["MAP"] = "map";
+    EntityType["GAME_OVER"] = "gameOver";
+    EntityType["LASER"] = "laser";
+    EntityType["MAIN_THEME"] = "shockWave";
+    EntityType["EXPLOSION_I"] = "explosion1";
+    EntityType["EXPLOSION_II"] = "explosion2";
+    EntityType["BOX"] = "BOX";
+})(EntityType = exports.EntityType || (exports.EntityType = {}));
+
+
+/***/ }),
+/* 1 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -173,37 +197,13 @@ exports.Vector2 = Vector2;
 
 
 /***/ }),
-/* 1 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-var EntityType;
-(function (EntityType) {
-    EntityType["PLAYER"] = "ship";
-    EntityType["ENEMY"] = "enmey";
-    EntityType["ENEMY_BULLET"] = "bulletEnemy";
-    EntityType["PLAYER_BULLET"] = "bullet";
-    EntityType["BACKGROUND"] = "background";
-    EntityType["MAP"] = "map";
-    EntityType["GAME_OVER"] = "gameOver";
-    EntityType["LASER"] = "laser";
-    EntityType["MAIN_THEME"] = "shockWave";
-    EntityType["EXPLOSION_I"] = "explosion1";
-    EntityType["EXPLOSION_II"] = "explosion2";
-    EntityType["BOX"] = "BOX";
-})(EntityType = exports.EntityType || (exports.EntityType = {}));
-
-
-/***/ }),
 /* 2 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-const Observable_1 = __webpack_require__(8);
+const Observable_1 = __webpack_require__(9);
 var Actions;
 (function (Actions) {
     Actions["UP"] = "UP";
@@ -309,9 +309,9 @@ exports.InputManager = InputManager;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-const SpriteSheet_1 = __webpack_require__(5);
-const Sound_1 = __webpack_require__(6);
-const Ajax_1 = __webpack_require__(7);
+const SpriteSheet_1 = __webpack_require__(6);
+const Sound_1 = __webpack_require__(7);
+const Ajax_1 = __webpack_require__(8);
 var AssetType;
 (function (AssetType) {
     AssetType["SPRITE"] = "SPRITE";
@@ -448,8 +448,8 @@ exports.AssetManager = AssetManager;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-const Vector2_1 = __webpack_require__(0);
-const CollideAble_1 = __webpack_require__(1);
+const Vector2_1 = __webpack_require__(1);
+const CollideAble_1 = __webpack_require__(0);
 class HitBox {
     constructor(x, y, width, height) {
         this.position = new Vector2_1.Vector2(x, y);
@@ -468,7 +468,8 @@ exports.HitBox = HitBox;
 
 
 /***/ }),
-/* 5 */
+/* 5 */,
+/* 6 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -513,7 +514,7 @@ exports.SpriteSheet = SpriteSheet;
 
 
 /***/ }),
-/* 6 */
+/* 7 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -544,7 +545,7 @@ exports.Sound = Sound;
 
 
 /***/ }),
-/* 7 */
+/* 8 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -580,7 +581,7 @@ exports.Ajax = Ajax;
 
 
 /***/ }),
-/* 8 */
+/* 9 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -621,7 +622,7 @@ exports.Observable = Observable;
 
 
 /***/ }),
-/* 9 */
+/* 10 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -728,7 +729,7 @@ exports.QuadTree = QuadTree;
 
 
 /***/ }),
-/* 10 */
+/* 11 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -761,7 +762,7 @@ exports.CollisionManager = CollisionManager;
 
 
 /***/ }),
-/* 11 */
+/* 12 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -806,7 +807,6 @@ exports.Settings = Settings;
 
 
 /***/ }),
-/* 12 */,
 /* 13 */,
 /* 14 */,
 /* 15 */,
@@ -816,33 +816,34 @@ exports.Settings = Settings;
 /* 19 */,
 /* 20 */,
 /* 21 */,
-/* 22 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-const Rpg_1 = __webpack_require__(23);
-document.addEventListener('DOMContentLoaded', () => new Rpg_1.Rpg());
-
-
-/***/ }),
+/* 22 */,
 /* 23 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-const QuadTree_1 = __webpack_require__(9);
-const Entity_1 = __webpack_require__(24);
-const CollisionManager_1 = __webpack_require__(10);
-const Area_1 = __webpack_require__(25);
-const Camera_1 = __webpack_require__(26);
+const Rpg_1 = __webpack_require__(24);
+document.addEventListener('DOMContentLoaded', () => new Rpg_1.Rpg());
+
+
+/***/ }),
+/* 24 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+const QuadTree_1 = __webpack_require__(10);
+const Entity_1 = __webpack_require__(25);
+const CollisionManager_1 = __webpack_require__(11);
+const Area_1 = __webpack_require__(26);
+const Camera_1 = __webpack_require__(27);
 const InputManager_1 = __webpack_require__(2);
-const Settings_1 = __webpack_require__(11);
+const Settings_1 = __webpack_require__(12);
 const AssetManager_1 = __webpack_require__(3);
-const TileSetMap_1 = __webpack_require__(28);
-const CollideAble_1 = __webpack_require__(1);
+const TileSetMap_1 = __webpack_require__(29);
+const CollideAble_1 = __webpack_require__(0);
 const HitBox_1 = __webpack_require__(4);
 class Rpg {
     constructor() {
@@ -979,15 +980,15 @@ exports.Rpg = Rpg;
 
 
 /***/ }),
-/* 24 */
+/* 25 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-const Vector2_1 = __webpack_require__(0);
+const Vector2_1 = __webpack_require__(1);
 const InputManager_1 = __webpack_require__(2);
-const CollideAble_1 = __webpack_require__(1);
+const CollideAble_1 = __webpack_require__(0);
 class Entity {
     constructor(x, y, sprite, context) {
         this.position = new Vector2_1.Vector2(x, y);
@@ -1062,7 +1063,7 @@ exports.Entity = Entity;
 
 
 /***/ }),
-/* 25 */
+/* 26 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1077,14 +1078,14 @@ exports.Area = Area;
 
 
 /***/ }),
-/* 26 */
+/* 27 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-const Vector2_1 = __webpack_require__(0);
-const Rectangle_1 = __webpack_require__(27);
+const Vector2_1 = __webpack_require__(1);
+const Rectangle_1 = __webpack_require__(28);
 var AXIS;
 (function (AXIS) {
     AXIS["NONE"] = "none";
@@ -1149,7 +1150,7 @@ exports.Camera = Camera;
 
 
 /***/ }),
-/* 27 */
+/* 28 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1189,7 +1190,7 @@ exports.Rectangle = Rectangle;
 
 
 /***/ }),
-/* 28 */
+/* 29 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";

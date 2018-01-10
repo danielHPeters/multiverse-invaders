@@ -60,12 +60,12 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 32);
+/******/ 	return __webpack_require__(__webpack_require__.s = 33);
 /******/ })
 /************************************************************************/
-/******/ ({
-
-/***/ 0:
+/******/ ([
+/* 0 */,
+/* 1 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -174,8 +174,10 @@ exports.Vector2 = Vector2;
 
 
 /***/ }),
-
-/***/ 13:
+/* 2 */,
+/* 3 */,
+/* 4 */,
+/* 5 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -189,6 +191,7 @@ var Color;
     Color["YELLOW"] = "#FFFF00";
     Color["BLACK"] = "#000000";
 })(Color = exports.Color || (exports.Color = {}));
+exports.VALID_COLOR = '^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$';
 class Line {
     constructor(start, end, color = Color.BLACK) {
         this.start = start;
@@ -207,156 +210,388 @@ exports.default = Line;
 
 
 /***/ }),
-
-/***/ 32:
+/* 6 */,
+/* 7 */,
+/* 8 */,
+/* 9 */,
+/* 10 */,
+/* 11 */,
+/* 12 */,
+/* 13 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-const Pane_1 = __webpack_require__(33);
-const MenuBar_1 = __webpack_require__(37);
-const Line_1 = __webpack_require__(13);
+const Line_1 = __webpack_require__(5);
+const Rectangle_1 = __webpack_require__(36);
+const Triangle_1 = __webpack_require__(37);
+const Circle_1 = __webpack_require__(38);
+var ShapeType;
+(function (ShapeType) {
+    ShapeType[ShapeType["LINE"] = 0] = "LINE";
+    ShapeType[ShapeType["RECTANGLE"] = 1] = "RECTANGLE";
+    ShapeType[ShapeType["TRIANGLE"] = 2] = "TRIANGLE";
+    ShapeType[ShapeType["CIRCLE"] = 3] = "CIRCLE";
+})(ShapeType = exports.ShapeType || (exports.ShapeType = {}));
+class ShapeFactory {
+    static create(shapeType, start, end, color) {
+        let shape;
+        switch (shapeType) {
+            case ShapeType.LINE:
+                shape = new Line_1.default(start, end, color);
+                break;
+            case ShapeType.RECTANGLE:
+                shape = new Rectangle_1.default(start, end, color);
+                break;
+            case ShapeType.TRIANGLE:
+                shape = new Triangle_1.default(start, end, color);
+                break;
+            case ShapeType.CIRCLE:
+                shape = new Circle_1.default(start, end, color);
+                break;
+            default:
+                throw new Error('Invalid Shape Type!');
+        }
+        return shape;
+    }
+}
+exports.default = ShapeFactory;
+
+
+/***/ }),
+/* 14 */,
+/* 15 */,
+/* 16 */,
+/* 17 */,
+/* 18 */,
+/* 19 */,
+/* 20 */,
+/* 21 */,
+/* 22 */,
+/* 23 */,
+/* 24 */,
+/* 25 */,
+/* 26 */,
+/* 27 */,
+/* 28 */,
+/* 29 */,
+/* 30 */,
+/* 31 */,
+/* 32 */,
+/* 33 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+const Pane_1 = __webpack_require__(34);
+const MenuBar_1 = __webpack_require__(35);
+const Settings_1 = __webpack_require__(39);
+const Line_1 = __webpack_require__(5);
+const ShapeTool_1 = __webpack_require__(40);
 document.addEventListener('DOMContentLoaded', () => {
     const canvas = document.getElementById('pane');
     const context = canvas.getContext('2d');
     const menuBar = document.getElementById('menuBar');
+    const settings = new Settings_1.default(Line_1.Color.BLACK, menuBar.offsetHeight);
     const menu = new MenuBar_1.default(menuBar);
-    const colors = ['Red', 'Black', 'Blue', 'Yellow'];
-    const settings = { activeColor: '#000000' };
-    const colorEntries = [];
-    colors.forEach(color => {
-        const menuEntry = document.createElement('li');
-        const menuLink = document.createElement('a');
-        menuLink.setAttribute('href', '#');
-        menuLink.setAttribute('id', color.toLowerCase());
-        menuLink.appendChild(document.createTextNode(color));
-        menuEntry.appendChild(menuLink);
-        menuEntry.classList.add('menuEntry');
-        menuEntry.addEventListener('click', () => {
-            settings.activeColor = Line_1.Color[color.toUpperCase()];
-        });
-        colorEntries.push(menuEntry);
-    });
+    const tool = new ShapeTool_1.default(settings);
     menu.addMenu('File');
-    menu.addMenu('Edit');
-    menu.addMenu('Color', colorEntries);
+    menu.addMenu('Edit', MenuBar_1.default.createEditMenu(settings, tool, context, canvas));
+    menu.addMenu('Color', MenuBar_1.default.createColorMenu(settings));
+    menu.addMenu('Shapes', MenuBar_1.default.createShapesMenu(settings));
     menu.addMenu('Options');
     menu.addMenu('Help');
-    const pane = new Pane_1.default(canvas, menuBar, context, settings);
-    pane.init();
+    new Pane_1.default(canvas, menuBar, context, tool).init();
 });
 
 
 /***/ }),
-
-/***/ 33:
+/* 34 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-const Pen_1 = __webpack_require__(34);
-const Vector2_1 = __webpack_require__(0);
-const Mouse_1 = __webpack_require__(35);
+const Vector2_1 = __webpack_require__(1);
 class Pane {
-    constructor(canvas, menuBar, context, settings) {
+    constructor(canvas, menuBar, context, tool) {
         this.menuBar = menuBar;
         this.canvas = canvas;
         this.canvas.width = window.innerWidth;
         this.canvas.height = window.innerHeight - this.menuBar.offsetHeight;
         this.context = context;
-        this.pen = new Pen_1.default(10, 0.5);
         this.mousePosition = new Vector2_1.Vector2(0, 0);
-        this.settings = settings;
-        this.mouse = new Mouse_1.default(this.menuBar.offsetHeight, this.settings);
+        this.tool = tool;
     }
     init() {
-        this.canvas.addEventListener('mousedown', event => this.mouse.click(event));
+        this.canvas.addEventListener('mousedown', event => this.tool.click(event));
         this.canvas.addEventListener('mousemove', event => {
-            this.mouse.move(event);
+            this.tool.move(event);
             this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
-            this.drawAllLines();
-            this.mouse.tempLine.render(this.context);
+            this.tool.renderAll(this.context);
+            this.tool.tempShape.render(this.context);
         });
         this.canvas.addEventListener('mouseup', event => {
-            this.mouse.release(event);
-            this.drawAllLines();
+            this.tool.release(event);
+            this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
+            this.tool.renderAll(this.context);
         });
-    }
-    drawAllLines() {
-        this.mouse.lines.forEach(line => line.render(this.context));
     }
 }
 exports.default = Pane;
 
 
 /***/ }),
-
-/***/ 34:
+/* 35 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-const Vector2_1 = __webpack_require__(0);
-class Pen {
-    constructor(radius, opacity = 0) {
-        this.radius = radius;
-        this.opacity = opacity;
-        this.position = new Vector2_1.Vector2(0, 0);
+const Line_1 = __webpack_require__(5);
+const ShapeFactory_1 = __webpack_require__(13);
+class MenuBar {
+    constructor(element) {
+        this.element = element;
+        this.submenus = [];
     }
-    draw(context, mousePosition) {
-        context.beginPath();
-        context.arc(mousePosition.x, mousePosition.y, this.radius, 0, 2 * Math.PI);
-        context.stroke();
+    static createEditMenu(settings, tool, context, canvas) {
+        const colorEntries = [];
+        const entryText = 'Undo';
+        const menuEntry = document.createElement('li');
+        const menuLink = document.createElement('a');
+        menuLink.setAttribute('href', '#');
+        menuLink.setAttribute('id', entryText.toLowerCase());
+        menuLink.appendChild(document.createTextNode(entryText));
+        menuEntry.appendChild(menuLink);
+        menuEntry.classList.add('menuEntry');
+        menuEntry.addEventListener('click', () => {
+            tool.undo(context, canvas.width, canvas.height);
+        });
+        colorEntries.push(menuEntry);
+        return colorEntries;
+    }
+    static createColorMenu(settings) {
+        const colors = ['Red', 'Black', 'Blue', 'Yellow'];
+        const colorEntries = [];
+        colors.forEach(color => {
+            const menuEntry = document.createElement('li');
+            const menuLink = document.createElement('a');
+            menuLink.setAttribute('href', '#');
+            menuLink.setAttribute('id', color.toLowerCase());
+            menuLink.appendChild(document.createTextNode(color));
+            menuEntry.appendChild(menuLink);
+            menuEntry.classList.add('menuEntry');
+            menuEntry.addEventListener('click', () => {
+                settings.activeColor = Line_1.Color[color.toUpperCase()];
+            });
+            colorEntries.push(menuEntry);
+        });
+        const colorForm = document.createElement('form');
+        const colorInput = document.createElement('input');
+        colorInput.setAttribute('type', 'color');
+        colorInput.setAttribute('accept', Line_1.VALID_COLOR);
+        colorInput.addEventListener('change', () => {
+            settings.activeColor = colorInput.value;
+        });
+        colorForm.appendChild(colorInput);
+        colorForm.classList.add('menuEntry');
+        colorEntries.push(colorForm);
+        return colorEntries;
+    }
+    static createShapesMenu(settings) {
+        const tools = ['Line', 'Rectangle', 'Triangle', 'Circle'];
+        const toolEntries = [];
+        tools.forEach(shape => {
+            const menuEntry = document.createElement('li');
+            const menuLink = document.createElement('a');
+            menuLink.setAttribute('href', '#');
+            menuLink.setAttribute('id', shape.toLowerCase());
+            menuLink.appendChild(document.createTextNode(shape));
+            menuEntry.appendChild(menuLink);
+            menuEntry.classList.add('menuEntry');
+            menuEntry.addEventListener('click', () => {
+                settings.activeTool = ShapeFactory_1.ShapeType[shape.toUpperCase()];
+            });
+            toolEntries.push(menuEntry);
+        });
+        return toolEntries;
+    }
+    addMenu(title, entries = []) {
+        let submenu = document.createElement('li');
+        let menuLink = document.createElement('a');
+        menuLink.setAttribute('href', '#');
+        menuLink.appendChild(document.createTextNode(title));
+        submenu.appendChild(menuLink);
+        submenu.classList.add('submenu');
+        submenu.setAttribute('id', title.toLowerCase());
+        if (entries.length > 0) {
+            const list = document.createElement('ul');
+            list.classList.add('submenu-content');
+            submenu.appendChild(list);
+            entries.forEach(entry => {
+                list.appendChild(entry);
+            });
+        }
+        this.submenus[title.toLowerCase()] = submenu;
+        this.element.appendChild(submenu);
+    }
+    getMenu(title) {
+        return this.submenus.hasOwnProperty(title.toLowerCase()) ? this.submenus[title.toLowerCase()] : null;
     }
 }
-exports.default = Pen;
+exports.default = MenuBar;
 
 
 /***/ }),
-
-/***/ 35:
+/* 36 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-const Point_1 = __webpack_require__(36);
-const Line_1 = __webpack_require__(13);
-class LineTool {
-    constructor(offsetY = 0, settings = { activeColor: Line_1.Color.BLACK }) {
+const Line_1 = __webpack_require__(5);
+class Rectangle {
+    constructor(start, end, color = Line_1.Color.BLACK) {
+        this.start = start;
+        this.end = end;
+        this.color = color;
+    }
+    render(context) {
+        context.beginPath();
+        context.rect(this.start.x, this.start.y, this.end.x - this.start.x, this.end.y - this.start.y);
+        context.strokeStyle = this.color;
+        context.stroke();
+    }
+}
+exports.default = Rectangle;
+
+
+/***/ }),
+/* 37 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+const Line_1 = __webpack_require__(5);
+class Triangle {
+    constructor(start, end, color = Line_1.Color.BLACK) {
+        this.start = start;
+        this.end = end;
+        this.color = color;
+    }
+    render(context) {
+        context.beginPath();
+        context.strokeStyle = this.color;
+        context.moveTo(this.start.x, this.start.y);
+        context.lineTo(this.start.x, this.end.y);
+        context.lineTo(this.end.x, this.start.y);
+        context.closePath();
+        context.stroke();
+    }
+}
+exports.default = Triangle;
+
+
+/***/ }),
+/* 38 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+class Circle {
+    constructor(start, end, color) {
+        this.start = start;
+        this.end = end;
+        this.color = color;
+    }
+    render(context) {
+        const radius = Math.abs(this.end.x - this.start.x);
+        if (radius !== 0) {
+            context.beginPath();
+            context.strokeStyle = this.color;
+            context.arc(this.start.x, this.start.y, radius, 0, Math.PI * 2, true);
+            context.stroke();
+        }
+    }
+}
+exports.default = Circle;
+
+
+/***/ }),
+/* 39 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+const ShapeFactory_1 = __webpack_require__(13);
+class Settings {
+    constructor(activeColor, menuHeight, activeTool = ShapeFactory_1.ShapeType.LINE) {
+        this.activeColor = activeColor;
+        this.menuHeight = menuHeight;
+        this.activeTool = activeTool;
+        this.history = [];
+    }
+}
+exports.default = Settings;
+
+
+/***/ }),
+/* 40 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+const Point_1 = __webpack_require__(41);
+const ShapeFactory_1 = __webpack_require__(13);
+class ShapeTool {
+    constructor(settings) {
         this.start = new Point_1.default(0, 0);
         this.end = new Point_1.default(0, 0);
-        this.lines = [];
+        this.shapes = settings.history;
         this.settings = settings;
-        this.tempLine = new Line_1.default(this.start, this.end, this.settings.activeColor);
+        this.tempShape = ShapeFactory_1.default.create(this.settings.activeTool, this.start, this.end, this.settings.activeColor);
         this.down = false;
-        this.offsetY = offsetY;
     }
     click(event) {
         this.down = true;
-        this.start.set(event.clientX, event.clientY - this.offsetY);
+        this.start.set(event.clientX, event.clientY - this.settings.menuHeight);
     }
     move(event) {
         if (!this.down)
             return;
-        this.tempLine.color = this.settings.activeColor;
-        this.tempLine.end.set(event.clientX, event.clientY - this.offsetY);
+        this.tempShape = ShapeFactory_1.default.create(this.settings.activeTool, this.start, this.end, this.settings.activeColor);
+        this.tempShape.end.set(event.clientX, event.clientY - this.settings.menuHeight);
     }
     release(event) {
-        this.end.set(event.clientX, event.clientY - this.offsetY);
-        this.lines.push(new Line_1.default(this.start.clone(), this.end.clone(), this.settings.activeColor));
+        this.end.set(event.clientX, event.clientY - this.settings.menuHeight);
+        this.shapes.push(ShapeFactory_1.default.create(this.settings.activeTool, this.start.clone(), this.end.clone(), this.settings.activeColor));
         this.down = false;
     }
+    renderAll(context) {
+        this.shapes.forEach(line => line.render(context));
+    }
+    undo(context, width, height) {
+        if (this.shapes.length > 0) {
+            context.clearRect(0, 0, width, height);
+            this.tempShape.start.set(0, 0);
+            this.tempShape.end.set(0, 0);
+            this.shapes.pop();
+            this.renderAll(context);
+        }
+    }
 }
-exports.default = LineTool;
+exports.default = ShapeTool;
 
 
 /***/ }),
-
-/***/ 36:
+/* 41 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -382,52 +617,6 @@ class Point {
 exports.default = Point;
 
 
-/***/ }),
-
-/***/ 37:
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-class MenuBar {
-    constructor(element) {
-        this.element = element;
-        this.submenus = [];
-    }
-    addMenu(title, entries = []) {
-        let submenu = document.createElement('li');
-        let menuLink = document.createElement('a');
-        menuLink.setAttribute('href', '#');
-        menuLink.appendChild(document.createTextNode(title));
-        submenu.appendChild(menuLink);
-        submenu.classList.add('submenu');
-        submenu.setAttribute('id', title.toLowerCase());
-        if (entries.length > 0) {
-            let list = document.createElement('ul');
-            list.classList.add('submenu-content');
-            submenu.appendChild(list);
-            entries.forEach(entry => {
-                list.appendChild(entry);
-            });
-        }
-        this.submenus[title.toLowerCase()] = submenu;
-        this.element.appendChild(submenu);
-    }
-    getMenu(title) {
-        return this.submenus.hasOwnProperty(title.toLowerCase()) ? this.submenus[title.toLowerCase()] : null;
-    }
-    hide(submenu) {
-        submenu.children[0].style.display = 'none';
-    }
-    show(submenu) {
-        submenu.children[0].style.display = 'block';
-    }
-}
-exports.default = MenuBar;
-
-
 /***/ })
-
-/******/ });
+/******/ ]);
 //# sourceMappingURL=draw.js.map

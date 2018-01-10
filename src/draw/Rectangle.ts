@@ -1,28 +1,12 @@
 import Point from './Point'
+import { Color } from './Line'
 import Shape from './interfaces/Shape'
 
-export enum Color {
-  RED = '#FF0000',
-  GREEN = '#00FF00',
-  BLUE = '#0000FF',
-  YELLOW = '#FFFF00',
-  BLACK = '#000000'
-}
-
-export const VALID_COLOR = '^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$'
-
-export default class Line implements Shape {
+export default class Rectangle implements Shape {
   start: Point
   end: Point
   color: Color
 
-  /**
-   * Default constructor.
-   *
-   * @param {Point} start tool start location
-   * @param {Point} end tool release location
-   * @param {Color} color stroke color
-   */
   constructor (start: Point, end: Point, color = Color.BLACK) {
     this.start = start
     this.end = end
@@ -36,9 +20,8 @@ export default class Line implements Shape {
    */
   render (context: CanvasRenderingContext2D): void {
     context.beginPath()
+    context.rect(this.start.x, this.start.y, this.end.x - this.start.x, this.end.y - this.start.y)
     context.strokeStyle = this.color
-    context.moveTo(this.start.x, this.start.y)
-    context.lineTo(this.end.x, this.end.y)
     context.stroke()
   }
 }
