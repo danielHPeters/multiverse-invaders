@@ -60,7 +60,7 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 31);
+/******/ 	return __webpack_require__(__webpack_require__.s = 32);
 /******/ })
 /************************************************************************/
 /******/ ({
@@ -175,44 +175,35 @@ exports.Vector2 = Vector2;
 
 /***/ }),
 
-/***/ 31:
+/***/ 13:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-const Pane_1 = __webpack_require__(32);
-const MenuBar_1 = __webpack_require__(37);
-const Color_1 = __webpack_require__(38);
-document.addEventListener('DOMContentLoaded', () => {
-    const canvas = document.getElementById('pane');
-    const context = canvas.getContext('2d');
-    const menuBar = document.getElementById('menuBar');
-    const menu = new MenuBar_1.default(menuBar);
-    const colors = ['Red', 'Black', 'Blue', 'Yellow'];
-    const settings = { activeColor: '000000' };
-    const colorEntries = [];
-    colors.forEach(color => {
-        const menuEntry = document.createElement('li');
-        const menuLink = document.createElement('a');
-        menuLink.setAttribute('href', '#');
-        menuLink.setAttribute('id', color.toLowerCase());
-        menuLink.appendChild(document.createTextNode(color));
-        menuEntry.appendChild(menuLink);
-        menuEntry.classList.add('menuEntry');
-        menuEntry.addEventListener('click', () => {
-            context.strokeStyle = Color_1.Color[color.toUpperCase()].toString();
-            console.log(Color_1.Color[color.toUpperCase()]);
-        });
-        colorEntries.push(menuEntry);
-    });
-    menu.addMenu('File');
-    menu.addMenu('Edit');
-    menu.addMenu('Color', colorEntries);
-    menu.addMenu('Options');
-    menu.addMenu('Help');
-    new Pane_1.default(canvas, menuBar, context).init();
-});
+var Color;
+(function (Color) {
+    Color["RED"] = "#FF0000";
+    Color["GREEN"] = "#00FF00";
+    Color["BLUE"] = "#0000FF";
+    Color["YELLOW"] = "#FFFF00";
+    Color["BLACK"] = "#000000";
+})(Color = exports.Color || (exports.Color = {}));
+class Line {
+    constructor(start, end, color = Color.BLACK) {
+        this.start = start;
+        this.end = end;
+        this.color = color;
+    }
+    render(context) {
+        context.beginPath();
+        context.strokeStyle = this.color;
+        context.moveTo(this.start.x, this.start.y);
+        context.lineTo(this.end.x, this.end.y);
+        context.stroke();
+    }
+}
+exports.default = Line;
 
 
 /***/ }),
@@ -223,11 +214,53 @@ document.addEventListener('DOMContentLoaded', () => {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-const Pen_1 = __webpack_require__(33);
+const Pane_1 = __webpack_require__(33);
+const MenuBar_1 = __webpack_require__(37);
+const Line_1 = __webpack_require__(13);
+document.addEventListener('DOMContentLoaded', () => {
+    const canvas = document.getElementById('pane');
+    const context = canvas.getContext('2d');
+    const menuBar = document.getElementById('menuBar');
+    const menu = new MenuBar_1.default(menuBar);
+    const colors = ['Red', 'Black', 'Blue', 'Yellow'];
+    const settings = { activeColor: '#000000' };
+    const colorEntries = [];
+    colors.forEach(color => {
+        const menuEntry = document.createElement('li');
+        const menuLink = document.createElement('a');
+        menuLink.setAttribute('href', '#');
+        menuLink.setAttribute('id', color.toLowerCase());
+        menuLink.appendChild(document.createTextNode(color));
+        menuEntry.appendChild(menuLink);
+        menuEntry.classList.add('menuEntry');
+        menuEntry.addEventListener('click', () => {
+            settings.activeColor = Line_1.Color[color.toUpperCase()];
+        });
+        colorEntries.push(menuEntry);
+    });
+    menu.addMenu('File');
+    menu.addMenu('Edit');
+    menu.addMenu('Color', colorEntries);
+    menu.addMenu('Options');
+    menu.addMenu('Help');
+    const pane = new Pane_1.default(canvas, menuBar, context, settings);
+    pane.init();
+});
+
+
+/***/ }),
+
+/***/ 33:
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+const Pen_1 = __webpack_require__(34);
 const Vector2_1 = __webpack_require__(0);
-const Mouse_1 = __webpack_require__(34);
+const Mouse_1 = __webpack_require__(35);
 class Pane {
-    constructor(canvas, menuBar, context) {
+    constructor(canvas, menuBar, context, settings) {
         this.menuBar = menuBar;
         this.canvas = canvas;
         this.canvas.width = window.innerWidth;
@@ -235,7 +268,8 @@ class Pane {
         this.context = context;
         this.pen = new Pen_1.default(10, 0.5);
         this.mousePosition = new Vector2_1.Vector2(0, 0);
-        this.mouse = new Mouse_1.default(this.menuBar.offsetHeight);
+        this.settings = settings;
+        this.mouse = new Mouse_1.default(this.menuBar.offsetHeight, this.settings);
     }
     init() {
         this.canvas.addEventListener('mousedown', event => this.mouse.click(event));
@@ -259,7 +293,7 @@ exports.default = Pane;
 
 /***/ }),
 
-/***/ 33:
+/***/ 34:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -283,20 +317,21 @@ exports.default = Pen;
 
 /***/ }),
 
-/***/ 34:
+/***/ 35:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-const Point_1 = __webpack_require__(35);
-const Line_1 = __webpack_require__(36);
+const Point_1 = __webpack_require__(36);
+const Line_1 = __webpack_require__(13);
 class LineTool {
-    constructor(offsetY = 0) {
+    constructor(offsetY = 0, settings = { activeColor: Line_1.Color.BLACK }) {
         this.start = new Point_1.default(0, 0);
         this.end = new Point_1.default(0, 0);
         this.lines = [];
-        this.tempLine = new Line_1.default(this.start, this.end);
+        this.settings = settings;
+        this.tempLine = new Line_1.default(this.start, this.end, this.settings.activeColor);
         this.down = false;
         this.offsetY = offsetY;
     }
@@ -307,11 +342,12 @@ class LineTool {
     move(event) {
         if (!this.down)
             return;
+        this.tempLine.color = this.settings.activeColor;
         this.tempLine.end.set(event.clientX, event.clientY - this.offsetY);
     }
     release(event) {
         this.end.set(event.clientX, event.clientY - this.offsetY);
-        this.lines.push(new Line_1.default(this.start.clone(), this.end.clone()));
+        this.lines.push(new Line_1.default(this.start.clone(), this.end.clone(), this.settings.activeColor));
         this.down = false;
     }
 }
@@ -320,7 +356,7 @@ exports.default = LineTool;
 
 /***/ }),
 
-/***/ 35:
+/***/ 36:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -344,29 +380,6 @@ class Point {
     }
 }
 exports.default = Point;
-
-
-/***/ }),
-
-/***/ 36:
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-class Line {
-    constructor(start, end) {
-        this.start = start;
-        this.end = end;
-    }
-    render(context) {
-        context.beginPath();
-        context.moveTo(this.start.x, this.start.y);
-        context.lineTo(this.end.x, this.end.y);
-        context.stroke();
-    }
-}
-exports.default = Line;
 
 
 /***/ }),
@@ -412,24 +425,6 @@ class MenuBar {
     }
 }
 exports.default = MenuBar;
-
-
-/***/ }),
-
-/***/ 38:
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-var Color;
-(function (Color) {
-    Color["RED"] = "#FF0000";
-    Color["GREEN"] = "#00FF00";
-    Color["BLUE"] = "#0000FF";
-    Color["YELLOW"] = "#FFFF00";
-    Color["BLACK"] = "#000000";
-})(Color = exports.Color || (exports.Color = {}));
 
 
 /***/ })

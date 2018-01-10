@@ -60,7 +60,7 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 13);
+/******/ 	return __webpack_require__(__webpack_require__.s = 14);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -821,17 +821,18 @@ exports.EventHandler = EventHandler;
 
 
 /***/ }),
-/* 13 */
+/* 13 */,
+/* 14 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
 const AssetManager_1 = __webpack_require__(3);
-const SpaceGame_1 = __webpack_require__(14);
+const SpaceGame_1 = __webpack_require__(15);
 const InputManager_1 = __webpack_require__(2);
 const Settings_1 = __webpack_require__(11);
-const SettingsMenu_1 = __webpack_require__(20);
+const SettingsMenu_1 = __webpack_require__(21);
 const CollideAble_1 = __webpack_require__(1);
 const EventHandler_1 = __webpack_require__(12);
 const assetManager = new AssetManager_1.AssetManager();
@@ -874,17 +875,17 @@ assetManager.downloadAll(() => {
 
 
 /***/ }),
-/* 14 */
+/* 15 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-const Background_1 = __webpack_require__(15);
+const Background_1 = __webpack_require__(16);
 const AssetManager_1 = __webpack_require__(3);
 const InputManager_1 = __webpack_require__(2);
-const Ship_1 = __webpack_require__(16);
-const Pool_1 = __webpack_require__(17);
+const Ship_1 = __webpack_require__(17);
+const Pool_1 = __webpack_require__(18);
 const QuadTree_1 = __webpack_require__(9);
 const HitBox_1 = __webpack_require__(4);
 const CollideAble_1 = __webpack_require__(1);
@@ -1013,7 +1014,7 @@ exports.SpaceGame = SpaceGame;
 
 
 /***/ }),
-/* 15 */
+/* 16 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1049,7 +1050,7 @@ exports.Background = Background;
 
 
 /***/ }),
-/* 16 */
+/* 17 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1149,14 +1150,14 @@ exports.Ship = Ship;
 
 
 /***/ }),
-/* 17 */
+/* 18 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-const Bullet_1 = __webpack_require__(18);
-const Enemy_1 = __webpack_require__(19);
+const Bullet_1 = __webpack_require__(19);
+const Enemy_1 = __webpack_require__(20);
 const CollideAble_1 = __webpack_require__(1);
 class Pool {
     constructor(assetManager, context, canvasWidth, canvasHeight, maxSize, type, pool = null, game = null) {
@@ -1229,7 +1230,7 @@ exports.Pool = Pool;
 
 
 /***/ }),
-/* 18 */
+/* 19 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1294,7 +1295,7 @@ exports.Bullet = Bullet;
 
 
 /***/ }),
-/* 19 */
+/* 20 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1385,7 +1386,7 @@ exports.Enemy = Enemy;
 
 
 /***/ }),
-/* 20 */
+/* 21 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";

@@ -60,7 +60,7 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 21);
+/******/ 	return __webpack_require__(__webpack_require__.s = 22);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -815,32 +815,33 @@ exports.Settings = Settings;
 /* 18 */,
 /* 19 */,
 /* 20 */,
-/* 21 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-const Rpg_1 = __webpack_require__(22);
-document.addEventListener('DOMContentLoaded', () => new Rpg_1.Rpg());
-
-
-/***/ }),
+/* 21 */,
 /* 22 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
+const Rpg_1 = __webpack_require__(23);
+document.addEventListener('DOMContentLoaded', () => new Rpg_1.Rpg());
+
+
+/***/ }),
+/* 23 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
 const QuadTree_1 = __webpack_require__(9);
-const Entity_1 = __webpack_require__(23);
+const Entity_1 = __webpack_require__(24);
 const CollisionManager_1 = __webpack_require__(10);
-const Area_1 = __webpack_require__(24);
-const Camera_1 = __webpack_require__(25);
+const Area_1 = __webpack_require__(25);
+const Camera_1 = __webpack_require__(26);
 const InputManager_1 = __webpack_require__(2);
 const Settings_1 = __webpack_require__(11);
 const AssetManager_1 = __webpack_require__(3);
-const TileSetMap_1 = __webpack_require__(27);
+const TileSetMap_1 = __webpack_require__(28);
 const CollideAble_1 = __webpack_require__(1);
 const HitBox_1 = __webpack_require__(4);
 class Rpg {
@@ -978,7 +979,7 @@ exports.Rpg = Rpg;
 
 
 /***/ }),
-/* 23 */
+/* 24 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1061,7 +1062,7 @@ exports.Entity = Entity;
 
 
 /***/ }),
-/* 24 */
+/* 25 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1076,14 +1077,14 @@ exports.Area = Area;
 
 
 /***/ }),
-/* 25 */
+/* 26 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
 const Vector2_1 = __webpack_require__(0);
-const Rectangle_1 = __webpack_require__(26);
+const Rectangle_1 = __webpack_require__(27);
 var AXIS;
 (function (AXIS) {
     AXIS["NONE"] = "none";
@@ -1148,7 +1149,7 @@ exports.Camera = Camera;
 
 
 /***/ }),
-/* 26 */
+/* 27 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1188,7 +1189,7 @@ exports.Rectangle = Rectangle;
 
 
 /***/ }),
-/* 27 */
+/* 28 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";

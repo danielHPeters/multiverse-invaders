@@ -19,7 +19,7 @@ export default class Line {
    * @param {Point} end mouse release location
    * @param {Color} color stroke color
    */
-  constructor (start: Point, end: Point, color: Color) {
+  constructor (start: Point, end: Point, color = Color.BLACK) {
     this.start = start
     this.end = end
     this.color = color
@@ -32,6 +32,7 @@ export default class Line {
    */
   render (context: CanvasRenderingContext2D): void {
     context.beginPath()
+    context.strokeStyle = this.color
     context.moveTo(this.start.x, this.start.y)
     context.lineTo(this.end.x, this.end.y)
     context.stroke()

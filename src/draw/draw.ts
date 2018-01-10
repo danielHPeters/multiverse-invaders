@@ -8,7 +8,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const menuBar = document.getElementById('menuBar') as HTMLElement
   const menu = new MenuBar(menuBar)
   const colors = ['Red', 'Black', 'Blue', 'Yellow']
-  const settings = { activeColor: '000000' }
+  const settings = { activeColor: '#000000' }
   const colorEntries = []
   colors.forEach(color => {
     const menuEntry = document.createElement('li') as HTMLElement
@@ -19,8 +19,9 @@ document.addEventListener('DOMContentLoaded', () => {
     menuEntry.appendChild(menuLink)
     menuEntry.classList.add('menuEntry')
     menuEntry.addEventListener('click', () => {
-      context.strokeStyle = Color[color.toUpperCase()].toString()
-      console.log(Color[color.toUpperCase()])
+      // context.strokeStyle = Color[color.toUpperCase()].toString()
+      // console.log(Color[color.toUpperCase()])
+      settings.activeColor = Color[color.toUpperCase()]
     })
     colorEntries.push(menuEntry)
   })
@@ -30,5 +31,6 @@ document.addEventListener('DOMContentLoaded', () => {
   menu.addMenu('Color', colorEntries)
   menu.addMenu('Options')
   menu.addMenu('Help')
-  new Pane(canvas, menuBar, context).init()
+  const pane = new Pane(canvas, menuBar, context, settings)
+  pane.init()
 })
