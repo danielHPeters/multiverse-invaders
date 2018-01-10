@@ -45,8 +45,6 @@ ul {
   cursor: pointer;
   background-color: #00B7FF;
   z-index: 3; }
-  .menuEntry input {
-    width: 100%; }
 
 #pane {
   top: 40px; }

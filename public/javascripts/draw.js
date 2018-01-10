@@ -177,7 +177,14 @@ exports.Vector2 = Vector2;
 /* 2 */,
 /* 3 */,
 /* 4 */,
-/* 5 */
+/* 5 */,
+/* 6 */,
+/* 7 */,
+/* 8 */,
+/* 9 */,
+/* 10 */,
+/* 11 */,
+/* 12 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -193,10 +200,11 @@ var Color;
 })(Color = exports.Color || (exports.Color = {}));
 exports.VALID_COLOR = '^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$';
 class Line {
-    constructor(start, end, color = Color.BLACK) {
+    constructor(start, end, color, fill) {
         this.start = start;
         this.end = end;
         this.color = color;
+        this.fill = fill;
     }
     render(context) {
         context.beginPath();
@@ -210,20 +218,13 @@ exports.default = Line;
 
 
 /***/ }),
-/* 6 */,
-/* 7 */,
-/* 8 */,
-/* 9 */,
-/* 10 */,
-/* 11 */,
-/* 12 */,
 /* 13 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-const Line_1 = __webpack_require__(5);
+const Line_1 = __webpack_require__(12);
 const Rectangle_1 = __webpack_require__(36);
 const Triangle_1 = __webpack_require__(37);
 const Circle_1 = __webpack_require__(38);
@@ -235,20 +236,20 @@ var ShapeType;
     ShapeType[ShapeType["CIRCLE"] = 3] = "CIRCLE";
 })(ShapeType = exports.ShapeType || (exports.ShapeType = {}));
 class ShapeFactory {
-    static create(shapeType, start, end, color) {
+    static create(shapeType, start, end, color, fill) {
         let shape;
         switch (shapeType) {
             case ShapeType.LINE:
-                shape = new Line_1.default(start, end, color);
+                shape = new Line_1.default(start, end, color, fill);
                 break;
             case ShapeType.RECTANGLE:
-                shape = new Rectangle_1.default(start, end, color);
+                shape = new Rectangle_1.default(start, end, color, fill);
                 break;
             case ShapeType.TRIANGLE:
-                shape = new Triangle_1.default(start, end, color);
+                shape = new Triangle_1.default(start, end, color, fill);
                 break;
             case ShapeType.CIRCLE:
-                shape = new Circle_1.default(start, end, color);
+                shape = new Circle_1.default(start, end, color, fill);
                 break;
             default:
                 throw new Error('Invalid Shape Type!');
@@ -288,7 +289,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const Pane_1 = __webpack_require__(34);
 const MenuBar_1 = __webpack_require__(35);
 const Settings_1 = __webpack_require__(39);
-const Line_1 = __webpack_require__(5);
+const Line_1 = __webpack_require__(12);
 const ShapeTool_1 = __webpack_require__(40);
 document.addEventListener('DOMContentLoaded', () => {
     const canvas = document.getElementById('pane');
@@ -301,7 +302,7 @@ document.addEventListener('DOMContentLoaded', () => {
     menu.addMenu('Edit', MenuBar_1.default.createEditMenu(settings, tool, context, canvas));
     menu.addMenu('Color', MenuBar_1.default.createColorMenu(settings));
     menu.addMenu('Shapes', MenuBar_1.default.createShapesMenu(settings));
-    menu.addMenu('Options');
+    menu.addMenu('Options', MenuBar_1.default.createOptionsMenu(settings));
     menu.addMenu('Help');
     new Pane_1.default(canvas, menuBar, context, tool).init();
 });
@@ -350,7 +351,7 @@ exports.default = Pane;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-const Line_1 = __webpack_require__(5);
+const Line_1 = __webpack_require__(12);
 const ShapeFactory_1 = __webpack_require__(13);
 class MenuBar {
     constructor(element) {
@@ -358,7 +359,7 @@ class MenuBar {
         this.submenus = [];
     }
     static createEditMenu(settings, tool, context, canvas) {
-        const colorEntries = [];
+        const editEntries = [];
         const entryText = 'Undo';
         const menuEntry = document.createElement('li');
         const menuLink = document.createElement('a');
@@ -370,8 +371,8 @@ class MenuBar {
         menuEntry.addEventListener('click', () => {
             tool.undo(context, canvas.width, canvas.height);
         });
-        colorEntries.push(menuEntry);
-        return colorEntries;
+        editEntries.push(menuEntry);
+        return editEntries;
     }
     static createColorMenu(settings) {
         const colors = ['Red', 'Black', 'Blue', 'Yellow'];
@@ -419,6 +420,22 @@ class MenuBar {
         });
         return toolEntries;
     }
+    static createOptionsMenu(settings) {
+        const optionEntries = [];
+        const entryText = 'Fill';
+        const menuEntry = document.createElement('li');
+        const menuInput = document.createElement('input');
+        menuInput.setAttribute('type', 'checkbox');
+        menuInput.setAttribute('id', entryText.toLowerCase());
+        menuEntry.appendChild(document.createTextNode(entryText));
+        menuEntry.appendChild(menuInput);
+        menuEntry.classList.add('menuEntry');
+        menuInput.addEventListener('click', () => {
+            settings.fill = !settings.fill;
+        });
+        optionEntries.push(menuEntry);
+        return optionEntries;
+    }
     addMenu(title, entries = []) {
         let submenu = document.createElement('li');
         let menuLink = document.createElement('a');
@@ -452,18 +469,24 @@ exports.default = MenuBar;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-const Line_1 = __webpack_require__(5);
 class Rectangle {
-    constructor(start, end, color = Line_1.Color.BLACK) {
+    constructor(start, end, color, fill) {
         this.start = start;
         this.end = end;
         this.color = color;
+        this.fill = fill;
     }
     render(context) {
         context.beginPath();
         context.rect(this.start.x, this.start.y, this.end.x - this.start.x, this.end.y - this.start.y);
-        context.strokeStyle = this.color;
-        context.stroke();
+        if (this.fill) {
+            context.fillStyle = this.color;
+            context.fill();
+        }
+        else {
+            context.strokeStyle = this.color;
+            context.stroke();
+        }
     }
 }
 exports.default = Rectangle;
@@ -476,21 +499,26 @@ exports.default = Rectangle;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-const Line_1 = __webpack_require__(5);
 class Triangle {
-    constructor(start, end, color = Line_1.Color.BLACK) {
+    constructor(start, end, color, fill) {
         this.start = start;
         this.end = end;
         this.color = color;
+        this.fill = fill;
     }
     render(context) {
         context.beginPath();
         context.strokeStyle = this.color;
+        context.fillStyle = this.color;
         context.moveTo(this.start.x, this.start.y);
         context.lineTo(this.start.x, this.end.y);
         context.lineTo(this.end.x, this.start.y);
-        context.closePath();
-        context.stroke();
+        if (this.fill) {
+            context.fill();
+        }
+        else {
+            context.stroke();
+        }
     }
 }
 exports.default = Triangle;
@@ -504,10 +532,11 @@ exports.default = Triangle;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 class Circle {
-    constructor(start, end, color) {
+    constructor(start, end, color, fill) {
         this.start = start;
         this.end = end;
         this.color = color;
+        this.fill = fill;
     }
     render(context) {
         const radius = Math.abs(this.end.x - this.start.x);
@@ -515,7 +544,13 @@ class Circle {
             context.beginPath();
             context.strokeStyle = this.color;
             context.arc(this.start.x, this.start.y, radius, 0, Math.PI * 2, true);
-            context.stroke();
+            if (this.fill) {
+                context.fillStyle = this.color;
+                context.fill();
+            }
+            else {
+                context.stroke();
+            }
         }
     }
 }
@@ -536,6 +571,7 @@ class Settings {
         this.menuHeight = menuHeight;
         this.activeTool = activeTool;
         this.history = [];
+        this.fill = false;
     }
 }
 exports.default = Settings;
@@ -556,7 +592,7 @@ class ShapeTool {
         this.end = new Point_1.default(0, 0);
         this.shapes = settings.history;
         this.settings = settings;
-        this.tempShape = ShapeFactory_1.default.create(this.settings.activeTool, this.start, this.end, this.settings.activeColor);
+        this.tempShape = ShapeFactory_1.default.create(this.settings.activeTool, this.start, this.end, this.settings.activeColor, this.settings.fill);
         this.down = false;
     }
     click(event) {
@@ -566,12 +602,12 @@ class ShapeTool {
     move(event) {
         if (!this.down)
             return;
-        this.tempShape = ShapeFactory_1.default.create(this.settings.activeTool, this.start, this.end, this.settings.activeColor);
+        this.tempShape = ShapeFactory_1.default.create(this.settings.activeTool, this.start, this.end, this.settings.activeColor, this.settings.fill);
         this.tempShape.end.set(event.clientX, event.clientY - this.settings.menuHeight);
     }
     release(event) {
         this.end.set(event.clientX, event.clientY - this.settings.menuHeight);
-        this.shapes.push(ShapeFactory_1.default.create(this.settings.activeTool, this.start.clone(), this.end.clone(), this.settings.activeColor));
+        this.shapes.push(ShapeFactory_1.default.create(this.settings.activeTool, this.start.clone(), this.end.clone(), this.settings.activeColor, this.settings.fill));
         this.down = false;
     }
     renderAll(context) {

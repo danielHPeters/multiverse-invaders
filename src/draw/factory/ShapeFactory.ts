@@ -10,20 +10,20 @@ export enum ShapeType {
 }
 
 export default class ShapeFactory {
-  static create (shapeType: ShapeType, start: Point, end: Point, color: Color): Shape {
+  static create (shapeType: ShapeType, start: Point, end: Point, color: Color, fill: boolean): Shape {
     let shape
     switch (shapeType) {
       case ShapeType.LINE:
-        shape = new Line(start, end, color)
+        shape = new Line(start, end, color, fill)
         break
       case ShapeType.RECTANGLE:
-        shape = new Rectangle(start, end, color)
+        shape = new Rectangle(start, end, color, fill)
         break
       case ShapeType.TRIANGLE:
-        shape = new Triangle(start, end, color)
+        shape = new Triangle(start, end, color, fill)
         break
       case ShapeType.CIRCLE:
-        shape = new Circle(start, end, color)
+        shape = new Circle(start, end, color, fill)
         break
       default:
         throw new Error('Invalid Shape Type!')

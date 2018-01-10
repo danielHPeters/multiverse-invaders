@@ -16,7 +16,7 @@ document.addEventListener('DOMContentLoaded', () => {
   menu.addMenu('Edit', MenuBar.createEditMenu(settings, tool, context, canvas))
   menu.addMenu('Color', MenuBar.createColorMenu(settings))
   menu.addMenu('Shapes', MenuBar.createShapesMenu(settings))
-  menu.addMenu('Options')
+  menu.addMenu('Options', MenuBar.createOptionsMenu(settings))
   menu.addMenu('Help')
   new Pane(canvas, menuBar, context, tool).init()
 })

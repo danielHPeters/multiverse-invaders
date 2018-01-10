@@ -203,7 +203,7 @@ exports.Vector2 = Vector2;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-const Observable_1 = __webpack_require__(9);
+const Observable_1 = __webpack_require__(8);
 var Actions;
 (function (Actions) {
     Actions["UP"] = "UP";
@@ -309,9 +309,9 @@ exports.InputManager = InputManager;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-const SpriteSheet_1 = __webpack_require__(6);
-const Sound_1 = __webpack_require__(7);
-const Ajax_1 = __webpack_require__(8);
+const SpriteSheet_1 = __webpack_require__(5);
+const Sound_1 = __webpack_require__(6);
+const Ajax_1 = __webpack_require__(7);
 var AssetType;
 (function (AssetType) {
     AssetType["SPRITE"] = "SPRITE";
@@ -468,8 +468,7 @@ exports.HitBox = HitBox;
 
 
 /***/ }),
-/* 5 */,
-/* 6 */
+/* 5 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -514,7 +513,7 @@ exports.SpriteSheet = SpriteSheet;
 
 
 /***/ }),
-/* 7 */
+/* 6 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -545,7 +544,7 @@ exports.Sound = Sound;
 
 
 /***/ }),
-/* 8 */
+/* 7 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -581,7 +580,7 @@ exports.Ajax = Ajax;
 
 
 /***/ }),
-/* 9 */
+/* 8 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -622,7 +621,7 @@ exports.Observable = Observable;
 
 
 /***/ }),
-/* 10 */
+/* 9 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -729,7 +728,7 @@ exports.QuadTree = QuadTree;
 
 
 /***/ }),
-/* 11 */
+/* 10 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -762,7 +761,7 @@ exports.CollisionManager = CollisionManager;
 
 
 /***/ }),
-/* 12 */
+/* 11 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -807,6 +806,7 @@ exports.Settings = Settings;
 
 
 /***/ }),
+/* 12 */,
 /* 13 */,
 /* 14 */
 /***/ (function(module, exports, __webpack_require__) {
@@ -832,7 +832,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const AssetManager_1 = __webpack_require__(3);
 const SpaceGame_1 = __webpack_require__(16);
 const InputManager_1 = __webpack_require__(2);
-const Settings_1 = __webpack_require__(12);
+const Settings_1 = __webpack_require__(11);
 const SettingsMenu_1 = __webpack_require__(22);
 const CollideAble_1 = __webpack_require__(0);
 const EventHandler_1 = __webpack_require__(14);
@@ -887,10 +887,10 @@ const AssetManager_1 = __webpack_require__(3);
 const InputManager_1 = __webpack_require__(2);
 const Ship_1 = __webpack_require__(18);
 const Pool_1 = __webpack_require__(19);
-const QuadTree_1 = __webpack_require__(10);
+const QuadTree_1 = __webpack_require__(9);
 const HitBox_1 = __webpack_require__(4);
 const CollideAble_1 = __webpack_require__(0);
-const CollisionManager_1 = __webpack_require__(11);
+const CollisionManager_1 = __webpack_require__(10);
 class SpaceGame {
     constructor(assetManager, inputManager, settings, canvases) {
         this.playing = false;

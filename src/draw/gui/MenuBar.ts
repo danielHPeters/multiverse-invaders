@@ -1,6 +1,7 @@
 import { Color, VALID_COLOR } from '../Line'
 import { ShapeType } from '../factory/ShapeFactory'
 import Tool from '../interfaces/Tool'
+import Settings from '../config/Settings'
 
 export default class MenuBar {
   private element: HTMLElement
@@ -11,8 +12,8 @@ export default class MenuBar {
     this.submenus = []
   }
 
-  static createEditMenu (settings, tool: Tool, context: CanvasRenderingContext2D, canvas: HTMLCanvasElement): HTMLElement[] {
-    const colorEntries = []
+  static createEditMenu (settings: Settings, tool: Tool, context: CanvasRenderingContext2D, canvas: HTMLCanvasElement): HTMLElement[] {
+    const editEntries = []
     const entryText = 'Undo'
     const menuEntry = document.createElement('li') as HTMLElement
     const menuLink = document.createElement('a')
@@ -24,11 +25,11 @@ export default class MenuBar {
     menuEntry.addEventListener('click', () => {
       tool.undo(context, canvas.width, canvas.height)
     })
-    colorEntries.push(menuEntry)
-    return colorEntries
+    editEntries.push(menuEntry)
+    return editEntries
   }
 
-  static createColorMenu (settings): HTMLElement[] {
+  static createColorMenu (settings: Settings): HTMLElement[] {
     const colors = ['Red', 'Black', 'Blue', 'Yellow']
     const colorEntries = []
     colors.forEach(color => {
@@ -75,6 +76,23 @@ export default class MenuBar {
       toolEntries.push(menuEntry)
     })
     return toolEntries
+  }
+
+  static createOptionsMenu (settings: Settings): HTMLElement[] {
+    const optionEntries = []
+    const entryText = 'Fill'
+    const menuEntry = document.createElement('li') as HTMLElement
+    const menuInput = document.createElement('input')
+    menuInput.setAttribute('type', 'checkbox')
+    menuInput.setAttribute('id', entryText.toLowerCase())
+    menuEntry.appendChild(document.createTextNode(entryText))
+    menuEntry.appendChild(menuInput)
+    menuEntry.classList.add('menuEntry')
+    menuInput.addEventListener('click', () => {
+      settings.fill = !settings.fill
+    })
+    optionEntries.push(menuEntry)
+    return optionEntries
   }
 
   addMenu (title: string, entries: HTMLElement[] = []): void {

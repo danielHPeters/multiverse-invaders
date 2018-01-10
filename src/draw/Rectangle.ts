@@ -6,11 +6,13 @@ export default class Rectangle implements Shape {
   start: Point
   end: Point
   color: Color
+  fill: boolean
 
-  constructor (start: Point, end: Point, color = Color.BLACK) {
+  constructor (start: Point, end: Point, color: Color, fill: boolean) {
     this.start = start
     this.end = end
     this.color = color
+    this.fill = fill
   }
 
   /**
@@ -21,7 +23,12 @@ export default class Rectangle implements Shape {
   render (context: CanvasRenderingContext2D): void {
     context.beginPath()
     context.rect(this.start.x, this.start.y, this.end.x - this.start.x, this.end.y - this.start.y)
-    context.strokeStyle = this.color
-    context.stroke()
+    if (this.fill) {
+      context.fillStyle = this.color
+      context.fill()
+    } else {
+      context.strokeStyle = this.color
+      context.stroke()
+    }
   }
 }

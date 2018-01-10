@@ -15,6 +15,7 @@ export default class Line implements Shape {
   start: Point
   end: Point
   color: Color
+  fill: boolean
 
   /**
    * Default constructor.
@@ -23,10 +24,11 @@ export default class Line implements Shape {
    * @param {Point} end tool release location
    * @param {Color} color stroke color
    */
-  constructor (start: Point, end: Point, color = Color.BLACK) {
+  constructor (start: Point, end: Point, color: Color, fill: boolean) {
     this.start = start
     this.end = end
     this.color = color
+    this.fill = fill
   }
 
   /**

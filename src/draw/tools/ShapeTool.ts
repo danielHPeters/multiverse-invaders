@@ -17,7 +17,7 @@ export default class ShapeTool implements Tool {
     this.end = new Point(0, 0)
     this.shapes = settings.history
     this.settings = settings
-    this.tempShape = ShapeFactory.create(this.settings.activeTool, this.start, this.end, this.settings.activeColor)
+    this.tempShape = ShapeFactory.create(this.settings.activeTool, this.start, this.end, this.settings.activeColor, this.settings.fill)
     this.down = false
   }
 
@@ -28,13 +28,13 @@ export default class ShapeTool implements Tool {
 
   move (event): void {
     if (!this.down) return
-    this.tempShape = ShapeFactory.create(this.settings.activeTool, this.start, this.end, this.settings.activeColor)
+    this.tempShape = ShapeFactory.create(this.settings.activeTool, this.start, this.end, this.settings.activeColor, this.settings.fill)
     this.tempShape.end.set(event.clientX, event.clientY - this.settings.menuHeight)
   }
 
   release (event): void {
     this.end.set(event.clientX, event.clientY - this.settings.menuHeight)
-    this.shapes.push(ShapeFactory.create(this.settings.activeTool, this.start.clone(), this.end.clone(), this.settings.activeColor))
+    this.shapes.push(ShapeFactory.create(this.settings.activeTool, this.start.clone(), this.end.clone(), this.settings.activeColor, this.settings.fill))
     this.down = false
   }
 
