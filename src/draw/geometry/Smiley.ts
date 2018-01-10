@@ -22,10 +22,10 @@ export default class Smiley implements Shape {
     context.arc(this.start.x, this.start.y, radius, 0, Math.PI * 2, true) // Outer circle
     context.moveTo(this.start.x + (radius * 0.7), this.start.y)
     context.arc(this.start.x , this.start.y, radius * 0.7, 0, Math.PI, false)  // Mouth (clockwise)
-    context.moveTo(this.start.x - (radius * 0.3) + radius * 0.2, this.start.y - (radius * 0.2))
-    context.arc(this.start.x - (radius * 0.3), this.start.y - (radius * 0.2), radius * 0.2, 0, Math.PI * 2, false)  // Left eye
-    context.moveTo(this.start.x + (radius * 0.3) + radius * 0.2, this.start.y - (radius * 0.2))
-    context.arc(this.start.x + (radius * 0.3), this.start.y - (radius * 0.2), radius * 0.2, 0, Math.PI * 2, true)  // Right eye
+    context.moveTo(this.start.x - (radius * 0.3) + radius * 0.1, this.start.y - (radius * 0.2))
+    context.arc(this.start.x - (radius * 0.3), this.start.y - (radius * 0.2), radius * 0.1, 0, Math.PI * 2, false)  // Left eye
+    context.moveTo(this.start.x + (radius * 0.3) + radius * 0.1, this.start.y - (radius * 0.2))
+    context.arc(this.start.x + (radius * 0.3), this.start.y - (radius * 0.2), radius * 0.1, 0, Math.PI * 2, true)  // Right eye
     context.stroke()
   }
 }
