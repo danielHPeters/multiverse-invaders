@@ -807,8 +807,7 @@ exports.Settings = Settings;
 
 /***/ }),
 /* 12 */,
-/* 13 */,
-/* 14 */
+/* 13 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -823,6 +822,7 @@ exports.EventHandler = EventHandler;
 
 
 /***/ }),
+/* 14 */,
 /* 15 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -835,7 +835,7 @@ const InputManager_1 = __webpack_require__(2);
 const Settings_1 = __webpack_require__(11);
 const SettingsMenu_1 = __webpack_require__(22);
 const CollideAble_1 = __webpack_require__(0);
-const EventHandler_1 = __webpack_require__(14);
+const EventHandler_1 = __webpack_require__(13);
 const assetManager = new AssetManager_1.AssetManager();
 const canvases = {
     background: document.getElementById('background'),
@@ -1394,7 +1394,7 @@ exports.Enemy = Enemy;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 const InputManager_1 = __webpack_require__(2);
-const EventHandler_1 = __webpack_require__(14);
+const EventHandler_1 = __webpack_require__(13);
 class SettingsMenu {
     constructor(element, settings, assetManager) {
         this.element = element;

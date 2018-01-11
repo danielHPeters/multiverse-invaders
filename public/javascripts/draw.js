@@ -82,45 +82,11 @@
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var Color;
-(function (Color) {
-    Color["RED"] = "#FF0000";
-    Color["GREEN"] = "#00FF00";
-    Color["BLUE"] = "#0000FF";
-    Color["YELLOW"] = "#FFFF00";
-    Color["BLACK"] = "#000000";
-})(Color = exports.Color || (exports.Color = {}));
-exports.VALID_COLOR = '^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$';
-class Line {
-    constructor(start, end, color, fill) {
-        this.start = start;
-        this.end = end;
-        this.color = color;
-        this.fill = fill;
-    }
-    render(context) {
-        context.beginPath();
-        context.strokeStyle = this.color;
-        context.moveTo(this.start.x, this.start.y);
-        context.lineTo(this.end.x, this.end.y);
-        context.stroke();
-    }
-}
-exports.default = Line;
-
-
-/***/ }),
-/* 13 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-const Line_1 = __webpack_require__(12);
-const Rectangle_1 = __webpack_require__(36);
-const Triangle_1 = __webpack_require__(37);
-const Circle_1 = __webpack_require__(38);
-const Smiley_1 = __webpack_require__(39);
+const Line_1 = __webpack_require__(14);
+const Rectangle_1 = __webpack_require__(37);
+const Triangle_1 = __webpack_require__(38);
+const Circle_1 = __webpack_require__(39);
+const Smiley_1 = __webpack_require__(40);
 var ShapeType;
 (function (ShapeType) {
     ShapeType[ShapeType["LINE"] = 0] = "LINE";
@@ -158,7 +124,32 @@ exports.default = ShapeFactory;
 
 
 /***/ }),
-/* 14 */,
+/* 13 */,
+/* 14 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+class Line {
+    constructor(start, end, color, fill) {
+        this.start = start;
+        this.end = end;
+        this.color = color;
+        this.fill = fill;
+    }
+    render(context) {
+        context.beginPath();
+        context.strokeStyle = this.color;
+        context.moveTo(this.start.x, this.start.y);
+        context.lineTo(this.end.x, this.end.y);
+        context.stroke();
+    }
+}
+exports.default = Line;
+
+
+/***/ }),
 /* 15 */,
 /* 16 */,
 /* 17 */,
@@ -183,11 +174,11 @@ exports.default = ShapeFactory;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-const Pane_1 = __webpack_require__(34);
+const DrawingApp_1 = __webpack_require__(34);
 const MenuBar_1 = __webpack_require__(35);
-const Settings_1 = __webpack_require__(40);
-const Line_1 = __webpack_require__(12);
-const ShapeTool_1 = __webpack_require__(41);
+const Settings_1 = __webpack_require__(41);
+const Line_1 = __webpack_require__(14);
+const ShapeTool_1 = __webpack_require__(42);
 document.addEventListener('DOMContentLoaded', () => {
     const canvas = document.getElementById('pane');
     const context = canvas.getContext('2d');
@@ -201,7 +192,7 @@ document.addEventListener('DOMContentLoaded', () => {
     menu.addMenu('Shapes', MenuBar_1.default.createShapesMenu(settings));
     menu.addMenu('Options', MenuBar_1.default.createOptionsMenu(settings));
     menu.addMenu('Help');
-    new Pane_1.default(canvas, menuBar, context, tool).init();
+    new DrawingApp_1.default(canvas, menuBar, context, tool).init();
 });
 
 
@@ -212,7 +203,7 @@ document.addEventListener('DOMContentLoaded', () => {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-class Pane {
+class DrawingApp {
     constructor(canvas, menuBar, context, tool) {
         this.menuBar = menuBar;
         this.canvas = canvas;
@@ -236,7 +227,7 @@ class Pane {
         });
     }
 }
-exports.default = Pane;
+exports.default = DrawingApp;
 
 
 /***/ }),
@@ -246,8 +237,8 @@ exports.default = Pane;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-const Line_1 = __webpack_require__(12);
-const ShapeFactory_1 = __webpack_require__(13);
+const Shape_1 = __webpack_require__(36);
+const ShapeFactory_1 = __webpack_require__(12);
 class MenuBar {
     constructor(element) {
         this.element = element;
@@ -281,14 +272,14 @@ class MenuBar {
             menuEntry.appendChild(menuLink);
             menuEntry.classList.add('menuEntry');
             menuEntry.addEventListener('click', () => {
-                settings.activeColor = Line_1.Color[color.toUpperCase()];
+                settings.activeColor = Shape_1.Color[color.toUpperCase()];
             });
             colorEntries.push(menuEntry);
         });
         const colorForm = document.createElement('form');
         const colorInput = document.createElement('input');
         colorInput.setAttribute('type', 'color');
-        colorInput.setAttribute('accept', Line_1.VALID_COLOR);
+        colorInput.setAttribute('accept', Shape_1.VALID_COLOR);
         colorInput.addEventListener('change', () => {
             settings.activeColor = colorInput.value;
         });
@@ -364,6 +355,24 @@ exports.default = MenuBar;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
+var Color;
+(function (Color) {
+    Color["RED"] = "#FF0000";
+    Color["GREEN"] = "#00FF00";
+    Color["BLUE"] = "#0000FF";
+    Color["YELLOW"] = "#FFFF00";
+    Color["BLACK"] = "#000000";
+})(Color = exports.Color || (exports.Color = {}));
+exports.VALID_COLOR = '^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$';
+
+
+/***/ }),
+/* 37 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
 class Rectangle {
     constructor(start, end, color, fill) {
         this.start = start;
@@ -388,7 +397,7 @@ exports.default = Rectangle;
 
 
 /***/ }),
-/* 37 */
+/* 38 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -421,7 +430,7 @@ exports.default = Triangle;
 
 
 /***/ }),
-/* 38 */
+/* 39 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -454,7 +463,7 @@ exports.default = Circle;
 
 
 /***/ }),
-/* 39 */
+/* 40 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -485,13 +494,13 @@ exports.default = Smiley;
 
 
 /***/ }),
-/* 40 */
+/* 41 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-const ShapeFactory_1 = __webpack_require__(13);
+const ShapeFactory_1 = __webpack_require__(12);
 class Settings {
     constructor(activeColor, menuHeight, activeTool = ShapeFactory_1.ShapeType.LINE) {
         this.activeColor = activeColor;
@@ -505,19 +514,19 @@ exports.default = Settings;
 
 
 /***/ }),
-/* 41 */
+/* 42 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-const Point_1 = __webpack_require__(42);
-const ShapeFactory_1 = __webpack_require__(13);
+const Point_1 = __webpack_require__(43);
+const ShapeFactory_1 = __webpack_require__(12);
 class ShapeTool {
     constructor(settings) {
         this.start = new Point_1.default(0, 0);
         this.end = new Point_1.default(0, 0);
-        this.shapes = settings.history;
+        this.history = settings.history;
         this.settings = settings;
         this.tempShape = ShapeFactory_1.default.create(this.settings.activeTool, this.start, this.end, this.settings.activeColor, this.settings.fill);
         this.down = false;
@@ -534,18 +543,18 @@ class ShapeTool {
     }
     release(event) {
         this.end.set(event.clientX, event.clientY - this.settings.menuHeight);
-        this.shapes.push(ShapeFactory_1.default.create(this.settings.activeTool, this.start.clone(), this.end.clone(), this.settings.activeColor, this.settings.fill));
+        this.history.push(ShapeFactory_1.default.create(this.settings.activeTool, this.start.clone(), this.end.clone(), this.settings.activeColor, this.settings.fill));
         this.down = false;
     }
     renderAll(context) {
-        this.shapes.forEach(line => line.render(context));
+        this.history.forEach(line => line.render(context));
     }
     undo(context, width, height) {
-        if (this.shapes.length > 0) {
+        if (this.history.length > 0) {
             context.clearRect(0, 0, width, height);
             this.tempShape.start.set(0, 0);
             this.tempShape.end.set(0, 0);
-            this.shapes.pop();
+            this.history.pop();
             this.renderAll(context);
         }
     }
@@ -554,7 +563,7 @@ exports.default = ShapeTool;
 
 
 /***/ }),
-/* 42 */
+/* 43 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
