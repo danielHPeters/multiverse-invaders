@@ -1,5 +1,5 @@
 import { ShapeType } from '../factory/ShapeFactory'
-import Shape from '../interfaces/Shape'
+import Shape, { Color } from '../interfaces/Shape'
 
 /**
  * Default application settings configuration.
@@ -17,11 +17,11 @@ export default class Settings {
   /**
    * Default constructor.
    *
-   * @param activeColor Currently used color for drawing
    * @param {number} menuHeight Height of the top menu to calculate the drawing offset
+   * @param {Color} activeColor Currently used color for drawing
    * @param {ShapeType} activeTool Currently active shape
    */
-  constructor (activeColor, menuHeight: number, activeTool = ShapeType.LINE) {
+  constructor (menuHeight: number, activeColor = Color.BLACK, activeTool = ShapeType.LINE) {
     this.activeColor = activeColor
     this.menuHeight = menuHeight
     this.activeTool = activeTool
