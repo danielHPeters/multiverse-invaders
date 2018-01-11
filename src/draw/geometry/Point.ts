@@ -1,3 +1,9 @@
+/**
+ * Class Representing a Coordinate (x|y) on the canvas.
+ *
+ * @author Daniel Peters
+ * @version 1.0
+ */
 export default class Point {
   x: number
   y: number
@@ -16,8 +22,8 @@ export default class Point {
   /**
    * Set both x and y values.
    *
-   * @param {number} x
-   * @param {number} y
+   * @param {number} x x-axis value
+   * @param {number} y y-axis value
    */
   public set (x: number, y: number): void {
     this.x = x
@@ -27,13 +33,18 @@ export default class Point {
   /**
    * Set the x and y values of this point to the values of another point.
    *
-   * @param {Point} point
+   * @param {Point} point Other point
    */
   public setPoint (point: Point): void {
     this.x = point.x
     this.y = point.y
   }
 
+  /**
+   * Create a another Point object with the same value as this Point.
+   *
+   * @returns {Point} A clone of this point
+   */
   public clone (): Point {
     return new Point(this.x, this.y)
   }

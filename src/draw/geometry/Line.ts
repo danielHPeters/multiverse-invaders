@@ -1,16 +1,12 @@
 import Point from './Point'
-import Shape from '../interfaces/Shape'
+import Shape, { Color } from '../interfaces/Shape'
 
-export enum Color {
-  RED = '#FF0000',
-  GREEN = '#00FF00',
-  BLUE = '#0000FF',
-  YELLOW = '#FFFF00',
-  BLACK = '#000000'
-}
-
-export const VALID_COLOR = '^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$'
-
+/**
+ * Line shape to be drawn on a canvas element.
+ *
+ * @author Daniel Peters
+ * @version 1.0
+ */
 export default class Line implements Shape {
   start: Point
   end: Point
@@ -20,9 +16,10 @@ export default class Line implements Shape {
   /**
    * Default constructor.
    *
-   * @param {Point} start tool start location
-   * @param {Point} end tool release location
-   * @param {Color} color stroke color
+   * @param {Point} start Tool start location
+   * @param {Point} end Tool release location
+   * @param {Color} color Stroke color
+   * @param {boolean} fill Flag determining whether the shape should be filled
    */
   constructor (start: Point, end: Point, color: Color, fill: boolean) {
     this.start = start

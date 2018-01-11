@@ -1,16 +1,26 @@
-import { Vector2 } from '../../lib/vector/Vector2'
-import LineTool from '../tools/ShapeTool'
-import Settings from '../config/Settings'
 import Tool from '../interfaces/Tool'
 
-export default class Pane {
-  menuBar: HTMLElement
-  canvas: HTMLCanvasElement
-  context: CanvasRenderingContext2D
-  tool: Tool
-  settings
+/**
+ * Main application class.
+ *
+ * @author Daniel Peters
+ * @version 1.0
+ */
+export default class DrawingApp {
+  private menuBar: HTMLElement
+  private canvas: HTMLCanvasElement
+  private context: CanvasRenderingContext2D
+  private tool: Tool
 
-  constructor (canvas: HTMLCanvasElement, menuBar: HTMLElement, context: CanvasRenderingContext2D, tool: LineTool) {
+  /**
+   * Default constructor.
+   *
+   * @param {HTMLCanvasElement} canvas Main drawing canvas
+   * @param {HTMLElement} menuBar menu Bar HTML element that displays options and tools
+   * @param {CanvasRenderingContext2D} context The context of the main canvas
+   * @param {Tool} tool Drawing tool
+   */
+  constructor (canvas: HTMLCanvasElement, menuBar: HTMLElement, context: CanvasRenderingContext2D, tool: Tool) {
     this.menuBar = menuBar
     this.canvas = canvas
     this.canvas.width = window.innerWidth
@@ -19,7 +29,10 @@ export default class Pane {
     this.tool = tool
   }
 
-  init (): void {
+  /**
+   * Initialize the mouse events.
+   */
+  public init (): void {
     this.canvas.addEventListener('mousedown', event => this.tool.click(event))
     this.canvas.addEventListener('mousemove', event => {
       this.tool.move(event)

@@ -1,13 +1,26 @@
 import Point from './Point'
-import { Color } from './Line'
-import Shape from '../interfaces/Shape'
+import Shape, { Color } from '../interfaces/Shape'
 
+/**
+ * Rectangle shape to be drawn on a canvas.
+ *
+ * @author Daniel Peters
+ * @version 1.0
+ */
 export default class Rectangle implements Shape {
   start: Point
   end: Point
   color: Color
   fill: boolean
 
+  /**
+   * Default constructor.
+   *
+   * @param {Point} start Starting point of this shape
+   * @param {Point} end Ending point of this shape
+   * @param {Color} color The color of this shape
+   * @param {boolean} fill Flag determining whether this shape should be filled
+   */
   constructor (start: Point, end: Point, color: Color, fill: boolean) {
     this.start = start
     this.end = end
@@ -16,9 +29,9 @@ export default class Rectangle implements Shape {
   }
 
   /**
-   * Draw this line on the canvas.
+   * Draw this rectangle on the canvas.
    *
-   * @param {CanvasRenderingContext2D} context drawing context
+   * @param {CanvasRenderingContext2D} context Drawing context
    */
   render (context: CanvasRenderingContext2D): void {
     context.beginPath()

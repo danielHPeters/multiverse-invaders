@@ -1,9 +1,13 @@
-import Pane from './gui/Pane'
+import Pane from './gui/DrawingApp'
 import MenuBar from './gui/MenuBar'
 import Settings from './config/Settings'
 import { Color } from './geometry/Line'
 import ShapeTool from './tools/ShapeTool'
 
+/**
+ * Entry script of the web application.
+ * Initializes the drawing context and the menu bar.
+ */
 document.addEventListener('DOMContentLoaded', () => {
   const canvas = document.getElementById('pane') as HTMLCanvasElement
   const context = canvas.getContext('2d')
