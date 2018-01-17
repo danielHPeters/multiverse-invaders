@@ -1,4 +1,4 @@
-import Pane from './gui/DrawingApp'
+import DrawingApp from './gui/DrawingApp'
 import MenuBar from './gui/MenuBar'
 import Settings from './config/Settings'
 import ShapeTool from './tools/ShapeTool'
@@ -21,5 +21,5 @@ document.addEventListener('DOMContentLoaded', () => {
   menu.addMenu('Shapes', MenuBar.createShapesMenu(settings))
   menu.addMenu('Options', MenuBar.createOptionsMenu(settings))
   menu.addMenu('Help')
-  new Pane(canvas, menuBar, context, tool).init()
+  new DrawingApp(canvas, menuBar, context, tool).init()
 })

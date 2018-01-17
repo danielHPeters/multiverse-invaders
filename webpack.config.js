@@ -7,10 +7,12 @@ module.exports = {
     'tileSetMap': './src/lib/tileset/test.ts',
     'matrix': './src/matrix/main.ts',
     'draw': './src/draw/draw.ts',
+    'pathfinding': './src/algorithm/pathfinding/app.ts',
     'multiverseInvaders.min': './src/game/app.ts',
     'tileSetMap.min': './src/lib/tileset/test.ts',
     'matrix.min': './src/matrix/main.ts',
-    'draw.min': './src/draw/draw.ts'
+    'draw.min': './src/draw/draw.ts',
+    'pathfinding.min': './src/algorithm/pathfinding/app.ts'
   },
   devtool: 'source-map',
   output: {

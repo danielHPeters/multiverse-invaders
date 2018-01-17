@@ -1,5 +1,5 @@
 import Shape, { Color } from '../interfaces/Shape'
-import Point from './Point'
+import Point from '../../lib/vector/Point'
 
 /**
  * Smiley Shape to draw on the canvas element.

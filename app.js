@@ -12,6 +12,7 @@ const game = require('./routes/game')
 const map = require('./routes/map')
 const draw = require('./routes/draw')
 const matrix = require('./routes/matrix')
+const pathFinding = require('./routes/pathfinding')
 
 const app = express()
 
@@ -39,6 +40,7 @@ app.use('/game', game)
 app.use('/map', map)
 app.use('/matrix', matrix)
 app.use('/draw', draw)
+app.use('/pathfinding', pathFinding)
 
 // catch 404 and forward to error handler
 app.use((req, res, next) => {

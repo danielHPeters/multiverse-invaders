@@ -1,4 +1,4 @@
-import Point from '../geometry/Point'
+import Point from '../../lib/vector/Point'
 
 /**
  * Basic hex-color enum.

@@ -1,4 +1,4 @@
-import Point from './Point'
+import Point from '../../lib/vector/Point'
 import Shape, { Color } from '../interfaces/Shape'
 
 /**
