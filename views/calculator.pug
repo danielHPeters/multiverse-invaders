@@ -2,47 +2,51 @@ extends layout
 block content
   .container
     form#calculator.row
-      .input-field.col.s3
+      .input-field.col.s4
         input#expression(type='text' name='expression' pattern='^\\s*([-+]?)(\\d+)(?:\\s*\\s*([-+]?)(\\d+)\\s*([-+*\\/\\^]))+$')
         label(for='expression') Enter postfix expression here
-      .col.s2
-        p#result
+
+    .row
+        p#result.col.s2
     #numpad
       .row
         .col.s1
-          button.btn 1
+          button.btn.math 1
         .col.s1
-          button.btn 2
+          button.btn.math 2
         .col.s1
-          button.btn 3
+          button.btn.math 3
         .col.s1
-          button.btn -
+          button.btn.math -
       .row
         .col.s1
-          button.btn 4
+          button.btn.math 4
         .col.s1
-          button.btn 5
+          button.btn.math 5
         .col.s1
-          button.btn 6
+          button.btn.math 6
         .col.s1
-          button.btn +
+          button.btn.math +
       .row
         .col.s1
-          button.btn 7
+          button.btn.math 7
         .col.s1
-          button.btn 8
+          button.btn.math 8
         .col.s1
-          button.btn 9
+          button.btn.math 9
         .col.s1
-          button.btn *
+          button.btn.math *
       .row
         .col.s1
           button#clear.btn C
         .col.s1
-          button.btn 0
+          button.btn.math 0
         .col.s1
           button#execute.btn(type='submit' form='calculator') =
         .col.s1
-          button.btn /
+          button.btn.math /
+      .row
+        .col.s1
+          button.btn.math= ' '
 block scripts
   script(src='javascripts/calculator.min.js')

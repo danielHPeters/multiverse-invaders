@@ -73,13 +73,19 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const PostFixCalculator_1 = __webpack_require__(49);
 const calculator = document.getElementById('calculator');
+const input = document.getElementById('expression');
 calculator.addEventListener('submit', ev => {
     ev.preventDefault();
     const resultBox = document.getElementById('result');
     resultBox.innerHTML = '';
-    const input = document.getElementById('expression');
     const expression = input.value;
     resultBox.appendChild(document.createTextNode(PostFixCalculator_1.default.calculate(expression).toString()));
+});
+document.querySelectorAll('.math').forEach(key => {
+    console.log('hi');
+    key.addEventListener('click', () => {
+        input.value += key.textContent;
+    });
 });
 
 
