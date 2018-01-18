@@ -21,7 +21,7 @@ let run = () => {
     let current = dialog[cursor]
     if (current['m'] !== undefined) {
       displayText(current['m'])
-      if (current['next' !== undefined]) {
+      if (current['next'] !== undefined) {
         cursor = findLabel(current['next'] as Answerstatus)
       } else {
         cursor++
