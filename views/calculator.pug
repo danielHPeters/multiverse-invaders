@@ -3,7 +3,7 @@ block content
   .container
     form#calculator
       .input-field
-        input#expression(type='text' name='expression' pattern='^\\s*([-+]?)(\\d+)(?:\\s*\\s*([-+]?)(\\d+)\\s*([-+*\\/]))+$')
+        input#expression(type='text' name='expression' pattern='^\\s*([-+]?)(\\d+)(?:\\s*\\s*([-+]?)(\\d+)\\s*([-+*\\/\\^]))+$')
         label(for='expression') Enter postfix expression here
       button.btn-floating.btn-large.waves-effect.waves-light.blue(type='submit')
         i.material-icons send

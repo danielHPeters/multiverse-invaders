@@ -119,6 +119,9 @@ class PostFixCalculator {
                                 throw new Error('Division by zero not allowed!');
                             }
                             break;
+                        case '^':
+                            result = Math.pow(operand, operand2);
+                            break;
                         default:
                             throw new Error('Internal error!');
                     }
@@ -135,7 +138,7 @@ class PostFixCalculator {
         return result;
     }
 }
-PostFixCalculator.VALID_INPUT = '^\\s*([-+]?)(\\d+)(?:\\s*\\s*([-+]?)(\\d+)\\s*([-+*\\/]))+$';
+PostFixCalculator.VALID_INPUT = '^\\s*([-+]?)(\\d+)(?:\\s*\\s*([-+]?)(\\d+)\\s*([-+*\\/\\^]))+$';
 exports.default = PostFixCalculator;
 
 

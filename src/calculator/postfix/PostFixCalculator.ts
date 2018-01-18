@@ -1,5 +1,5 @@
 export default class PostFixCalculator {
-  static VALID_INPUT = '^\\s*([-+]?)(\\d+)(?:\\s*\\s*([-+]?)(\\d+)\\s*([-+*\\/]))+$'
+  static VALID_INPUT = '^\\s*([-+]?)(\\d+)(?:\\s*\\s*([-+]?)(\\d+)\\s*([-+*\\/\\^]))+$'
 
   static calculate (input: string): number {
     let result = null
@@ -28,6 +28,9 @@ export default class PostFixCalculator {
               } else {
                 throw new Error('Division by zero not allowed!')
               }
+              break
+            case '^':
+              result = Math.pow(operand, operand2)
               break
             default:
               throw new Error('Internal error!')
