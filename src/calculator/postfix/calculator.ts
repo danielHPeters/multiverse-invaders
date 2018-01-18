@@ -12,8 +12,5 @@ calculator.addEventListener('submit', ev => {
 })
 
 document.querySelectorAll('.math').forEach(key => {
-  console.log('hi')
-  key.addEventListener('click', () => {
-    input.value += key.textContent
-  })
+  key.addEventListener('click', () => input.value += key.textContent)
 })
