@@ -16,16 +16,18 @@ export default class Observable {
   }
 
   /**
+   * Register an observer on this observable.
    *
-   * @param {Observer} observer
+   * @param {Observer} observer Object implementing the Observer interface
    */
   register (observer: Observer): void {
     this._observers.push(observer)
   }
 
   /**
+   * Remove an observer from this observables observers list.
    *
-   * @param {Observer} observer
+   * @param {Observer} observer Object implementing the Observer interface
    */
   unRegister (observer: Observer): void {
     this._observers = this._observers.filter(obs => {
@@ -34,7 +36,7 @@ export default class Observable {
   }
 
   /**
-   *
+   * Notify all observers.
    */
   notify (): void {
     this._observers.forEach(observer => {

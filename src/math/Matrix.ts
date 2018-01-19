@@ -78,8 +78,9 @@ export default class Matrix {
   }
 
   /**
+   * Multiply this matrix by a scalar.
    *
-   * @param {number} scalar
+   * @param {number} scalar Scalar by which the matrix is multiplied by
    */
   multScalar (scalar: number): void {
     for (let i = 0; i < this.rows; i++) {
@@ -89,6 +90,11 @@ export default class Matrix {
     }
   }
 
+  /**
+   * Transposes this matrix and returns the result.
+   *
+   * @returns {Matrix} The resulting matrix
+   */
   transpose (): Matrix {
     let array = []
     console.log(array)

@@ -1,4 +1,16 @@
+/**
+ * Collection of WebGL initialization methods.
+ *
+ * @author Daniel Peters
+ * @version 1.0
+ */
 export default class WebGL {
+  /**
+   * Initialize the WebGL context.
+   *
+   * @param {HTMLCanvasElement} canvasElement Canvas element on which the scenes will be drawn.
+   * @returns {WebGLRenderingContext} WebGL Context
+   */
   static initContext (canvasElement: HTMLCanvasElement): WebGLRenderingContext {
     let gl = null
 
@@ -11,6 +23,11 @@ export default class WebGL {
     return gl
   }
 
+  /**
+   * Initialize vertex and fragment shaders.
+   *
+   * @param {WebGLRenderingContext} gl WebGL context
+   */
   static initShaders (gl: WebGLRenderingContext): void {
     const fragmentShader = WebGL.getShader(gl, 'shader-fs')
     const vertexShader = WebGL.getShader(gl, 'shader-vs')
@@ -31,6 +48,13 @@ export default class WebGL {
     gl.enableVertexAttribArray(vertexPositionAttribute)
   }
 
+  /**
+   * Get a shader from a script by script tag id.
+   *
+   * @param {WebGLRenderingContext} gl WebGL context
+   * @param {string} id Script tag id
+   * @returns {WebGLShader} Shader instance
+   */
   static getShader (gl: WebGLRenderingContext, id: string): WebGLShader {
     const shaderScript = document.getElementById(id) as HTMLScriptElement
 

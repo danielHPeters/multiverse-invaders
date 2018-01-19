@@ -8,6 +8,9 @@ export default class DoublyList {
   private _head
   private _elementsCount: number
 
+  /**
+   * Default constructor.
+   */
   constructor () {
     this._head = null
     this._elementsCount = 0
