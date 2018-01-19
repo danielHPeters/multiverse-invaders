@@ -36,6 +36,12 @@ const matrix3 = MatrixFactory.createMatrix([
   [10, 11, 12, 2]
 ])
 
+const matrix4 = MatrixFactory.createMatrix([
+  [4, 5, 6, 2],
+  [7, 8, 9, 2],
+  [10, 11, 12, 2]
+])
+
 const m = matrix.clone()
 m.add(matrix2)
 console.log(m)
@@ -45,3 +51,5 @@ console.log(matrix2)
 console.log(matrix)
 
 console.log(matrix.multiply(matrix3).mArray)
+
+console.log(matrix4.transpose().mArray)

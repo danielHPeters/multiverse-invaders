@@ -89,6 +89,19 @@ export default class Matrix {
     }
   }
 
+  transpose (): Matrix {
+    let array = []
+    console.log(array)
+    for (let i = 0; i < this.columns; i++) {
+      array[i] = []
+      for (let j = 0; j < this.rows; j++) {
+        array[i][j] = this.mArray[j][i]
+      }
+    }
+
+    return new Matrix(array)
+  }
+
   /**
    * Check if the row and column length are equal to another matrix's.
    *

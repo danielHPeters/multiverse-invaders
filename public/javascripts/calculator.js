@@ -102,12 +102,18 @@ const matrix3 = MatrixFactory_1.default.createMatrix([
     [7, 8, 9, 2],
     [10, 11, 12, 2]
 ]);
+const matrix4 = MatrixFactory_1.default.createMatrix([
+    [4, 5, 6, 2],
+    [7, 8, 9, 2],
+    [10, 11, 12, 2]
+]);
 const m = matrix.clone();
 m.add(matrix2);
 console.log(m);
 console.log(matrix2);
 console.log(matrix);
 console.log(matrix.multiply(matrix3).mArray);
+console.log(matrix4.transpose().mArray);
 
 
 /***/ }),
@@ -249,6 +255,17 @@ class Matrix {
                 this.mArray[i][j] *= scalar;
             }
         }
+    }
+    transpose() {
+        let array = [];
+        console.log(array);
+        for (let i = 0; i < this.columns; i++) {
+            array[i] = [];
+            for (let j = 0; j < this.rows; j++) {
+                array[i][j] = this.mArray[j][i];
+            }
+        }
+        return new Matrix(array);
     }
     equals(other) {
         return other.rows === this.rows && other.columns === this.columns;
