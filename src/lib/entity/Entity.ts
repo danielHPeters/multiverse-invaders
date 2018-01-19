@@ -1,10 +1,10 @@
-import { Vector2 } from '../vector/Vector2'
+import Vector2 from '../vector/Vector2'
 import { Actions } from '../../client/InputManager'
-import { Observer } from '../observer/Observer'
-import { CollideAble, EntityType } from '../../game/interfaces/CollideAble'
-import { Drawable } from '../../game/interfaces/Drawable'
+import Observer from '../observer/Observer'
+import CollideAble, { EntityType } from '../../game/interfaces/CollideAble'
+import Drawable from '../../game/interfaces/Drawable'
 
-export class Entity implements Observer, CollideAble, Drawable {
+export default class Entity implements Observer, CollideAble, Drawable {
   speed: number
   canvasWidth: number
   canvasHeight: number

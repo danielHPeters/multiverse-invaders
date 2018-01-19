@@ -1,6 +1,11 @@
 import Location, { Direction, Status } from './Location'
 import Point from '../../lib/vector/Point'
 
+/**
+ * Path finding algorithm class.
+ *
+ * @version 1.0
+ */
 export default class PathFinding {
   grid
 

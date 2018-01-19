@@ -1,5 +1,11 @@
-import { IGame } from '../lib/interfaces/IGame'
+import IGame from '../lib/interfaces/IGame'
 
+/**
+ * Snake game.
+ *
+ * @author Daniel Peters
+ * @version 1.0
+ */
 export class SnakeGame implements IGame {
   canvas: HTMLCanvasElement
   context: CanvasRenderingContext2D

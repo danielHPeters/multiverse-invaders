@@ -1,10 +1,10 @@
-import { AssetManager, AssetType } from '../client/AssetManager'
-import { SpaceGame } from './SpaceGame'
-import { InputManager } from '../client/InputManager'
-import { Settings } from '../client/Settings'
-import { SettingsMenu } from '../client/SettingsMenu'
+import AssetManager, { AssetType } from '../client/AssetManager'
+import SpaceGame from './SpaceGame'
+import InputManager from '../client/InputManager'
+import Settings from '../client/Settings'
+import SettingsMenu from '../client/SettingsMenu'
 import { EntityType } from './interfaces/CollideAble'
-import { EventHandler } from '../lib/event/EventHandler'
+import EventHandler from '../lib/event/EventHandler'
 
 const assetManager = new AssetManager()
 const canvases = {

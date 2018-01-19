@@ -193,7 +193,7 @@ class Vector2 {
         return new Vector2(this.x, this.y);
     }
 }
-exports.Vector2 = Vector2;
+exports.default = Vector2;
 
 
 /***/ }),
@@ -213,7 +213,7 @@ var Actions;
     Actions["SHOOT"] = "SHOOT";
     Actions["RESTART"] = "RESTART";
 })(Actions = exports.Actions || (exports.Actions = {}));
-class InputManager extends Observable_1.Observable {
+class InputManager extends Observable_1.default {
     constructor(settings) {
         super();
         this.inputMap = settings.keyBoard;
@@ -299,7 +299,7 @@ class InputManager extends Observable_1.Observable {
         this.state[this.inputMap['d']] = false;
     }
 }
-exports.InputManager = InputManager;
+exports.default = InputManager;
 
 
 /***/ }),
@@ -369,7 +369,7 @@ class AssetManager {
         });
     }
     loadAudioFromUrl(item, callback) {
-        Ajax_1.Ajax.create({
+        Ajax_1.default.create({
             method: 'GET',
             url: item.path,
             responseType: 'arraybuffer'
@@ -400,7 +400,7 @@ class AssetManager {
     loadSpriteSheet(item, callback) {
         let spriteSheet = new Image();
         spriteSheet.addEventListener('load', () => {
-            this.cache.spriteSheets[item.id] = new SpriteSheet_1.SpriteSheet(spriteSheet, item.opts.frameWidth || 0, item.opts.frameHeight || 0);
+            this.cache.spriteSheets[item.id] = new SpriteSheet_1.default(spriteSheet, item.opts.frameWidth || 0, item.opts.frameHeight || 0);
             this.downloadCount += 1;
             if (this.done()) {
                 callback();
@@ -429,7 +429,7 @@ class AssetManager {
         else {
             gain = this.ambientGain;
         }
-        return new Sound_1.Sound(this.audioContext, gain, this.cache.audio[id]);
+        return new Sound_1.default(this.audioContext, gain, this.cache.audio[id]);
     }
     getSprite(id) {
         return this.cache.sprites[id];
@@ -438,7 +438,7 @@ class AssetManager {
         return this.cache.spriteSheets[id];
     }
 }
-exports.AssetManager = AssetManager;
+exports.default = AssetManager;
 
 
 /***/ }),
@@ -452,7 +452,7 @@ const Vector2_1 = __webpack_require__(1);
 const CollideAble_1 = __webpack_require__(0);
 class HitBox {
     constructor(x, y, width, height) {
-        this.position = new Vector2_1.Vector2(x, y);
+        this.position = new Vector2_1.default(x, y);
         this.width = width;
         this.height = height;
         this.colliding = false;
@@ -464,7 +464,7 @@ class HitBox {
         return this.collidesWith.includes(other.type.toString());
     }
 }
-exports.HitBox = HitBox;
+exports.default = HitBox;
 
 
 /***/ }),
@@ -510,7 +510,7 @@ class SpriteSheet {
         this._framesPerRow = framesPerRow;
     }
 }
-exports.SpriteSheet = SpriteSheet;
+exports.default = SpriteSheet;
 
 
 /***/ }),
@@ -541,7 +541,7 @@ class Sound {
         this.source.stop(0);
     }
 }
-exports.Sound = Sound;
+exports.default = Sound;
 
 
 /***/ }),
@@ -577,7 +577,7 @@ Ajax.defaults = {
     async: true,
     data: null
 };
-exports.Ajax = Ajax;
+exports.default = Ajax;
 
 
 /***/ }),
@@ -618,7 +618,7 @@ class Observable {
         this._state = state;
     }
 }
-exports.Observable = Observable;
+exports.default = Observable;
 
 
 /***/ }),
@@ -630,7 +630,7 @@ exports.Observable = Observable;
 Object.defineProperty(exports, "__esModule", { value: true });
 const HitBox_1 = __webpack_require__(4);
 class QuadTree {
-    constructor(hitBox = new HitBox_1.HitBox(0, 0, 0, 0), level = 0) {
+    constructor(hitBox = new HitBox_1.default(0, 0, 0, 0), level = 0) {
         this.level = level;
         this.maxObjects = 10;
         this.maxLevels = 5;
@@ -719,13 +719,13 @@ class QuadTree {
     split() {
         let subWidth = (this.hitBox.width / 2) | 0;
         let subHeight = (this.hitBox.height / 2) | 0;
-        this.nodes[0] = new QuadTree(new HitBox_1.HitBox(this.hitBox.position.x + subWidth, this.hitBox.position.y, subWidth, subHeight), this.level + 1);
-        this.nodes[1] = new QuadTree(new HitBox_1.HitBox(this.hitBox.position.x, this.hitBox.position.y, subWidth, subHeight), this.level + 1);
-        this.nodes[2] = new QuadTree(new HitBox_1.HitBox(this.hitBox.position.x, this.hitBox.position.y + subHeight, subWidth, subHeight), this.level + 1);
-        this.nodes[3] = new QuadTree(new HitBox_1.HitBox(this.hitBox.position.x + subWidth, this.hitBox.position.y + subHeight, subWidth, subHeight), this.level + 1);
+        this.nodes[0] = new QuadTree(new HitBox_1.default(this.hitBox.position.x + subWidth, this.hitBox.position.y, subWidth, subHeight), this.level + 1);
+        this.nodes[1] = new QuadTree(new HitBox_1.default(this.hitBox.position.x, this.hitBox.position.y, subWidth, subHeight), this.level + 1);
+        this.nodes[2] = new QuadTree(new HitBox_1.default(this.hitBox.position.x, this.hitBox.position.y + subHeight, subWidth, subHeight), this.level + 1);
+        this.nodes[3] = new QuadTree(new HitBox_1.default(this.hitBox.position.x + subWidth, this.hitBox.position.y + subHeight, subWidth, subHeight), this.level + 1);
     }
 }
-exports.QuadTree = QuadTree;
+exports.default = QuadTree;
 
 
 /***/ }),
@@ -758,7 +758,7 @@ class CollisionManager {
         }
     }
 }
-exports.CollisionManager = CollisionManager;
+exports.default = CollisionManager;
 
 
 /***/ }),
@@ -803,7 +803,7 @@ class Settings {
         }
     }
 }
-exports.Settings = Settings;
+exports.default = Settings;
 
 
 /***/ }),
@@ -819,7 +819,7 @@ class EventHandler {
         events.forEach(event => element.addEventListener(event, listener));
     }
 }
-exports.EventHandler = EventHandler;
+exports.default = EventHandler;
 
 
 /***/ }),
@@ -838,15 +838,15 @@ const Settings_1 = __webpack_require__(12);
 const SettingsMenu_1 = __webpack_require__(24);
 const CollideAble_1 = __webpack_require__(0);
 const EventHandler_1 = __webpack_require__(14);
-const assetManager = new AssetManager_1.AssetManager();
+const assetManager = new AssetManager_1.default();
 const canvases = {
     background: document.getElementById('background'),
     ship: document.getElementById('ship'),
     main: document.getElementById('main')
 };
-const settings = new Settings_1.Settings();
-const inputManager = new InputManager_1.InputManager(settings);
-const settingsMenu = new SettingsMenu_1.SettingsMenu(document.getElementById('settings-menu'), settings, assetManager);
+const settings = new Settings_1.default();
+const inputManager = new InputManager_1.default(settings);
+const settingsMenu = new SettingsMenu_1.default(document.getElementById('settings-menu'), settings, assetManager);
 assetManager.queueDownload(CollideAble_1.EntityType.BACKGROUND, 'assets/textures/background.png', AssetManager_1.AssetType.SPRITE);
 assetManager.queueDownload(CollideAble_1.EntityType.PLAYER, 'assets/sprites/ship.png', AssetManager_1.AssetType.SPRITE);
 assetManager.queueDownload(CollideAble_1.EntityType.PLAYER_BULLET, 'assets/sprites/bullet.png', AssetManager_1.AssetType.SPRITE);
@@ -857,7 +857,7 @@ assetManager.queueDownload(CollideAble_1.EntityType.LASER, 'assets/audio/laser.w
 assetManager.queueDownload(CollideAble_1.EntityType.EXPLOSION_I, 'assets/audio/explosion.wav', AssetManager_1.AssetType.AUDIO);
 assetManager.queueDownload(CollideAble_1.EntityType.GAME_OVER, 'assets/audio/game_over.wav', AssetManager_1.AssetType.AUDIO);
 assetManager.downloadAll(() => {
-    const game = new SpaceGame_1.SpaceGame(assetManager, inputManager, settings, canvases);
+    const game = new SpaceGame_1.default(assetManager, inputManager, settings, canvases);
     settingsMenu.init();
     let gameOver = document.getElementById('game-over');
     let set = document.getElementById('settings');
@@ -869,8 +869,8 @@ assetManager.downloadAll(() => {
         event.preventDefault();
         return false;
     });
-    EventHandler_1.EventHandler.registerOnElement(gameOver, events, () => game.restart());
-    EventHandler_1.EventHandler.registerOnElement(set, events, () => {
+    EventHandler_1.default.registerOnElement(gameOver, events, () => game.restart());
+    EventHandler_1.default.registerOnElement(set, events, () => {
         settingsMenu.toggleShow();
         game.togglePause();
     });
@@ -907,17 +907,17 @@ class SpaceGame {
             this.shipContext = this.canvases.ship.getContext('2d');
             this.mainContext = this.canvases.main.getContext('2d');
             this.playerScore = 0;
-            this.background = new Background_1.Background(0, 0, this.canvases.background.width, this.canvases.background.height, this.backgroundContext, this.assetManager.getSprite(CollideAble_1.EntityType.BACKGROUND));
+            this.background = new Background_1.default(0, 0, this.canvases.background.width, this.canvases.background.height, this.backgroundContext, this.assetManager.getSprite(CollideAble_1.EntityType.BACKGROUND));
             this.shipStartX = this.canvases.ship.width / 2 - assetManager.getSprite(CollideAble_1.EntityType.PLAYER).width;
             this.shipStartY = this.canvases.ship.height / 4 * 3 + assetManager.getSprite(CollideAble_1.EntityType.PLAYER).height * 2;
-            this.ship = new Ship_1.Ship(this.shipStartX, this.shipStartY, assetManager.getSprite(CollideAble_1.EntityType.PLAYER).width, assetManager.getSprite(CollideAble_1.EntityType.PLAYER).height, this.canvases.ship.width, this.canvases.ship.height, this.shipContext, assetManager, new Pool_1.Pool(assetManager, this.mainContext, this.canvases.main.width, this.canvases.main.height, 80, CollideAble_1.EntityType.PLAYER_BULLET), settings.player);
-            this.enemyBulletPool = new Pool_1.Pool(assetManager, this.mainContext, this.canvases.main.width, this.canvases.main.height, 50, CollideAble_1.EntityType.ENEMY_BULLET);
-            this.enemyPool = new Pool_1.Pool(assetManager, this.mainContext, this.canvases.main.width, this.canvases.main.height, 30, CollideAble_1.EntityType.ENEMY, this.enemyBulletPool, this);
+            this.ship = new Ship_1.default(this.shipStartX, this.shipStartY, assetManager.getSprite(CollideAble_1.EntityType.PLAYER).width, assetManager.getSprite(CollideAble_1.EntityType.PLAYER).height, this.canvases.ship.width, this.canvases.ship.height, this.shipContext, assetManager, new Pool_1.default(assetManager, this.mainContext, this.canvases.main.width, this.canvases.main.height, 80, CollideAble_1.EntityType.PLAYER_BULLET), settings.player);
+            this.enemyBulletPool = new Pool_1.default(assetManager, this.mainContext, this.canvases.main.width, this.canvases.main.height, 50, CollideAble_1.EntityType.ENEMY_BULLET);
+            this.enemyPool = new Pool_1.default(assetManager, this.mainContext, this.canvases.main.width, this.canvases.main.height, 30, CollideAble_1.EntityType.ENEMY, this.enemyBulletPool, this);
             this.spawnWave();
             inputManager.register(this.ship);
             inputManager.register(this);
-            this.quadTree = new QuadTree_1.QuadTree(new HitBox_1.HitBox(0, 0, this.canvases.main.width, this.canvases.main.height));
-            this.collisionManager = new CollisionManager_1.CollisionManager(this.quadTree);
+            this.quadTree = new QuadTree_1.default(new HitBox_1.default(0, 0, this.canvases.main.width, this.canvases.main.height));
+            this.collisionManager = new CollisionManager_1.default(this.quadTree);
             this.backgroundAudio = this.assetManager.getSound(CollideAble_1.EntityType.MAIN_THEME, AssetManager_1.AssetType.AUDIO_LOOP);
             this.backgroundAudio.play(true);
             this.start();
@@ -1013,7 +1013,7 @@ class SpaceGame {
         this.start();
     }
 }
-exports.SpaceGame = SpaceGame;
+exports.default = SpaceGame;
 
 
 /***/ }),
@@ -1027,7 +1027,7 @@ const Vector2_1 = __webpack_require__(1);
 const CollideAble_1 = __webpack_require__(0);
 class Background {
     constructor(x, y, width, height, context, sprite) {
-        this.position = new Vector2_1.Vector2(x, y);
+        this.position = new Vector2_1.default(x, y);
         this.speed = 1;
         this.width = width;
         this.height = height;
@@ -1049,7 +1049,7 @@ class Background {
         }
     }
 }
-exports.Background = Background;
+exports.default = Background;
 
 
 /***/ }),
@@ -1065,10 +1065,10 @@ const InputManager_1 = __webpack_require__(2);
 const AssetManager_1 = __webpack_require__(3);
 class Ship {
     constructor(x, y, width, height, canvasWidth, canvasHeight, context, assetManager, pool, settings) {
-        this.position = new Vector2_1.Vector2(x, y);
-        this.startPosition = new Vector2_1.Vector2(x, y);
-        this.acceleration = new Vector2_1.Vector2(0, 0);
-        this.velocity = new Vector2_1.Vector2(0, 0);
+        this.position = new Vector2_1.default(x, y);
+        this.startPosition = new Vector2_1.default(x, y);
+        this.acceleration = new Vector2_1.default(0, 0);
+        this.velocity = new Vector2_1.default(0, 0);
         this.width = width;
         this.height = height;
         this.canvasWidth = canvasWidth;
@@ -1149,7 +1149,7 @@ class Ship {
         return this.collidesWith.includes(other.type.toString());
     }
 }
-exports.Ship = Ship;
+exports.default = Ship;
 
 
 /***/ }),
@@ -1179,13 +1179,13 @@ class Pool {
         if (this.type === CollideAble_1.EntityType.ENEMY) {
             let sprite = this.assetManager.getSprite(this.type);
             for (let i = 0; i < this.maxSize; i++) {
-                this.pool[i] = new Enemy_1.Enemy(0, 0, sprite.width, sprite.height, this.canvasWidth, this.canvasHeight, 0, this.context, sprite, this.type, this.subPool, this.game);
+                this.pool[i] = new Enemy_1.default(0, 0, sprite.width, sprite.height, this.canvasWidth, this.canvasHeight, 0, this.context, sprite, this.type, this.subPool, this.game);
             }
         }
         else {
             for (let i = 0; i < this.maxSize; i++) {
                 let sprite = this.assetManager.getSprite(this.type);
-                this.pool[i] = new Bullet_1.Bullet(0, 0, sprite.width, sprite.height, this.canvasWidth, this.canvasHeight, 0, this.context, sprite, this.type);
+                this.pool[i] = new Bullet_1.default(0, 0, sprite.width, sprite.height, this.canvasWidth, this.canvasHeight, 0, this.context, sprite, this.type);
             }
         }
     }
@@ -1229,7 +1229,7 @@ class Pool {
         return objects;
     }
 }
-exports.Pool = Pool;
+exports.default = Pool;
 
 
 /***/ }),
@@ -1243,7 +1243,7 @@ const Vector2_1 = __webpack_require__(1);
 const CollideAble_1 = __webpack_require__(0);
 class Bullet {
     constructor(x, y, width, height, canvasWidth, canvasHeight, speed, context, sprite, type) {
-        this.position = new Vector2_1.Vector2(x, y);
+        this.position = new Vector2_1.default(x, y);
         this.speed = speed;
         this.width = width;
         this.height = height;
@@ -1294,7 +1294,7 @@ class Bullet {
         return this.collidesWith.includes(other.type.toString());
     }
 }
-exports.Bullet = Bullet;
+exports.default = Bullet;
 
 
 /***/ }),
@@ -1309,7 +1309,7 @@ const CollideAble_1 = __webpack_require__(0);
 const AssetManager_1 = __webpack_require__(3);
 class Enemy {
     constructor(x, y, width, height, canvasWidth, canvasHeight, speed, context, sprite, type, bulletPool, game) {
-        this.position = new Vector2_1.Vector2(x, y);
+        this.position = new Vector2_1.default(x, y);
         this.width = width;
         this.height = height;
         this.canvasWidth = canvasWidth;
@@ -1385,7 +1385,7 @@ class Enemy {
         return this.collidesWith.includes(other.type.toString());
     }
 }
-exports.Enemy = Enemy;
+exports.default = Enemy;
 
 
 /***/ }),
@@ -1430,7 +1430,7 @@ class SettingsMenu {
         let title = document.createElement('h4');
         let form = document.createElement('form');
         let submit = document.createElement('input');
-        EventHandler_1.EventHandler.registerOnElement(keyboardLink, ['click', 'touchstart'], event => this.openTab(event, keyboardMenuId));
+        EventHandler_1.default.registerOnElement(keyboardLink, ['click', 'touchstart'], event => this.openTab(event, keyboardMenuId));
         keyboardLink.appendChild(document.createTextNode('Keyboard'));
         keyboardLink.classList.add('tabLink');
         this.mainMenu.appendChild(keyboardLink);
@@ -1464,7 +1464,7 @@ class SettingsMenu {
         let playerTitle = document.createElement('h4');
         let playerForm = document.createElement('form');
         let playerSubmit = document.createElement('input');
-        EventHandler_1.EventHandler.registerOnElement(playerLink, ['click', 'touchstart'], event => this.openTab(event, playerMenuId));
+        EventHandler_1.default.registerOnElement(playerLink, ['click', 'touchstart'], event => this.openTab(event, playerMenuId));
         playerLink.appendChild(document.createTextNode('Player'));
         playerLink.classList.add('tabLink');
         this.mainMenu.appendChild(playerLink);
@@ -1497,7 +1497,7 @@ class SettingsMenu {
         let audioTitle = document.createElement('h4');
         let audioLabel = document.createElement('label');
         let audioSlide = document.createElement('input');
-        EventHandler_1.EventHandler.registerOnElement(audioLink, ['click', 'touchstart'], event => this.openTab(event, audioMenuId));
+        EventHandler_1.default.registerOnElement(audioLink, ['click', 'touchstart'], event => this.openTab(event, audioMenuId));
         audioLink.classList.add('tabLink');
         audioLink.appendChild(document.createTextNode('Audio'));
         this.mainMenu.appendChild(audioLink);
@@ -1602,7 +1602,7 @@ class SettingsMenu {
         }
     }
 }
-exports.SettingsMenu = SettingsMenu;
+exports.default = SettingsMenu;
 
 
 /***/ })

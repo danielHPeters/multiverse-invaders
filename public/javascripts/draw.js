@@ -336,8 +336,9 @@ class MenuBar {
         menuEntry.appendChild(document.createTextNode(entryText));
         menuEntry.appendChild(menuInput);
         menuEntry.classList.add('menuEntry');
-        menuInput.addEventListener('click', () => {
+        menuEntry.addEventListener('click', () => {
             settings.fill = !settings.fill;
+            console.log(settings.fill);
         });
         optionEntries.push(menuEntry);
         return optionEntries;

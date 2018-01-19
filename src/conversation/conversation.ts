@@ -1,4 +1,4 @@
-enum Answerstatus {
+enum AnswerStatus {
   YES, NO, END, CONTINUE
 }
 
@@ -6,12 +6,12 @@ const dialog = [
   { m: 'Hi this is the story of Tom!' },
   {
     question: 'Would you like to continue', answers: [
-      { m: 'Yes.', next: Answerstatus.YES },
-      { m: 'No.', next: Answerstatus.NO }
+      { m: 'Yes.', next: AnswerStatus.YES },
+      { m: 'No.', next: AnswerStatus.NO }
     ]
   },
-  { label: Answerstatus.YES, m: 'How Wonderful!', next: Answerstatus.END },
-  { label: Answerstatus.NO, m: 'That\'s sad! See you again soon!', next: Answerstatus.CONTINUE }
+  { label: AnswerStatus.YES, m: 'How Wonderful!', next: AnswerStatus.END },
+  { label: AnswerStatus.NO, m: 'That\'s sad! See you again soon!', next: AnswerStatus.CONTINUE }
 
 ]
 
@@ -22,7 +22,7 @@ let run = () => {
     if (current['m'] !== undefined) {
       displayText(current['m'])
       if (current['next'] !== undefined) {
-        cursor = findLabel(current['next'] as Answerstatus)
+        cursor = findLabel(current['next'] as AnswerStatus)
       } else {
         cursor++
       }
@@ -33,7 +33,7 @@ let run = () => {
   }
 }
 
-let findLabel = (label: Answerstatus) => {
+let findLabel = (label: AnswerStatus) => {
   return dialog.indexOf(dialog.filter(option => option['label'] === label)[0])
 }
 

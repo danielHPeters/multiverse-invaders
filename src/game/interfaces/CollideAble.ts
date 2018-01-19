@@ -13,7 +13,10 @@ export enum EntityType {
   BOX = 'BOX'
 }
 
-export interface CollideAble {
+/**
+ * Interface for collide able objects.
+ */
+export default interface CollideAble {
   type: EntityType
   collidesWith
   colliding: boolean

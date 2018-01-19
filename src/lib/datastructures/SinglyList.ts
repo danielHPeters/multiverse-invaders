@@ -1,8 +1,14 @@
-import { ListNode } from './ListNode'
-import { IList } from '../interfaces/IList'
-import { IQueue } from '../interfaces/IQueue'
+import ListNode from './ListNode'
+import IList from '../interfaces/IList'
+import IQueue from '../interfaces/IQueue'
 
-export class SinglyList implements IList, IQueue {
+/**
+ * Singly list implementation.
+ *
+ * @author Daniel Peters
+ * @version 1.0
+ */
+export default class SinglyList implements IList, IQueue {
   private _elementsCount: number
   private _head: ListNode
   private _errorMessages

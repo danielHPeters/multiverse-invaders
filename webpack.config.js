@@ -9,12 +9,14 @@ module.exports = {
     'draw': './src/draw/draw.ts',
     'pathfinding': './src/algorithm/pathfinding/app.ts',
     'calculator': './src/calculator/postfix/calculator.ts',
+    'webgl': './src/graphics/webgl-test.ts',
     'multiverseInvaders.min': './src/game/app.ts',
     'tileSetMap.min': './src/lib/tileset/test.ts',
     'matrix.min': './src/matrix/main.ts',
     'draw.min': './src/draw/draw.ts',
     'pathfinding.min': './src/algorithm/pathfinding/app.ts',
-    'calculator.min': './src/calculator/postfix/calculator.ts'
+    'calculator.min': './src/calculator/postfix/calculator.ts',
+    'webgl.min': './src/graphics/webgl-test.ts'
   },
   devtool: 'source-map',
   output: {

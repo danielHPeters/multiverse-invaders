@@ -1,8 +1,8 @@
-import { Drawable } from '../interfaces/Drawable'
-import { Vector2 } from '../../lib/vector/Vector2'
+import Drawable from '../interfaces/Drawable'
+import Vector2 from '../../lib/vector/Vector2'
 import { EntityType } from '../interfaces/CollideAble'
 
-export class Background implements Drawable {
+export default class Background implements Drawable {
   position: Vector2
   speed: number
   width: number

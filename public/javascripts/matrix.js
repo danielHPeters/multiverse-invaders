@@ -120,16 +120,16 @@ class Matrix {
         this.yPositions = yPositions;
         this.running = false;
     }
-    draw(ctx) {
+    draw(context) {
         if (this.running) {
-            ctx.fillStyle = 'rgba(0,0,0,.05)';
-            ctx.fillRect(0, 0, this.width, this.height);
-            ctx.fillStyle = '#0F0';
-            ctx.font = '10pt Georgia';
+            context.fillStyle = 'rgba(0,0,0,.05)';
+            context.fillRect(0, 0, this.width, this.height);
+            context.fillStyle = '#0F0';
+            context.font = '10pt Georgia';
             this.yPositions.map((y, index) => {
                 const text = String.fromCharCode(1e2 + Math.random() * 33);
                 const x = (index * 10) + 10;
-                ctx.fillText(text, x, y);
+                context.fillText(text, x, y);
                 if (y > 100 + Math.random() * 1e4) {
                     this.yPositions[index] = 0;
                 }
@@ -137,12 +137,12 @@ class Matrix {
                     this.yPositions[index] = y + 10;
                 }
             });
-            this.frameId = requestAnimationFrame(() => this.draw(ctx));
+            this.frameId = requestAnimationFrame(() => this.draw(context));
         }
     }
-    run(ctx) {
+    run(context) {
         this.running = true;
-        this.draw(ctx);
+        this.draw(context);
     }
     stop() {
         if (this.frameId) {

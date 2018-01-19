@@ -1,7 +1,7 @@
 import { Status } from './Location'
 import Point from '../../lib/vector/Point'
 import PathFinding from './PathFinding'
-import Visualization from './gui/Visualization'
+import Visualisation from './gui/Visualization'
 
 const algorithm = new PathFinding()
 algorithm.init(8, 4)
@@ -17,6 +17,6 @@ algorithm.grid[4][1] = Status.OBSTACLE
 
 console.log(algorithm.findShortestPath(new Point(0, 0)))
 
-const gui = new Visualization(algorithm.grid, document.getElementById('grid'))
+const gui = new Visualisation(algorithm.grid, document.getElementById('grid'))
 
 gui.init()

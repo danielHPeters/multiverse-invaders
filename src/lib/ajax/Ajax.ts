@@ -1,4 +1,4 @@
-export class Ajax {
+export default class Ajax {
   private static defaults = {
     url: '',
     method: 'GET',

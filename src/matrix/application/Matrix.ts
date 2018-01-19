@@ -1,3 +1,9 @@
+/**
+ * Matrix application class.
+ *
+ * @author Daniel Peters
+ * @version 1.0
+ */
 export default class Matrix {
   width: number
   height: number
@@ -5,6 +11,13 @@ export default class Matrix {
   yPositions
   running: boolean
 
+  /**
+   * Default constructor.
+   *
+   * @param {number} width Canvas width
+   * @param {number} height Canvas height
+   * @param {any[]} yPositions Positons of the texts.
+   */
   constructor (width: number, height: number, yPositions = []) {
     this.width = width
     this.height = height
@@ -12,31 +25,43 @@ export default class Matrix {
     this.running = false
   }
 
-  draw (ctx): void {
+  /**
+   * Draw the matrix onto the canvas.
+   * @param context Canvas context
+   */
+  draw (context): void {
     if (this.running) {
-      ctx.fillStyle = 'rgba(0,0,0,.05)'
-      ctx.fillRect(0, 0, this.width, this.height)
-      ctx.fillStyle = '#0F0'
-      ctx.font = '10pt Georgia'
+      context.fillStyle = 'rgba(0,0,0,.05)'
+      context.fillRect(0, 0, this.width, this.height)
+      context.fillStyle = '#0F0'
+      context.font = '10pt Georgia'
       this.yPositions.map((y, index) => {
         const text = String.fromCharCode(1e2 + Math.random() * 33)
         const x = (index * 10) + 10
-        ctx.fillText(text, x, y)
+        context.fillText(text, x, y)
         if (y > 100 + Math.random() * 1e4) {
           this.yPositions[index] = 0
         } else {
           this.yPositions[index] = y + 10
         }
       })
-      this.frameId = requestAnimationFrame(() => this.draw(ctx))
+      this.frameId = requestAnimationFrame(() => this.draw(context))
     }
   }
 
-  run (ctx): void {
+  /**
+   * Start the rendering loop.
+   *
+   * @param context Canvas context.
+   */
+  run (context): void {
     this.running = true
-    this.draw(ctx)
+    this.draw(context)
   }
 
+  /**
+   * Stop the rendering loop.
+   */
   stop (): void {
     if (this.frameId) {
       this.running = false
@@ -45,6 +70,13 @@ export default class Matrix {
     }
   }
 
+  /**
+   * Set the size of the matrix.
+   *
+   * @param {number} width Canvas width
+   * @param {number} height Canvas height
+   * @param yPositions Positions of the characters on the canvas.
+   */
   setSize (width: number, height: number, yPositions): void {
     this.width = width
     this.height = height

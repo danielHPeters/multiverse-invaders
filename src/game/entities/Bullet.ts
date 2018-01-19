@@ -1,11 +1,11 @@
-import { Drawable } from '../interfaces/Drawable'
-import { Vector2 } from '../../lib/vector/Vector2'
-import { CollideAble, EntityType } from '../interfaces/CollideAble'
+import Drawable from '../interfaces/Drawable'
+import Vector2 from '../../lib/vector/Vector2'
+import CollideAble, { EntityType } from '../interfaces/CollideAble'
 
 /**
  *
  */
-export class Bullet implements Drawable, CollideAble {
+export default class Bullet implements Drawable, CollideAble {
   position: Vector2
   speed: number
   width: number

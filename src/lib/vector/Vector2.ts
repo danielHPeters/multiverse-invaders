@@ -1,4 +1,10 @@
-export class Vector2 {
+/**
+ * 2D vector implementation.
+ *
+ * @author Daniel Peters
+ * @version 1.0
+ */
+export default class Vector2 {
   private _x: number
   private _y: number
 

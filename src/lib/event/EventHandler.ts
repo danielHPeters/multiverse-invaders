@@ -1,4 +1,7 @@
-export class EventHandler {
+/**
+ * Wrapper class for event handler convenience functions.
+ */
+export default class EventHandler {
   /**
    * Register multiple events with the same event listener on one element.
    *
@@ -6,7 +9,7 @@ export class EventHandler {
    * @param {Array<string>} events the events to be registered
    * @param {EventListener} listener the event listener function
    */
-  static registerOnElement (element: HTMLElement, events: Array<string>, listener: EventListener) {
+  static registerOnElement (element: HTMLElement, events: Array<string>, listener: EventListener): void {
     events.forEach(event => element.addEventListener(event, listener))
   }
 }

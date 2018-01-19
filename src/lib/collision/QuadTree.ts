@@ -1,10 +1,13 @@
-import { HitBox } from './HitBox'
-import { Drawable } from '../../game/interfaces/Drawable'
+import HitBox from './HitBox'
+import Drawable from '../../game/interfaces/Drawable'
 
 /**
+ * QuadTree class used to optimize collision checking.
  *
+ * @author Daniel Peters
+ * @version 1.0
  */
-export class QuadTree {
+export default class QuadTree {
   level: number
   maxObjects: number
   maxLevels: number

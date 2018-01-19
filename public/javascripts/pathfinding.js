@@ -228,7 +228,7 @@ exports.default = PathFinding;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-class Visualization {
+class Visualisation {
     constructor(grid, element) {
         this.grid = grid;
         this.element = element;
@@ -252,7 +252,7 @@ class Visualization {
         }
     }
 }
-exports.default = Visualization;
+exports.default = Visualisation;
 
 
 /***/ }),

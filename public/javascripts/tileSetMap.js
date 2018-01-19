@@ -193,7 +193,7 @@ class Vector2 {
         return new Vector2(this.x, this.y);
     }
 }
-exports.Vector2 = Vector2;
+exports.default = Vector2;
 
 
 /***/ }),
@@ -213,7 +213,7 @@ var Actions;
     Actions["SHOOT"] = "SHOOT";
     Actions["RESTART"] = "RESTART";
 })(Actions = exports.Actions || (exports.Actions = {}));
-class InputManager extends Observable_1.Observable {
+class InputManager extends Observable_1.default {
     constructor(settings) {
         super();
         this.inputMap = settings.keyBoard;
@@ -299,7 +299,7 @@ class InputManager extends Observable_1.Observable {
         this.state[this.inputMap['d']] = false;
     }
 }
-exports.InputManager = InputManager;
+exports.default = InputManager;
 
 
 /***/ }),
@@ -369,7 +369,7 @@ class AssetManager {
         });
     }
     loadAudioFromUrl(item, callback) {
-        Ajax_1.Ajax.create({
+        Ajax_1.default.create({
             method: 'GET',
             url: item.path,
             responseType: 'arraybuffer'
@@ -400,7 +400,7 @@ class AssetManager {
     loadSpriteSheet(item, callback) {
         let spriteSheet = new Image();
         spriteSheet.addEventListener('load', () => {
-            this.cache.spriteSheets[item.id] = new SpriteSheet_1.SpriteSheet(spriteSheet, item.opts.frameWidth || 0, item.opts.frameHeight || 0);
+            this.cache.spriteSheets[item.id] = new SpriteSheet_1.default(spriteSheet, item.opts.frameWidth || 0, item.opts.frameHeight || 0);
             this.downloadCount += 1;
             if (this.done()) {
                 callback();
@@ -429,7 +429,7 @@ class AssetManager {
         else {
             gain = this.ambientGain;
         }
-        return new Sound_1.Sound(this.audioContext, gain, this.cache.audio[id]);
+        return new Sound_1.default(this.audioContext, gain, this.cache.audio[id]);
     }
     getSprite(id) {
         return this.cache.sprites[id];
@@ -438,7 +438,7 @@ class AssetManager {
         return this.cache.spriteSheets[id];
     }
 }
-exports.AssetManager = AssetManager;
+exports.default = AssetManager;
 
 
 /***/ }),
@@ -452,7 +452,7 @@ const Vector2_1 = __webpack_require__(1);
 const CollideAble_1 = __webpack_require__(0);
 class HitBox {
     constructor(x, y, width, height) {
-        this.position = new Vector2_1.Vector2(x, y);
+        this.position = new Vector2_1.default(x, y);
         this.width = width;
         this.height = height;
         this.colliding = false;
@@ -464,7 +464,7 @@ class HitBox {
         return this.collidesWith.includes(other.type.toString());
     }
 }
-exports.HitBox = HitBox;
+exports.default = HitBox;
 
 
 /***/ }),
@@ -510,7 +510,7 @@ class SpriteSheet {
         this._framesPerRow = framesPerRow;
     }
 }
-exports.SpriteSheet = SpriteSheet;
+exports.default = SpriteSheet;
 
 
 /***/ }),
@@ -541,7 +541,7 @@ class Sound {
         this.source.stop(0);
     }
 }
-exports.Sound = Sound;
+exports.default = Sound;
 
 
 /***/ }),
@@ -577,7 +577,7 @@ Ajax.defaults = {
     async: true,
     data: null
 };
-exports.Ajax = Ajax;
+exports.default = Ajax;
 
 
 /***/ }),
@@ -618,7 +618,7 @@ class Observable {
         this._state = state;
     }
 }
-exports.Observable = Observable;
+exports.default = Observable;
 
 
 /***/ }),
@@ -630,7 +630,7 @@ exports.Observable = Observable;
 Object.defineProperty(exports, "__esModule", { value: true });
 const HitBox_1 = __webpack_require__(4);
 class QuadTree {
-    constructor(hitBox = new HitBox_1.HitBox(0, 0, 0, 0), level = 0) {
+    constructor(hitBox = new HitBox_1.default(0, 0, 0, 0), level = 0) {
         this.level = level;
         this.maxObjects = 10;
         this.maxLevels = 5;
@@ -719,13 +719,13 @@ class QuadTree {
     split() {
         let subWidth = (this.hitBox.width / 2) | 0;
         let subHeight = (this.hitBox.height / 2) | 0;
-        this.nodes[0] = new QuadTree(new HitBox_1.HitBox(this.hitBox.position.x + subWidth, this.hitBox.position.y, subWidth, subHeight), this.level + 1);
-        this.nodes[1] = new QuadTree(new HitBox_1.HitBox(this.hitBox.position.x, this.hitBox.position.y, subWidth, subHeight), this.level + 1);
-        this.nodes[2] = new QuadTree(new HitBox_1.HitBox(this.hitBox.position.x, this.hitBox.position.y + subHeight, subWidth, subHeight), this.level + 1);
-        this.nodes[3] = new QuadTree(new HitBox_1.HitBox(this.hitBox.position.x + subWidth, this.hitBox.position.y + subHeight, subWidth, subHeight), this.level + 1);
+        this.nodes[0] = new QuadTree(new HitBox_1.default(this.hitBox.position.x + subWidth, this.hitBox.position.y, subWidth, subHeight), this.level + 1);
+        this.nodes[1] = new QuadTree(new HitBox_1.default(this.hitBox.position.x, this.hitBox.position.y, subWidth, subHeight), this.level + 1);
+        this.nodes[2] = new QuadTree(new HitBox_1.default(this.hitBox.position.x, this.hitBox.position.y + subHeight, subWidth, subHeight), this.level + 1);
+        this.nodes[3] = new QuadTree(new HitBox_1.default(this.hitBox.position.x + subWidth, this.hitBox.position.y + subHeight, subWidth, subHeight), this.level + 1);
     }
 }
-exports.QuadTree = QuadTree;
+exports.default = QuadTree;
 
 
 /***/ }),
@@ -758,7 +758,7 @@ class CollisionManager {
         }
     }
 }
-exports.CollisionManager = CollisionManager;
+exports.default = CollisionManager;
 
 
 /***/ }),
@@ -803,7 +803,7 @@ class Settings {
         }
     }
 }
-exports.Settings = Settings;
+exports.default = Settings;
 
 
 /***/ }),
@@ -826,7 +826,7 @@ exports.Settings = Settings;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 const Rpg_1 = __webpack_require__(26);
-document.addEventListener('DOMContentLoaded', () => new Rpg_1.Rpg());
+document.addEventListener('DOMContentLoaded', () => new Rpg_1.default());
 
 
 /***/ }),
@@ -851,9 +851,9 @@ class Rpg {
     constructor() {
         this.canvas = document.getElementById('background');
         this.canvasPlayer = document.getElementById('player');
-        this.assetManager = new AssetManager_1.AssetManager();
-        this.settings = new Settings_1.Settings();
-        this.inputManager = new InputManager_1.InputManager(this.settings);
+        this.assetManager = new AssetManager_1.default();
+        this.settings = new Settings_1.default();
+        this.inputManager = new InputManager_1.default(this.settings);
         this.init();
     }
     init() {
@@ -939,15 +939,15 @@ class Rpg {
                 [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
                 [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
             ];
-            this.player = new Entity_1.Entity(350, 370, this.assetManager.getSprite(CollideAble_1.EntityType.PLAYER), this.canvasPlayer.getContext('2d'));
-            this.area = new Area_1.Area(new TileSetMap_1.TileSetMap(this.assetManager.getSprite(CollideAble_1.EntityType.MAP), [ground, topLayer], this.canvas.getContext('2d'), 32, ground[0].length, ground.length, 16));
+            this.player = new Entity_1.default(350, 370, this.assetManager.getSprite(CollideAble_1.EntityType.PLAYER), this.canvasPlayer.getContext('2d'));
+            this.area = new Area_1.default(new TileSetMap_1.default(this.assetManager.getSprite(CollideAble_1.EntityType.MAP), [ground, topLayer], this.canvas.getContext('2d'), 32, ground[0].length, ground.length, 16));
             this.canvas.width = window.innerWidth > this.area.map.width ? this.area.map.width : window.innerWidth;
             this.canvas.height = window.innerHeight > this.area.map.height ? this.area.map.height : window.innerHeight;
             this.canvasPlayer.width = window.innerWidth > this.area.map.width ? this.area.map.width : window.innerWidth;
             this.canvasPlayer.height = window.innerHeight > this.area.map.height ? this.area.map.height : window.innerHeight;
-            this.quadTree = new QuadTree_1.QuadTree(new HitBox_1.HitBox(0, 0, this.canvas.width, this.canvas.height));
-            this.collisionManager = new CollisionManager_1.CollisionManager(this.quadTree);
-            this.camera = new Camera_1.Camera(0, 0, this.canvasPlayer.width, this.canvasPlayer.height, this.area.map.width, this.area.map.height);
+            this.quadTree = new QuadTree_1.default(new HitBox_1.default(0, 0, this.canvas.width, this.canvas.height));
+            this.collisionManager = new CollisionManager_1.default(this.quadTree);
+            this.camera = new Camera_1.default(0, 0, this.canvasPlayer.width, this.canvasPlayer.height, this.area.map.width, this.area.map.height);
             this.area.map.generate();
             this.inputManager.register(this.player);
             this.camera.follow(this.player, this.canvas.width / 2, this.canvas.height / 2);
@@ -978,7 +978,7 @@ class Rpg {
         window.requestAnimationFrame(() => this.run());
     }
 }
-exports.Rpg = Rpg;
+exports.default = Rpg;
 
 
 /***/ }),
@@ -993,11 +993,11 @@ const InputManager_1 = __webpack_require__(2);
 const CollideAble_1 = __webpack_require__(0);
 class Entity {
     constructor(x, y, sprite, context) {
-        this.position = new Vector2_1.Vector2(x, y);
-        this.velocity = new Vector2_1.Vector2(1, 1);
+        this.position = new Vector2_1.default(x, y);
+        this.velocity = new Vector2_1.default(1, 1);
         this.sprite = sprite;
         this.context = context;
-        this.acceleration = new Vector2_1.Vector2(0, 0);
+        this.acceleration = new Vector2_1.default(0, 0);
         this.state = {};
         this.colliding = false;
         this.type = CollideAble_1.EntityType.PLAYER;
@@ -1005,7 +1005,7 @@ class Entity {
         this.collidesWith.push(CollideAble_1.EntityType.BOX);
         this.width = sprite.width;
         this.height = sprite.height;
-        this.previousPosition = new Vector2_1.Vector2(x, y);
+        this.previousPosition = new Vector2_1.default(x, y);
     }
     move(worldWidth, worldHeight) {
         if (!this.colliding) {
@@ -1061,7 +1061,7 @@ class Entity {
         return this.collidesWith.includes(other.type.toString());
     }
 }
-exports.Entity = Entity;
+exports.default = Entity;
 
 
 /***/ }),
@@ -1076,7 +1076,7 @@ class Area {
         this.map = map;
     }
 }
-exports.Area = Area;
+exports.default = Area;
 
 
 /***/ }),
@@ -1097,15 +1097,15 @@ var AXIS;
 })(AXIS = exports.AXIS || (exports.AXIS = {}));
 class Camera {
     constructor(x, y, viewWidth, viewHeight, worldWidth, worldHeight) {
-        this.position = new Vector2_1.Vector2(x, y);
-        this.previousPosition = new Vector2_1.Vector2(x, y);
-        this.deadZone = new Vector2_1.Vector2(0, 0);
+        this.position = new Vector2_1.default(x, y);
+        this.previousPosition = new Vector2_1.default(x, y);
+        this.deadZone = new Vector2_1.default(0, 0);
         this.viewWidth = viewWidth;
         this.viewHeight = viewHeight;
         this.axis = AXIS.BOTH;
         this.following = null;
-        this.viewportRect = new Rectangle_1.Rectangle(this.position.x, this.position.y, this.viewWidth, this.viewHeight);
-        this.worldRect = new Rectangle_1.Rectangle(0, 0, worldWidth, worldHeight);
+        this.viewportRect = new Rectangle_1.default(this.position.x, this.position.y, this.viewWidth, this.viewHeight);
+        this.worldRect = new Rectangle_1.default(0, 0, worldWidth, worldHeight);
     }
     follow(following, xDeadZone, yDeadZone) {
         this.following = following;
@@ -1148,7 +1148,7 @@ class Camera {
         }
     }
 }
-exports.Camera = Camera;
+exports.default = Camera;
 
 
 /***/ }),
@@ -1188,7 +1188,7 @@ class Rectangle {
             other.top < this.bottom);
     }
 }
-exports.Rectangle = Rectangle;
+exports.default = Rectangle;
 
 
 /***/ }),
@@ -1228,7 +1228,7 @@ class TileSetMap {
             for (let col = 0; col < this.tilesPerRow; col++) {
                 let tile = layer[row][col];
                 if (tile !== 0 && this.mapLayers.indexOf(layer) === this.mapLayers.length - 1) {
-                    this.hitBoxes.push(new HitBox_1.HitBox((col * this.tileSize), (row * this.tileSize), this.tileSize, this.tileSize));
+                    this.hitBoxes.push(new HitBox_1.default((col * this.tileSize), (row * this.tileSize), this.tileSize, this.tileSize));
                 }
                 let tileRow = (tile / this.imageTilesPerRow) | 0;
                 let tileCol = (tile % this.imageTilesPerRow) | 0;
@@ -1240,7 +1240,7 @@ class TileSetMap {
         this.context.drawImage(this.image, 0, 0, this.image.width, this.image.height, -xView, -yView, this.image.width, this.image.height);
     }
 }
-exports.TileSetMap = TileSetMap;
+exports.default = TileSetMap;
 
 
 /***/ })

@@ -1,13 +1,19 @@
 import { EntityType } from '../game/interfaces/CollideAble'
-import { SpriteSheet } from './graphics/2D/SpriteSheet'
-import { Sound } from './audio/Sound'
-import { Ajax } from '../lib/ajax/Ajax'
+import SpriteSheet from './graphics/2D/SpriteSheet'
+import Sound from './audio/Sound'
+import Ajax from '../lib/ajax/Ajax'
 
 export enum AssetType {
   SPRITE = 'SPRITE', SPRITE_SHEET = 'SPRITE_SHEET', AUDIO = 'AUDIO', AUDIO_LOOP = 'LOOP'
 }
 
-export class AssetManager {
+/**
+ * Asset manager Class.
+ *
+ * @author Daniel Peters
+ * @version 1.0
+ */
+export default class AssetManager {
   audioContext
   cache
   queue

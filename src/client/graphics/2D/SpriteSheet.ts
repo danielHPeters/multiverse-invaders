@@ -1,7 +1,10 @@
 /**
  * Sprite sheet definition.
+ *
+ * @author Daniel Peters
+ * @version 1.0
  */
-export class SpriteSheet {
+export default class SpriteSheet {
   private _image
   private _frameWidth
   private _frameHeight

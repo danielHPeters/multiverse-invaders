@@ -1,9 +1,12 @@
-import { Vector2 } from '../../lib/vector/Vector2'
+import Vector2 from '../../lib/vector/Vector2'
 
 /**
+ * Interface for game objects which will be drawn onto the canvas.
  *
+ * @author Daniel Peters
+ * @version 1.0
  */
-export interface Drawable {
+export default interface Drawable {
   position: Vector2
   speed: number
   width: number

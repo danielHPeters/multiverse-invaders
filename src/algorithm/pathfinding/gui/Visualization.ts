@@ -1,12 +1,26 @@
-export default class Visualization {
+/**
+ * Visualisation class
+ *
+ * @author Daniel Peters
+ * @version 1.0
+ */
+export default class Visualisation {
   grid
   element: HTMLElement
 
+  /**
+   *
+   * @param grid
+   * @param {HTMLElement} element
+   */
   constructor (grid, element: HTMLElement) {
     this.grid = grid
     this.element = element
   }
 
+  /**
+   *
+   */
   init (): void {
     this.grid.forEach((row) => {
       const rowDiv = document.createElement('div')
@@ -21,6 +35,9 @@ export default class Visualization {
     })
   }
 
+  /**
+   *
+   */
   clear (): void {
     while (this.element.firstChild) {
       this.element.removeChild(this.element.firstChild)

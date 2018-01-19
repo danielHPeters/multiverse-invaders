@@ -1,3 +1,9 @@
+/**
+ * Simple postfix calculator.
+ *
+ * @author Daniel Peters
+ * @version 1.0
+ */
 export default class PostFixCalculator {
   static VALID_INPUT = '^\\s*([-+]?)(\\d+)(?:\\s*\\s*([-+]?)(\\d+)\\s*([-+*\\/\\^]))+$'
 

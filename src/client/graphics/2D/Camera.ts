@@ -1,6 +1,6 @@
-import { Vector2 } from '../../../lib/vector/Vector2'
-import { Rectangle } from './Rectangle'
-import { Drawable } from '../../../game/interfaces/Drawable'
+import Vector2 from '../../../lib/vector/Vector2'
+import Rectangle from './Rectangle'
+import Drawable from '../../../game/interfaces/Drawable'
 
 export enum AXIS {
   NONE = 'none',
@@ -9,7 +9,13 @@ export enum AXIS {
   BOTH = 'both'
 }
 
-export class Camera {
+/**
+ * Camera class.
+ *
+ * @author Daniel Peters
+ * @version 1.0
+ */
+export default class Camera {
   position: Vector2
   previousPosition: Vector2
   viewWidth: number

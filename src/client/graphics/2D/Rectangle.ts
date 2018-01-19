@@ -1,4 +1,10 @@
-export class Rectangle {
+/**
+ * Rectangle class for camera.
+ *
+ * @author Daniel Peters
+ * @version 1.0
+ */
+export default class Rectangle {
   left: number
   right: number
   top: number

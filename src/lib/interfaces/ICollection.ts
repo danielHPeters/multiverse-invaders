@@ -1,4 +1,10 @@
-export interface ICollection {
+/**
+ * Interface for collections.
+ *
+ * @author Daniel Peters
+ * @version 1.0
+ */
+export default interface ICollection {
   size (): number
 
   isEmpty (): boolean

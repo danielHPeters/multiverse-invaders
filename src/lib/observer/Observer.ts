@@ -1,7 +1,10 @@
 /**
+ * Interface for observers.
  *
+ * @author Daniel Peters
+ * @version 1.0
  */
-export interface Observer {
+export default interface Observer {
   /**
    *
    * @param {any} state

@@ -1,6 +1,6 @@
-import { HitBox } from '../collision/HitBox'
+import HitBox from '../collision/HitBox'
 
-export class TileSetMap {
+export default class TileSetMap {
   tileSetImage: HTMLImageElement
   image: HTMLImageElement
   width: number

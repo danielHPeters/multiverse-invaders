@@ -1,6 +1,12 @@
-export class ListNode {
+/**
+ * List node element class.
+ *
+ * @author Daniel Peters
+ * @version 1.0
+ */
+export default class ListNode {
   private _data
-  private _next
+  private _next: ListNode
 
   constructor (data) {
     this._data = data
@@ -15,11 +21,11 @@ export class ListNode {
     this._data = value
   }
 
-  get next () {
+  get next (): ListNode {
     return this._next
   }
 
-  set next (value) {
+  set next (value: ListNode) {
     this._next = value
   }
 }

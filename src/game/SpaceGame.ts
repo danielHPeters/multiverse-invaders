@@ -1,21 +1,23 @@
-import { Background } from './entities/Background'
-import { AssetManager, AssetType } from '../client/AssetManager'
-import { Actions, InputManager } from '../client/InputManager'
-import { Ship } from './entities/Ship'
-import { Pool } from './structures/Pool'
-import { QuadTree } from '../lib/collision/QuadTree'
-import { HitBox } from '../lib/collision/HitBox'
-import { Settings } from '../client/Settings'
+import Background from './entities/Background'
+import AssetManager, { AssetType } from '../client/AssetManager'
+import InputManager, { Actions } from '../client/InputManager'
+import Ship from './entities/Ship'
+import Pool from './structures/Pool'
+import QuadTree from '../lib/collision/QuadTree'
+import HitBox from '../lib/collision/HitBox'
+import Settings from '../client/Settings'
 import { EntityType } from './interfaces/CollideAble'
-import { CollisionManager } from '../lib/collision/CollisionManager'
-import { Sound } from '../client/audio/Sound'
-import { Observer } from '../lib/observer/Observer'
-import { IGame } from '../lib/interfaces/IGame'
+import CollisionManager from '../lib/collision/CollisionManager'
+import Sound from '../client/audio/Sound'
+import Observer from '../lib/observer/Observer'
 
 /**
+ * Space game main class.
  *
+ * @author Daniel Peters
+ * @version 1.0
  */
-export class SpaceGame implements Observer {
+export default class SpaceGame implements Observer {
   background: Background
   ship: Ship
   enemyPool: Pool

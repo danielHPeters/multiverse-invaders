@@ -1,14 +1,14 @@
-import { AssetManager } from '../../client/AssetManager'
-import { Bullet } from '../entities/Bullet'
-import { Enemy } from '../entities/Enemy'
-import { SpaceGame } from '../SpaceGame'
+import AssetManager from '../../client/AssetManager'
+import Bullet from '../entities/Bullet'
+import Enemy from '../entities/Enemy'
+import SpaceGame from '../SpaceGame'
 import { EntityType } from '../interfaces/CollideAble'
-import { Drawable } from '../interfaces/Drawable'
+import Drawable from '../interfaces/Drawable'
 
 /**
  *
  */
-export class Pool {
+export default class Pool {
   assetManager: AssetManager
   context: any
   canvasWidth: number

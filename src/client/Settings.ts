@@ -1,6 +1,12 @@
 import { Actions } from './InputManager'
 
-export class Settings {
+/**
+ * Settings class for game applications.
+ *
+ * @author Daniel Peters
+ * @version 1.0
+ */
+export default class Settings {
   keyBoard
   player
   audio

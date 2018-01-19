@@ -1,6 +1,6 @@
-import { TileSetMap } from '../../lib/tileset/TileSetMap'
+import TileSetMap from '../../lib/tileset/TileSetMap'
 
-export class Area {
+export default class Area {
   map: TileSetMap
 
   constructor (map: TileSetMap) {

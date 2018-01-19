@@ -1,9 +1,12 @@
-import { Observer } from './Observer'
+import Observer from './Observer'
 
 /**
+ * Observable class to be extended by a class that should be observed.
  *
+ * @author Daniel Peters
+ * @version 1.0
  */
-export class Observable {
+export default class Observable {
   private _observers: Observer[]
   private _state: any
 

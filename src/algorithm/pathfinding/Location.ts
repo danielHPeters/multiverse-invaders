@@ -1,9 +1,21 @@
 import Point from '../../lib/vector/Point'
 
+/**
+ * Direction enum.
+ *
+ * @author Daniel Peters
+ * @version 1.0
+ */
 export enum Direction {
   NORTH = 'North', EAST = 'East', SOUTH = 'South', WEST = 'West'
 }
 
+/**
+ * Location status enum.
+ *
+ * @author Daniel Peters
+ * @version 1.0
+ */
 export enum Status {
   START = 'start',
   VALID = 'valid',
@@ -16,6 +28,12 @@ export enum Status {
   GOAL = 'goal'
 }
 
+/**
+ * Location on the grid.
+ *
+ * @author Daniel Peters
+ * @version 1.0
+ */
 export default class Location {
   position: Point
   path

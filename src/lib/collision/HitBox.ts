@@ -1,7 +1,7 @@
-import { Vector2 } from '../vector/Vector2'
-import { CollideAble, EntityType } from '../../game/interfaces/CollideAble'
+import Vector2 from '../vector/Vector2'
+import CollideAble, { EntityType } from '../../game/interfaces/CollideAble'
 
-export class HitBox implements CollideAble{
+export default class HitBox implements CollideAble {
   type: EntityType
   collidesWith
   colliding: boolean

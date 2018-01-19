@@ -4,9 +4,15 @@
  * @author Daniel Peters
  * @version 0.3
  */
-import { SpriteSheet } from './SpriteSheet'
+import SpriteSheet from './SpriteSheet'
 
-export class Animation {
+/**
+ * Animation class to animate a sprite sheet sequence.
+ *
+ * @author Daniel Peters
+ * @version 1.0
+ */
+export default class Animation {
   private _spriteSheet: SpriteSheet
   private _speed: number
   private _sequence: number[]

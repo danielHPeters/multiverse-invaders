@@ -1,15 +1,18 @@
-import { Drawable } from '../interfaces/Drawable'
-import { Vector2 } from '../../lib/vector/Vector2'
-import { Pool } from '../structures/Pool'
-import { CollideAble, EntityType } from '../interfaces/CollideAble'
-import { SpaceGame } from '../SpaceGame'
+import Drawable from '../interfaces/Drawable'
+import Vector2 from '../../lib/vector/Vector2'
+import Pool from '../structures/Pool'
+import CollideAble, { EntityType } from '../interfaces/CollideAble'
+import SpaceGame from '../SpaceGame'
 import { AssetType } from '../../client/AssetManager'
-import { Sound } from '../../client/audio/Sound'
+import Sound from '../../client/audio/Sound'
 
 /**
+ * Enemy ship class.
  *
+ * @author Daniel Peters
+ * @version 1.0
  */
-export class Enemy implements Drawable, CollideAble {
+export default class Enemy implements Drawable, CollideAble {
   position: Vector2
   speed: number
   speedX: number

@@ -1,4 +1,10 @@
-export class Sound {
+/**
+ * Sound class used to play a sound from a file.
+ *
+ * @author Daniel Peters
+ * @version 1.0
+ */
+export default class Sound {
   audioContext: AudioContext
   source: AudioBufferSourceNode
   gainNode: GainNode
@@ -6,6 +12,12 @@ export class Sound {
   buffer
   playing: boolean
 
+  /**
+   *
+   * @param audioContext
+   * @param {GainNode} masterGain
+   * @param buffer
+   */
   constructor (audioContext, masterGain: GainNode, buffer) {
     this.audioContext = audioContext
     this.masterGain = masterGain
@@ -16,6 +28,10 @@ export class Sound {
     this.playing = false
   }
 
+  /**
+   *
+   * @param {boolean} loop
+   */
   play (loop = false): void {
     this.source = this.audioContext.createBufferSource()
     this.source.buffer = this.buffer
@@ -24,6 +40,9 @@ export class Sound {
     this.source.start(0)
   }
 
+  /**
+   *
+   */
   stop (): void {
     this.source.stop(0)
   }

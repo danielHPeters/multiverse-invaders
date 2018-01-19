@@ -1,14 +1,17 @@
-import { Observable } from '../lib/observer/Observable'
-import { Settings } from './Settings'
+import Observable from '../lib/observer/Observable'
+import Settings from './Settings'
 
 export enum Actions {
   UP = 'UP', DOWN = 'DOWN', LEFT = 'LEFT', RIGHT = 'RIGHT', SHOOT = 'SHOOT', RESTART = 'RESTART'
 }
 
 /**
+ * Input manager class.
  *
+ * @author Daniel Peters
+ * @version 1.0
  */
-export class InputManager extends Observable {
+export default class InputManager extends Observable {
   inputMap
   touches
 

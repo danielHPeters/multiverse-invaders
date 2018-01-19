@@ -1,9 +1,9 @@
-import { Settings } from './Settings'
+import Settings from './Settings'
 import { Actions } from './InputManager'
-import { AssetManager } from './AssetManager'
-import { EventHandler } from '../lib/event/EventHandler'
+import AssetManager from './AssetManager'
+import EventHandler from '../lib/event/EventHandler'
 
-export class SettingsMenu {
+export default class SettingsMenu {
   element: HTMLDivElement
   mainMenu: HTMLDivElement
   settings: Settings
