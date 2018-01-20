@@ -2,7 +2,7 @@ import QuadTree from '../lib/collision/QuadTree'
 import Entity from '../lib/entity/Entity'
 import CollisionManager from '../lib/collision/CollisionManager'
 import Area from './entities/Area'
-import Camera from '../client/graphics/2D/Camera'
+import Camera from '../graphics/2D/Camera'
 import InputManager from '../client/InputManager'
 import Settings from '../client/Settings'
 import AssetManager, { AssetType } from '../client/AssetManager'
@@ -150,6 +150,9 @@ export default class Rpg implements IGame {
 
   start (): void {
 
+  }
+
+  animationCallback (timeStamp: number): void {
   }
 
   stop (): void {

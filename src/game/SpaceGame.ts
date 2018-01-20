@@ -8,7 +8,7 @@ import HitBox from '../lib/collision/HitBox'
 import Settings from '../client/Settings'
 import { EntityType } from './interfaces/CollideAble'
 import CollisionManager from '../lib/collision/CollisionManager'
-import Sound from '../client/audio/Sound'
+import Sound from '../audio/Sound'
 import Observer from '../lib/observer/Observer'
 
 /**

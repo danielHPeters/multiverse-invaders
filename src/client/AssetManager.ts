@@ -1,6 +1,6 @@
 import { EntityType } from '../game/interfaces/CollideAble'
-import SpriteSheet from './graphics/2D/SpriteSheet'
-import Sound from './audio/Sound'
+import SpriteSheet from '../graphics/2D/SpriteSheet'
+import Sound from '../audio/Sound'
 import Ajax from '../lib/ajax/Ajax'
 
 export enum AssetType {

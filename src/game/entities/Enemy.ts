@@ -1,10 +1,10 @@
 import Drawable from '../interfaces/Drawable'
-import Vector2 from '../../lib/vector/Vector2'
+import Vector2 from '../../lib/math/Vector2'
 import Pool from '../structures/Pool'
 import CollideAble, { EntityType } from '../interfaces/CollideAble'
 import SpaceGame from '../SpaceGame'
 import { AssetType } from '../../client/AssetManager'
-import Sound from '../../client/audio/Sound'
+import Sound from '../../audio/Sound'
 
 /**
  * Enemy ship class.

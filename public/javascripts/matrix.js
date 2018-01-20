@@ -60,22 +60,10 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 32);
+/******/ 	return __webpack_require__(__webpack_require__.s = 33);
 /******/ })
 /************************************************************************/
 /******/ ({
-
-/***/ 32:
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-const GUI_1 = __webpack_require__(33);
-document.addEventListener('DOMContentLoaded', () => new GUI_1.default().init());
-
-
-/***/ }),
 
 /***/ 33:
 /***/ (function(module, exports, __webpack_require__) {
@@ -83,7 +71,19 @@ document.addEventListener('DOMContentLoaded', () => new GUI_1.default().init());
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-const Matrix_1 = __webpack_require__(34);
+const GUI_1 = __webpack_require__(34);
+document.addEventListener('DOMContentLoaded', () => new GUI_1.default().init());
+
+
+/***/ }),
+
+/***/ 34:
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+const Matrix_1 = __webpack_require__(35);
 class GUI {
     constructor() {
         this.canvas = document.getElementById('matrix');
@@ -107,7 +107,7 @@ exports.default = GUI;
 
 /***/ }),
 
-/***/ 34:
+/***/ 35:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";

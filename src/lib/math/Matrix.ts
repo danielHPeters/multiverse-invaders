@@ -20,6 +20,23 @@ export default class Matrix {
     this.columns = mArray[0].length
   }
 
+  set (array: number[][]): void {
+    const length = array[0].length
+    let valid = true
+    for (let i = 1; i < array.length; i++) {
+      if (array[i].length !== length) {
+        valid = false
+      }
+    }
+    if (valid) {
+      this.rows = array.length
+      this.columns = array[0].length
+      this.mArray = array
+    } else {
+      throw new Error('The passed matrix array is malformed: ' + array)
+    }
+  }
+
   /**
    * Add another matrix to this matrix.
    * The dimension of the other matrix must be equal to this.
@@ -91,13 +108,10 @@ export default class Matrix {
   }
 
   /**
-   * Transposes this matrix and returns the result.
-   *
-   * @returns {Matrix} The resulting matrix
+   * Transposes this matrix.
    */
-  transpose (): Matrix {
+  transpose (): void {
     let array = []
-    console.log(array)
     for (let i = 0; i < this.columns; i++) {
       array[i] = []
       for (let j = 0; j < this.rows; j++) {
@@ -105,7 +119,18 @@ export default class Matrix {
       }
     }
 
-    return new Matrix(array)
+    this.rows = array.length
+    this.columns = array[0].length
+    this.mArray = array
+  }
+
+  rotate (direction: number): void {
+    this.transpose()
+    if (direction > 0) {
+      this.mArray.forEach(row => row.reverse())
+    } else {
+      this.mArray.reverse()
+    }
   }
 
   /**

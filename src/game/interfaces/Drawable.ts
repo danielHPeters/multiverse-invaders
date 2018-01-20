@@ -1,4 +1,4 @@
-import Vector2 from '../../lib/vector/Vector2'
+import Vector2 from '../../lib/math/Vector2'
 
 /**
  * Interface for game objects which will be drawn onto the canvas.

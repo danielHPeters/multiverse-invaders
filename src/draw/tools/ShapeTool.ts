@@ -1,4 +1,4 @@
-import Point from '../../lib/vector/Point'
+import Point from '../../lib/math/Point'
 import Settings from '../config/Settings'
 import Tool from '../interfaces/Tool'
 import Shape from '../interfaces/Shape'

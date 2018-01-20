@@ -11,7 +11,9 @@ export default interface IGame {
 
   start (): void
 
-  update (): void
+  animationCallback (timeStamp: number): void
+
+  update (deltaTime: number): void
 
   render (): void
 

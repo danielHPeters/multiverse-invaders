@@ -18,7 +18,9 @@ export default class Settings {
       'a': Actions.LEFT,
       'd': Actions.RIGHT,
       'space': Actions.SHOOT,
-      'r': Actions.RESTART
+      'r': Actions.RESTART,
+      'q': Actions.ROTATE_LEFT,
+      'e': Actions.ROTATE_RIGHT
     }
     this.player = {
       maxVelocity: 15,

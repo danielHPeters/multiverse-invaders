@@ -1,5 +1,5 @@
 import Shape, { Color } from '../interfaces/Shape'
-import Point from '../../lib/vector/Point'
+import Point from '../../lib/math/Point'
 import Rectangle from '../geometry/Rectangle'
 import Triangle from '../geometry/Triangle'
 import Circle from '../geometry/Circle'

@@ -1,5 +1,5 @@
 import { Status } from './Location'
-import Point from '../../lib/vector/Point'
+import Point from '../../lib/math/Point'
 import PathFinding from './PathFinding'
 import Visualisation from './gui/Visualization'
 

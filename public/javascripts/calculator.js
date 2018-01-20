@@ -60,19 +60,19 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 48);
+/******/ 	return __webpack_require__(__webpack_require__.s = 49);
 /******/ })
 /************************************************************************/
 /******/ ({
 
-/***/ 48:
+/***/ 49:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-const PostFixCalculator_1 = __webpack_require__(49);
-const MatrixFactory_1 = __webpack_require__(50);
+const PostFixCalculator_1 = __webpack_require__(50);
+const MatrixFactory_1 = __webpack_require__(51);
 const calculator = document.getElementById('calculator');
 const input = document.getElementById('expression');
 calculator.addEventListener('submit', ev => {
@@ -113,12 +113,15 @@ console.log(m);
 console.log(matrix2);
 console.log(matrix);
 console.log(matrix.multiply(matrix3).mArray);
-console.log(matrix4.transpose().mArray);
+matrix4.rotate(1);
+console.log(matrix4.mArray);
+matrix4.transpose();
+console.log(matrix4.mArray);
 
 
 /***/ }),
 
-/***/ 49:
+/***/ 50:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -177,13 +180,13 @@ exports.default = PostFixCalculator;
 
 /***/ }),
 
-/***/ 50:
+/***/ 51:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-const Matrix_1 = __webpack_require__(51);
+const Matrix_1 = __webpack_require__(8);
 class MatrixFactory {
     static createMatrix(mArray) {
         const length = mArray[0].length;
@@ -200,7 +203,7 @@ exports.default = MatrixFactory;
 
 /***/ }),
 
-/***/ 51:
+/***/ 8:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -211,6 +214,23 @@ class Matrix {
         this.mArray = mArray;
         this.rows = mArray.length;
         this.columns = mArray[0].length;
+    }
+    set(array) {
+        const length = array[0].length;
+        let valid = true;
+        for (let i = 1; i < array.length; i++) {
+            if (array[i].length !== length) {
+                valid = false;
+            }
+        }
+        if (valid) {
+            this.rows = array.length;
+            this.columns = array[0].length;
+            this.mArray = array;
+        }
+        else {
+            throw new Error('The passed matrix array is malformed: ' + array);
+        }
     }
     add(matrix) {
         if (this.equals(matrix)) {
@@ -258,14 +278,24 @@ class Matrix {
     }
     transpose() {
         let array = [];
-        console.log(array);
         for (let i = 0; i < this.columns; i++) {
             array[i] = [];
             for (let j = 0; j < this.rows; j++) {
                 array[i][j] = this.mArray[j][i];
             }
         }
-        return new Matrix(array);
+        this.rows = array.length;
+        this.columns = array[0].length;
+        this.mArray = array;
+    }
+    rotate(direction) {
+        this.transpose();
+        if (direction > 0) {
+            this.mArray.forEach(row => row.reverse());
+        }
+        else {
+            this.mArray.reverse();
+        }
     }
     equals(other) {
         return other.rows === this.rows && other.columns === this.columns;

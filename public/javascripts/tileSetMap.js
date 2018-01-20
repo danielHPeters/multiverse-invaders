@@ -60,7 +60,7 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 25);
+/******/ 	return __webpack_require__(__webpack_require__.s = 26);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -73,7 +73,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var EntityType;
 (function (EntityType) {
     EntityType["PLAYER"] = "ship";
-    EntityType["ENEMY"] = "enmey";
+    EntityType["ENEMY"] = "enemy";
     EntityType["ENEMY_BULLET"] = "bulletEnemy";
     EntityType["PLAYER_BULLET"] = "bullet";
     EntityType["BACKGROUND"] = "background";
@@ -83,12 +83,121 @@ var EntityType;
     EntityType["MAIN_THEME"] = "shockWave";
     EntityType["EXPLOSION_I"] = "explosion1";
     EntityType["EXPLOSION_II"] = "explosion2";
-    EntityType["BOX"] = "BOX";
+    EntityType["BOX"] = "box";
+    EntityType["ARENA"] = "arena";
 })(EntityType = exports.EntityType || (exports.EntityType = {}));
 
 
 /***/ }),
 /* 1 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+const Observable_1 = __webpack_require__(5);
+var Actions;
+(function (Actions) {
+    Actions["UP"] = "UP";
+    Actions["DOWN"] = "DOWN";
+    Actions["LEFT"] = "LEFT";
+    Actions["RIGHT"] = "RIGHT";
+    Actions["SHOOT"] = "SHOOT";
+    Actions["RESTART"] = "RESTART";
+    Actions["ROTATE_LEFT"] = "R-LEFT";
+    Actions["ROTATE_RIGHT"] = "R-RIGHT";
+})(Actions = exports.Actions || (exports.Actions = {}));
+class InputManager extends Observable_1.default {
+    constructor(settings) {
+        super();
+        this.inputMap = settings.keyBoard;
+        this.init();
+        this.initializeTouchHandler();
+        this.touches = {
+            start: [],
+            move: []
+        };
+    }
+    init() {
+        window.addEventListener('keydown', event => {
+            let key = event.key !== ' ' ? event.key : 'space';
+            this.state[this.inputMap[key]] = true;
+            this.notify();
+        });
+        window.addEventListener('keyup', event => {
+            let key = event.key !== ' ' ? event.key : 'space';
+            this.state[this.inputMap[key]] = false;
+            this.notify();
+        });
+    }
+    initializeTouchHandler() {
+        let button = document.getElementById('move');
+        let el = button ? button : window;
+        el.addEventListener('touchstart', handleTouchStart, false);
+        el.addEventListener('touchmove', handleTouchMove, false);
+        el.addEventListener('touchend', handleTouchEnd, false);
+        el.addEventListener('contextmenu', event => {
+            event.preventDefault();
+            return false;
+        });
+        let start = [];
+        let move = [];
+        let touchstartX = 0;
+        let touchstartY = 0;
+        let toucheMoveX = 0;
+        let touchMoveY = 0;
+        let thisInstance = this;
+        function handleTouchStart(evt) {
+            evt.preventDefault();
+            start = evt.touches;
+            touchstartX = evt.touches[0].pageX;
+            touchstartY = evt.touches[0].pageY;
+        }
+        function handleTouchMove(evt) {
+            thisInstance.reset();
+            evt.preventDefault();
+            move = evt.changedTouches;
+            toucheMoveX = evt.touches[0].pageX;
+            touchMoveY = evt.touches[0].pageY;
+            for (let i = 0; i < evt.touches.length; i++) {
+                if (move[i].pageX < start[i].pageX) {
+                    thisInstance.state[thisInstance.inputMap['a']] = true;
+                }
+                if (move[i].pageX > start[i].pageX) {
+                    thisInstance.state[thisInstance.inputMap['d']] = true;
+                }
+                if (move[i].pageY < start[i].pageY) {
+                    thisInstance.state[thisInstance.inputMap['w']] = true;
+                }
+                if (move[i].pageY > start[i].pageY) {
+                    thisInstance.state[thisInstance.inputMap['s']] = true;
+                }
+                thisInstance.notify();
+            }
+        }
+        function handleTouchEnd(evt) {
+            evt.preventDefault();
+            thisInstance.reset();
+        }
+    }
+    shoot() {
+        this.state[this.inputMap['space']] = true;
+    }
+    cancelShoot() {
+        this.state[this.inputMap['space']] = false;
+    }
+    reset() {
+        this.state[this.inputMap['w']] = false;
+        this.state[this.inputMap['a']] = false;
+        this.state[this.inputMap['s']] = false;
+        this.state[this.inputMap['d']] = false;
+    }
+}
+exports.default = InputManager;
+
+
+/***/ }),
+/* 2 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -197,121 +306,15 @@ exports.default = Vector2;
 
 
 /***/ }),
-/* 2 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-const Observable_1 = __webpack_require__(9);
-var Actions;
-(function (Actions) {
-    Actions["UP"] = "UP";
-    Actions["DOWN"] = "DOWN";
-    Actions["LEFT"] = "LEFT";
-    Actions["RIGHT"] = "RIGHT";
-    Actions["SHOOT"] = "SHOOT";
-    Actions["RESTART"] = "RESTART";
-})(Actions = exports.Actions || (exports.Actions = {}));
-class InputManager extends Observable_1.default {
-    constructor(settings) {
-        super();
-        this.inputMap = settings.keyBoard;
-        this.init();
-        this.initializeTouchHandler();
-        this.touches = {
-            start: [],
-            move: []
-        };
-    }
-    init() {
-        window.addEventListener('keydown', event => {
-            let key = event.key !== ' ' ? event.key : 'space';
-            this.state[this.inputMap[key]] = true;
-            this.notify();
-        });
-        window.addEventListener('keyup', event => {
-            let key = event.key !== ' ' ? event.key : 'space';
-            this.state[this.inputMap[key]] = false;
-            this.notify();
-        });
-    }
-    initializeTouchHandler() {
-        let button = document.getElementById('move');
-        let el = button ? button : window;
-        el.addEventListener('touchstart', handleTouchStart, false);
-        el.addEventListener('touchmove', handleTouchMove, false);
-        el.addEventListener('touchend', handleTouchEnd, false);
-        el.addEventListener('contextmenu', event => {
-            event.preventDefault();
-            return false;
-        });
-        let start = [];
-        let move = [];
-        let touchstartX = 0;
-        let touchstartY = 0;
-        let toucheMoveX = 0;
-        let touchMoveY = 0;
-        let thisInstance = this;
-        function handleTouchStart(evt) {
-            evt.preventDefault();
-            start = evt.touches;
-            touchstartX = evt.touches[0].pageX;
-            touchstartY = evt.touches[0].pageY;
-        }
-        function handleTouchMove(evt) {
-            thisInstance.reset();
-            evt.preventDefault();
-            move = evt.changedTouches;
-            toucheMoveX = evt.touches[0].pageX;
-            touchMoveY = evt.touches[0].pageY;
-            for (let i = 0; i < evt.touches.length; i++) {
-                if (move[i].pageX < start[i].pageX) {
-                    thisInstance.state[thisInstance.inputMap['a']] = true;
-                }
-                if (move[i].pageX > start[i].pageX) {
-                    thisInstance.state[thisInstance.inputMap['d']] = true;
-                }
-                if (move[i].pageY < start[i].pageY) {
-                    thisInstance.state[thisInstance.inputMap['w']] = true;
-                }
-                if (move[i].pageY > start[i].pageY) {
-                    thisInstance.state[thisInstance.inputMap['s']] = true;
-                }
-                thisInstance.notify();
-            }
-        }
-        function handleTouchEnd(evt) {
-            evt.preventDefault();
-            thisInstance.reset();
-        }
-    }
-    shoot() {
-        this.state[this.inputMap['space']] = true;
-    }
-    cancelShoot() {
-        this.state[this.inputMap['space']] = false;
-    }
-    reset() {
-        this.state[this.inputMap['w']] = false;
-        this.state[this.inputMap['a']] = false;
-        this.state[this.inputMap['s']] = false;
-        this.state[this.inputMap['d']] = false;
-    }
-}
-exports.default = InputManager;
-
-
-/***/ }),
 /* 3 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-const SpriteSheet_1 = __webpack_require__(6);
-const Sound_1 = __webpack_require__(7);
-const Ajax_1 = __webpack_require__(8);
+const SpriteSheet_1 = __webpack_require__(9);
+const Sound_1 = __webpack_require__(10);
+const Ajax_1 = __webpack_require__(11);
 var AssetType;
 (function (AssetType) {
     AssetType["SPRITE"] = "SPRITE";
@@ -448,7 +451,7 @@ exports.default = AssetManager;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-const Vector2_1 = __webpack_require__(1);
+const Vector2_1 = __webpack_require__(2);
 const CollideAble_1 = __webpack_require__(0);
 class HitBox {
     constructor(x, y, width, height) {
@@ -468,8 +471,97 @@ exports.default = HitBox;
 
 
 /***/ }),
-/* 5 */,
+/* 5 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+class Observable {
+    constructor() {
+        this._observers = [];
+        this._state = {};
+    }
+    register(observer) {
+        this._observers.push(observer);
+    }
+    unRegister(observer) {
+        this._observers = this._observers.filter(obs => {
+            return obs !== observer;
+        });
+    }
+    notify() {
+        this._observers.forEach(observer => {
+            observer.update(this._state);
+        });
+    }
+    get observers() {
+        return this._observers;
+    }
+    set observers(observers) {
+        this._observers = observers;
+    }
+    get state() {
+        return this._state;
+    }
+    set state(state) {
+        this._state = state;
+    }
+}
+exports.default = Observable;
+
+
+/***/ }),
 /* 6 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+const InputManager_1 = __webpack_require__(1);
+class Settings {
+    constructor() {
+        this.keyBoard = {
+            'w': InputManager_1.Actions.UP,
+            's': InputManager_1.Actions.DOWN,
+            'a': InputManager_1.Actions.LEFT,
+            'd': InputManager_1.Actions.RIGHT,
+            'space': InputManager_1.Actions.SHOOT,
+            'r': InputManager_1.Actions.RESTART,
+            'q': InputManager_1.Actions.ROTATE_LEFT,
+            'e': InputManager_1.Actions.ROTATE_RIGHT
+        };
+        this.player = {
+            maxVelocity: 15,
+            fireDelay: 15,
+            friction: 0.7,
+            acceleration: 3
+        };
+        this.audio = {
+            master: 1,
+            ambient: 1,
+            effects: 1
+        };
+    }
+    findKey(value) {
+        return Object.keys(this.keyBoard).filter(key => this.keyBoard[key] === value)[0];
+    }
+    setKey(newKey, action) {
+        let oldKey = this.findKey(action);
+        if (newKey !== oldKey) {
+            console.log('old:' + oldKey, ' new: ' + newKey + ' value: ' + action);
+            this.keyBoard[newKey] = this.keyBoard[oldKey];
+            delete this.keyBoard[oldKey];
+        }
+    }
+}
+exports.default = Settings;
+
+
+/***/ }),
+/* 7 */,
+/* 8 */,
+/* 9 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -514,7 +606,7 @@ exports.default = SpriteSheet;
 
 
 /***/ }),
-/* 7 */
+/* 10 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -545,7 +637,7 @@ exports.default = Sound;
 
 
 /***/ }),
-/* 8 */
+/* 11 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -581,48 +673,7 @@ exports.default = Ajax;
 
 
 /***/ }),
-/* 9 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-class Observable {
-    constructor() {
-        this._observers = [];
-        this._state = {};
-    }
-    register(observer) {
-        this._observers.push(observer);
-    }
-    unRegister(observer) {
-        this._observers = this._observers.filter(obs => {
-            return obs !== observer;
-        });
-    }
-    notify() {
-        this._observers.forEach(observer => {
-            observer.update(this._state);
-        });
-    }
-    get observers() {
-        return this._observers;
-    }
-    set observers(observers) {
-        this._observers = observers;
-    }
-    get state() {
-        return this._state;
-    }
-    set state(state) {
-        this._state = state;
-    }
-}
-exports.default = Observable;
-
-
-/***/ }),
-/* 10 */
+/* 12 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -729,7 +780,7 @@ exports.default = QuadTree;
 
 
 /***/ }),
-/* 11 */
+/* 13 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -762,52 +813,6 @@ exports.default = CollisionManager;
 
 
 /***/ }),
-/* 12 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-const InputManager_1 = __webpack_require__(2);
-class Settings {
-    constructor() {
-        this.keyBoard = {
-            'w': InputManager_1.Actions.UP,
-            's': InputManager_1.Actions.DOWN,
-            'a': InputManager_1.Actions.LEFT,
-            'd': InputManager_1.Actions.RIGHT,
-            'space': InputManager_1.Actions.SHOOT,
-            'r': InputManager_1.Actions.RESTART
-        };
-        this.player = {
-            maxVelocity: 15,
-            fireDelay: 15,
-            friction: 0.7,
-            acceleration: 3
-        };
-        this.audio = {
-            master: 1,
-            ambient: 1,
-            effects: 1
-        };
-    }
-    findKey(value) {
-        return Object.keys(this.keyBoard).filter(key => this.keyBoard[key] === value)[0];
-    }
-    setKey(newKey, action) {
-        let oldKey = this.findKey(action);
-        if (newKey !== oldKey) {
-            console.log('old:' + oldKey, ' new: ' + newKey + ' value: ' + action);
-            this.keyBoard[newKey] = this.keyBoard[oldKey];
-            delete this.keyBoard[oldKey];
-        }
-    }
-}
-exports.default = Settings;
-
-
-/***/ }),
-/* 13 */,
 /* 14 */,
 /* 15 */,
 /* 16 */,
@@ -819,32 +824,33 @@ exports.default = Settings;
 /* 22 */,
 /* 23 */,
 /* 24 */,
-/* 25 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-const Rpg_1 = __webpack_require__(26);
-document.addEventListener('DOMContentLoaded', () => new Rpg_1.default());
-
-
-/***/ }),
+/* 25 */,
 /* 26 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-const QuadTree_1 = __webpack_require__(10);
-const Entity_1 = __webpack_require__(27);
-const CollisionManager_1 = __webpack_require__(11);
-const Area_1 = __webpack_require__(28);
-const Camera_1 = __webpack_require__(29);
-const InputManager_1 = __webpack_require__(2);
-const Settings_1 = __webpack_require__(12);
+const Rpg_1 = __webpack_require__(27);
+document.addEventListener('DOMContentLoaded', () => new Rpg_1.default());
+
+
+/***/ }),
+/* 27 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+const QuadTree_1 = __webpack_require__(12);
+const Entity_1 = __webpack_require__(28);
+const CollisionManager_1 = __webpack_require__(13);
+const Area_1 = __webpack_require__(29);
+const Camera_1 = __webpack_require__(30);
+const InputManager_1 = __webpack_require__(1);
+const Settings_1 = __webpack_require__(6);
 const AssetManager_1 = __webpack_require__(3);
-const TileSetMap_1 = __webpack_require__(31);
+const TileSetMap_1 = __webpack_require__(32);
 const CollideAble_1 = __webpack_require__(0);
 const HitBox_1 = __webpack_require__(4);
 class Rpg {
@@ -958,6 +964,8 @@ class Rpg {
     }
     start() {
     }
+    animationCallback(timeStamp) {
+    }
     stop() {
     }
     update() {
@@ -982,14 +990,14 @@ exports.default = Rpg;
 
 
 /***/ }),
-/* 27 */
+/* 28 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-const Vector2_1 = __webpack_require__(1);
-const InputManager_1 = __webpack_require__(2);
+const Vector2_1 = __webpack_require__(2);
+const InputManager_1 = __webpack_require__(1);
 const CollideAble_1 = __webpack_require__(0);
 class Entity {
     constructor(x, y, sprite, context) {
@@ -1065,7 +1073,7 @@ exports.default = Entity;
 
 
 /***/ }),
-/* 28 */
+/* 29 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1080,14 +1088,14 @@ exports.default = Area;
 
 
 /***/ }),
-/* 29 */
+/* 30 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-const Vector2_1 = __webpack_require__(1);
-const Rectangle_1 = __webpack_require__(30);
+const Vector2_1 = __webpack_require__(2);
+const Rectangle_1 = __webpack_require__(31);
 var AXIS;
 (function (AXIS) {
     AXIS["NONE"] = "none";
@@ -1152,7 +1160,7 @@ exports.default = Camera;
 
 
 /***/ }),
-/* 30 */
+/* 31 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1192,7 +1200,7 @@ exports.default = Rectangle;
 
 
 /***/ }),
-/* 31 */
+/* 32 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";

@@ -10,6 +10,7 @@ export class SnakeGame implements IGame {
   canvas: HTMLCanvasElement
   context: CanvasRenderingContext2D
   playing: boolean
+  lastTimestamp: number
 
   constructor (canvas: HTMLCanvasElement) {
     this.canvas = canvas
@@ -22,7 +23,18 @@ export class SnakeGame implements IGame {
     this.run()
   }
 
-  update (): void {
+  animationCallback (timeStamp: number): void {
+    while (this.playing) {
+      if (this.lastTimestamp) {
+        this.update(timeStamp - this.lastTimestamp / 1000)
+      }
+      this.render()
+      this.lastTimestamp = timeStamp
+      requestAnimationFrame(this.animationCallback)
+    }
+  }
+
+  update (deltaTime: number): void {
 
   }
 
@@ -31,11 +43,7 @@ export class SnakeGame implements IGame {
   }
 
   run (): void {
-    while (this.playing) {
-      this.update()
-      this.render()
-      window.requestAnimationFrame(() => this.run())
-    }
+    window.requestAnimationFrame(this.animationCallback)
   }
 
   stop (): void {

@@ -15,6 +15,7 @@ const matrix = require('./routes/matrix')
 const pathFinding = require('./routes/pathfinding')
 const calculator = require('./routes/calculator')
 const webgl = require('./routes/webgl')
+const tetris = require('./routes/tetris')
 
 const app = express()
 
@@ -45,6 +46,7 @@ app.use('/draw', draw)
 app.use('/pathfinding', pathFinding)
 app.use('/calculator', calculator)
 app.use('/webgl', webgl)
+app.use('/tetris', tetris)
 
 // catch 404 and forward to error handler
 app.use((req, res, next) => {

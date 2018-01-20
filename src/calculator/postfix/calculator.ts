@@ -1,5 +1,5 @@
-import PostFixCalculator from './PostFixCalculator'
-import MatrixFactory from '../../math/MatrixFactory'
+import PostFixCalculator from '../../lib/math/PostFixCalculator'
+import MatrixFactory from '../../lib/math/MatrixFactory'
 
 const calculator = document.getElementById('calculator')
 const input = document.getElementById('expression') as HTMLInputElement
@@ -51,5 +51,7 @@ console.log(matrix2)
 console.log(matrix)
 
 console.log(matrix.multiply(matrix3).mArray)
-
-console.log(matrix4.transpose().mArray)
+matrix4.rotate(1)
+console.log(matrix4.mArray)
+matrix4.transpose()
+console.log(matrix4.mArray)

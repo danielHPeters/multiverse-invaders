@@ -1,6 +1,6 @@
 export enum EntityType {
   PLAYER = 'ship',
-  ENEMY = 'enmey',
+  ENEMY = 'enemy',
   ENEMY_BULLET = 'bulletEnemy',
   PLAYER_BULLET = 'bullet',
   BACKGROUND = 'background',
@@ -10,7 +10,8 @@ export enum EntityType {
   MAIN_THEME = 'shockWave',
   EXPLOSION_I = 'explosion1',
   EXPLOSION_II = 'explosion2',
-  BOX = 'BOX'
+  BOX = 'box',
+  ARENA = 'arena'
 }
 
 /**

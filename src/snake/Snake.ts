@@ -1,4 +1,4 @@
-import Vector2 from '../lib/vector/Vector2'
+import Vector2 from '../lib/math/Vector2'
 
 /**
  * Player snake class for snake game.

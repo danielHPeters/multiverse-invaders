@@ -1,5 +1,5 @@
 import Location, { Direction, Status } from './Location'
-import Point from '../../lib/vector/Point'
+import Point from '../../lib/math/Point'
 
 /**
  * Path finding algorithm class.

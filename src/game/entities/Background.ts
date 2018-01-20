@@ -1,5 +1,5 @@
 import Drawable from '../interfaces/Drawable'
-import Vector2 from '../../lib/vector/Vector2'
+import Vector2 from '../../lib/math/Vector2'
 import { EntityType } from '../interfaces/CollideAble'
 
 export default class Background implements Drawable {

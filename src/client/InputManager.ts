@@ -2,7 +2,14 @@ import Observable from '../lib/observer/Observable'
 import Settings from './Settings'
 
 export enum Actions {
-  UP = 'UP', DOWN = 'DOWN', LEFT = 'LEFT', RIGHT = 'RIGHT', SHOOT = 'SHOOT', RESTART = 'RESTART'
+  UP = 'UP',
+  DOWN = 'DOWN',
+  LEFT = 'LEFT',
+  RIGHT = 'RIGHT',
+  SHOOT = 'SHOOT',
+  RESTART = 'RESTART',
+  ROTATE_LEFT = 'R-LEFT',
+  ROTATE_RIGHT = 'R-RIGHT'
 }
 
 /**
