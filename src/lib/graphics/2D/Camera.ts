@@ -1,6 +1,6 @@
-import Vector2 from '../../lib/math/Vector2'
-import Rectangle from '../../lib/geometry/Rectangle'
-import Drawable from '../../game/interfaces/Drawable'
+import Vector2 from '../../math/Vector2'
+import Rectangle from '../../geometry/Rectangle'
+import Drawable from '../../../game/interfaces/Drawable'
 
 export enum AXIS {
   NONE = 'none',

@@ -1,4 +1,4 @@
-import Observable from '../lib/observer/Observable'
+import Observable from '../observer/Observable'
 import Settings from './Settings'
 
 export enum Actions {

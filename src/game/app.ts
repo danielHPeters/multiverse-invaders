@@ -1,11 +1,11 @@
-import AssetManager, { AssetType } from '../client/AssetManager'
+import AssetManager, { AssetType } from '../lib/client/AssetManager'
 import SpaceGame from './SpaceGame'
-import InputManager from '../client/InputManager'
-import Settings from '../client/Settings'
-import SettingsMenu from '../client/SettingsMenu'
+import InputManager from '../lib/client/InputManager'
+import Settings from '../lib/client/Settings'
+import SettingsMenu from '../lib/client/SettingsMenu'
 import EventHandler from '../lib/event/EventHandler'
 import { AssetId } from '../enum/AssetId'
-import AudioManager from '../client/AudioManager'
+import AudioManager from '../lib/client/AudioManager'
 import GameLoop from './GameLoop'
 
 const audioManager = new AudioManager()

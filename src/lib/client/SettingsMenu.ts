@@ -1,7 +1,7 @@
 import Settings from './Settings'
 import { Actions } from './InputManager'
 import AssetManager from './AssetManager'
-import EventHandler from '../lib/event/EventHandler'
+import EventHandler from '../event/EventHandler'
 import AudioManager from './AudioManager'
 
 /**

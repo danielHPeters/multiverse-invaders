@@ -1,4 +1,4 @@
-import AssetManager  from '../../client/AssetManager'
+import AssetManager  from '../../lib/client/AssetManager'
 import Bullet from '../entities/Bullet'
 import Enemy from '../entities/Enemy'
 import SpaceGame from '../SpaceGame'

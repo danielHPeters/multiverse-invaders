@@ -1,5 +1,5 @@
 import Vector2 from '../math/Vector2'
-import { Actions } from '../../client/InputManager'
+import { Actions } from '../client/InputManager'
 import Observer from '../observer/Observer'
 import CollideAble, { EntityType } from '../../game/interfaces/CollideAble'
 import Drawable from '../../game/interfaces/Drawable'

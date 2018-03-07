@@ -1,6 +1,6 @@
 import Piece from './Piece'
 import Observer from '../lib/observer/Observer'
-import { Actions } from '../client/InputManager'
+import { Actions } from '../lib/client/InputManager'
 import Arena from './Arena'
 
 export default class Player implements Observer {

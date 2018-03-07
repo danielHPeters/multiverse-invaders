@@ -1,7 +1,7 @@
 import SpriteSheet from '../graphics/2D/SpriteSheet'
 import Sound from '../audio/Sound'
-import Ajax from '../lib/ajax/Ajax'
-import { AssetId } from '../enum/AssetId'
+import Ajax from '../ajax/Ajax'
+import { AssetId } from '../../enum/AssetId'
 import AudioManager from './AudioManager'
 
 export enum AssetType {

@@ -1,6 +1,6 @@
 import Tetris from './Tetris'
-import InputManager from '../client/InputManager'
-import Settings from '../client/Settings'
+import InputManager from '../lib/client/InputManager'
+import Settings from '../lib/client/Settings'
 import Piece from './Piece'
 
 const settings = new Settings()

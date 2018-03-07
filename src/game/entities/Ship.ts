@@ -3,9 +3,9 @@ import Vector2 from '../../lib/math/Vector2'
 import Pool from '../structures/Pool'
 import Observer from '../../lib/observer/Observer'
 import CollideAble, { EntityType } from '../interfaces/CollideAble'
-import { Actions } from '../../client/InputManager'
-import AssetManager, { AssetType } from '../../client/AssetManager'
-import Sound from '../../audio/Sound'
+import { Actions } from '../../lib/client/InputManager'
+import AssetManager, { AssetType } from '../../lib/client/AssetManager'
+import Sound from '../../lib/audio/Sound'
 import { AssetId } from '../../enum/AssetId'
 
 /**

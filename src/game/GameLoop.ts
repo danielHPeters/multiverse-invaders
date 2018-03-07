@@ -28,7 +28,7 @@ export default class GameLoop implements IGameLoop {
   public start (): void {
     this.game.init()
     this.game.state.running = true
-    this.frameId = requestAnimationFrame(this.loop.bind(this))
+    this.frameId = requestAnimationFrame(time => this.loop(time))
   }
 
   /**
@@ -65,7 +65,7 @@ export default class GameLoop implements IGameLoop {
         }
         this.lastTime = time
         this.game.render()
-        this.frameId = requestAnimationFrame(this.loop.bind(this))
+        this.frameId = requestAnimationFrame(time => this.loop(time))
       }
     }
   }
