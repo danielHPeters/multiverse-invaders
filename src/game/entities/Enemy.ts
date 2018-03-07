@@ -5,6 +5,7 @@ import CollideAble, { EntityType } from '../interfaces/CollideAble'
 import SpaceGame from '../SpaceGame'
 import { AssetType } from '../../client/AssetManager'
 import Sound from '../../audio/Sound'
+import { AssetId } from '../../enum/AssetId'
 
 /**
  * Enemy ship class.
@@ -69,7 +70,7 @@ export default class Enemy implements Drawable, CollideAble {
     this.colliding = false
     this.bulletPool = bulletPool
     this.game = game
-    this.explosionSound = this.game.assetManager.getSound(EntityType.EXPLOSION_I, AssetType.AUDIO)
+    this.explosionSound = this.game.assetManager.getSound(AssetId.EXPLOSION_I, AssetType.AUDIO)
   }
 
   /**

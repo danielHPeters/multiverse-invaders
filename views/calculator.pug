@@ -1,4 +1,6 @@
 extends layout
+block stylesheets
+  link(rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0-alpha.2/css/materialize.min.css')
 block content
   .container
     form#calculator.row
@@ -49,4 +51,5 @@ block content
         .col.s1
           button.btn.math= ' '
 block scripts
+  script(src='https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0-alpha.2/js/materialize.min.js')
   script(src='javascripts/calculator.min.js')

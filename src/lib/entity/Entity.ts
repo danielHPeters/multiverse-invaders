@@ -4,6 +4,12 @@ import Observer from '../observer/Observer'
 import CollideAble, { EntityType } from '../../game/interfaces/CollideAble'
 import Drawable from '../../game/interfaces/Drawable'
 
+/**
+ * Base entity class.
+ *
+ * @author Daniel Peters
+ * @version 1.0
+ */
 export default class Entity implements Observer, CollideAble, Drawable {
   speed: number
   canvasWidth: number
@@ -21,6 +27,13 @@ export default class Entity implements Observer, CollideAble, Drawable {
   height
   previousPosition: Vector2
 
+  /**
+   *
+   * @param {number} x
+   * @param {number} y
+   * @param sprite
+   * @param context
+   */
   constructor (x: number, y: number, sprite, context) {
     this.position = new Vector2(x, y)
     this.velocity = new Vector2(1, 1)
@@ -37,6 +50,11 @@ export default class Entity implements Observer, CollideAble, Drawable {
     this.previousPosition = new Vector2(x, y)
   }
 
+  /**
+   *
+   * @param worldWidth
+   * @param worldHeight
+   */
   move (worldWidth, worldHeight): void {
     if (!this.colliding) {
       this.previousPosition.setVector(this.position)
@@ -75,6 +93,13 @@ export default class Entity implements Observer, CollideAble, Drawable {
     }
   }
 
+  /**
+   *
+   * @param {number} xView
+   * @param {number} yView
+   * @param {number} prevXView
+   * @param {number} prevYView
+   */
   draw (xView: number, yView: number, prevXView: number, prevYView: number): void {
     this.context.clearRect(
       (Math.floor(this.previousPosition.x) - this.width / 2) - prevXView,
@@ -91,6 +116,9 @@ export default class Entity implements Observer, CollideAble, Drawable {
     )
   }
 
+  /**
+   *
+   */
   goBack (): void {
     let temp = this.position.clone()
     this.position.setVector(this.previousPosition)
@@ -98,10 +126,19 @@ export default class Entity implements Observer, CollideAble, Drawable {
     this.colliding = false
   }
 
+  /**
+   *
+   * @param state
+   */
   update (state: any): void {
     this.state = state
   }
 
+  /**
+   *
+   * @param {CollideAble} other
+   * @returns {boolean}
+   */
   isCollideAbleWith (other: CollideAble): boolean {
     return this.collidesWith.includes(other.type.toString())
   }

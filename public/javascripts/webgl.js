@@ -60,18 +60,18 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 52);
+/******/ 	return __webpack_require__(__webpack_require__.s = 54);
 /******/ })
 /************************************************************************/
 /******/ ({
 
-/***/ 52:
+/***/ 54:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-const WebGL_1 = __webpack_require__(53);
+const WebGL_1 = __webpack_require__(55);
 const horAspect = 480.0 / 640.0;
 function initBuffers(gl) {
     const squareVerticesBuffer = gl.createBuffer();
@@ -96,7 +96,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 /***/ }),
 
-/***/ 53:
+/***/ 55:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";

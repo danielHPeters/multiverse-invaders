@@ -6,6 +6,7 @@ import CollideAble, { EntityType } from '../interfaces/CollideAble'
 import { Actions } from '../../client/InputManager'
 import AssetManager, { AssetType } from '../../client/AssetManager'
 import Sound from '../../audio/Sound'
+import { AssetId } from '../../enum/AssetId'
 
 /**
  *
@@ -55,7 +56,7 @@ export default class Ship implements Drawable, Observer, CollideAble {
     this.canvasWidth = canvasWidth
     this.canvasHeight = canvasHeight
     this.context = context
-    this.sprite = assetManager.getSprite(EntityType.PLAYER)
+    this.sprite = assetManager.getSprite(AssetId.PLAYER)
     this.type = EntityType.PLAYER
     this.pool = pool
     this.counter = 0
@@ -65,7 +66,7 @@ export default class Ship implements Drawable, Observer, CollideAble {
     this.state = {}
     this.settings = settings
     this.maxTop = Math.floor(this.canvasHeight / 4 * 3)
-    this.laserSound = assetManager.getSound(EntityType.LASER, AssetType.AUDIO)
+    this.laserSound = assetManager.getSound(AssetId.LASER, AssetType.AUDIO)
   }
 
   reset (): void {

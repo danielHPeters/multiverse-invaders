@@ -1,9 +1,10 @@
-import AssetManager from '../../client/AssetManager'
+import AssetManager  from '../../client/AssetManager'
 import Bullet from '../entities/Bullet'
 import Enemy from '../entities/Enemy'
 import SpaceGame from '../SpaceGame'
 import { EntityType } from '../interfaces/CollideAble'
 import Drawable from '../interfaces/Drawable'
+import { AssetId } from '../../enum/AssetId'
 
 /**
  *
@@ -15,6 +16,7 @@ export default class Pool {
   canvasHeight: number
   maxSize: number
   type: EntityType
+  assetId: AssetId
   pool: any[]
   subPool: Pool
   game: SpaceGame
@@ -27,16 +29,18 @@ export default class Pool {
    * @param {number} canvasHeight
    * @param {number} maxSize
    * @param {string} type
+   * @param {AssetId} asId
    * @param {Pool} pool
    * @param {SpaceGame} game
    */
-  constructor (assetManager: AssetManager, context: any, canvasWidth: number, canvasHeight: number, maxSize: number, type: EntityType, pool: Pool = null, game: SpaceGame = null) {
+  constructor (assetManager: AssetManager, context: any, canvasWidth: number, canvasHeight: number, maxSize: number, type: EntityType, asId: AssetId, pool: Pool = null, game: SpaceGame = null) {
     this.assetManager = assetManager
     this.context = context
     this.canvasWidth = canvasWidth
     this.canvasHeight = canvasHeight
     this.maxSize = maxSize
     this.type = type
+    this.assetId = asId
     this.pool = []
     this.subPool = pool
     this.game = game
@@ -48,7 +52,7 @@ export default class Pool {
    */
   init (): void {
     if (this.type === EntityType.ENEMY) {
-      let sprite = this.assetManager.getSprite(this.type)
+      let sprite = this.assetManager.getSprite(this.assetId)
       for (let i = 0; i < this.maxSize; i++) {
         this.pool[i] = new Enemy(
           0,
@@ -67,7 +71,7 @@ export default class Pool {
       }
     } else {
       for (let i = 0; i < this.maxSize; i++) {
-        let sprite = this.assetManager.getSprite(this.type)
+        let sprite = this.assetManager.getSprite(this.assetId)
         this.pool[i] = new Bullet(
           0,
           0,

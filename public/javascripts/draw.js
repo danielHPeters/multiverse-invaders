@@ -60,7 +60,7 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 36);
+/******/ 	return __webpack_require__(__webpack_require__.s = 38);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -71,7 +71,8 @@
 /* 4 */,
 /* 5 */,
 /* 6 */,
-/* 7 */
+/* 7 */,
+/* 8 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -98,23 +99,24 @@ exports.default = Point;
 
 
 /***/ }),
-/* 8 */,
 /* 9 */,
 /* 10 */,
 /* 11 */,
 /* 12 */,
 /* 13 */,
-/* 14 */
+/* 14 */,
+/* 15 */,
+/* 16 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-const Rectangle_1 = __webpack_require__(39);
-const Triangle_1 = __webpack_require__(40);
-const Circle_1 = __webpack_require__(41);
-const Smiley_1 = __webpack_require__(42);
-const Line_1 = __webpack_require__(43);
+const Rectangle_1 = __webpack_require__(41);
+const Triangle_1 = __webpack_require__(42);
+const Circle_1 = __webpack_require__(43);
+const Smiley_1 = __webpack_require__(44);
+const Line_1 = __webpack_require__(45);
 var ShapeType;
 (function (ShapeType) {
     ShapeType[ShapeType["LINE"] = 0] = "LINE";
@@ -152,8 +154,8 @@ exports.default = ShapeFactory;
 
 
 /***/ }),
-/* 15 */,
-/* 16 */
+/* 17 */,
+/* 18 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -171,8 +173,6 @@ exports.VALID_COLOR = '^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$';
 
 
 /***/ }),
-/* 17 */,
-/* 18 */,
 /* 19 */,
 /* 20 */,
 /* 21 */,
@@ -190,16 +190,18 @@ exports.VALID_COLOR = '^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$';
 /* 33 */,
 /* 34 */,
 /* 35 */,
-/* 36 */
+/* 36 */,
+/* 37 */,
+/* 38 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-const DrawingApp_1 = __webpack_require__(37);
-const MenuBar_1 = __webpack_require__(38);
-const Settings_1 = __webpack_require__(44);
-const ShapeTool_1 = __webpack_require__(45);
+const DrawingApp_1 = __webpack_require__(39);
+const MenuBar_1 = __webpack_require__(40);
+const Settings_1 = __webpack_require__(46);
+const ShapeTool_1 = __webpack_require__(47);
 document.addEventListener('DOMContentLoaded', () => {
     const canvas = document.getElementById('pane');
     const context = canvas.getContext('2d');
@@ -218,7 +220,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
 /***/ }),
-/* 37 */
+/* 39 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -252,14 +254,14 @@ exports.default = DrawingApp;
 
 
 /***/ }),
-/* 38 */
+/* 40 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-const Shape_1 = __webpack_require__(16);
-const ShapeFactory_1 = __webpack_require__(14);
+const Shape_1 = __webpack_require__(18);
+const ShapeFactory_1 = __webpack_require__(16);
 class MenuBar {
     constructor(element) {
         this.element = element;
@@ -371,7 +373,7 @@ exports.default = MenuBar;
 
 
 /***/ }),
-/* 39 */
+/* 41 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -401,7 +403,7 @@ exports.default = Rectangle;
 
 
 /***/ }),
-/* 40 */
+/* 42 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -434,7 +436,7 @@ exports.default = Triangle;
 
 
 /***/ }),
-/* 41 */
+/* 43 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -467,7 +469,7 @@ exports.default = Circle;
 
 
 /***/ }),
-/* 42 */
+/* 44 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -498,7 +500,7 @@ exports.default = Smiley;
 
 
 /***/ }),
-/* 43 */
+/* 45 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -523,14 +525,14 @@ exports.default = Line;
 
 
 /***/ }),
-/* 44 */
+/* 46 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-const ShapeFactory_1 = __webpack_require__(14);
-const Shape_1 = __webpack_require__(16);
+const ShapeFactory_1 = __webpack_require__(16);
+const Shape_1 = __webpack_require__(18);
 class Settings {
     constructor(menuHeight, activeColor = Shape_1.Color.BLACK, activeTool = ShapeFactory_1.ShapeType.LINE) {
         this.activeColor = activeColor;
@@ -544,14 +546,14 @@ exports.default = Settings;
 
 
 /***/ }),
-/* 45 */
+/* 47 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-const Point_1 = __webpack_require__(7);
-const ShapeFactory_1 = __webpack_require__(14);
+const Point_1 = __webpack_require__(8);
+const ShapeFactory_1 = __webpack_require__(16);
 class ShapeTool {
     constructor(settings) {
         this.start = new Point_1.default(0, 0);

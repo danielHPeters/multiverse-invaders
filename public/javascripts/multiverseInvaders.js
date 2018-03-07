@@ -60,7 +60,7 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 18);
+/******/ 	return __webpack_require__(__webpack_require__.s = 20);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -70,32 +70,7 @@
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var EntityType;
-(function (EntityType) {
-    EntityType["PLAYER"] = "ship";
-    EntityType["ENEMY"] = "enemy";
-    EntityType["ENEMY_BULLET"] = "bulletEnemy";
-    EntityType["PLAYER_BULLET"] = "bullet";
-    EntityType["BACKGROUND"] = "background";
-    EntityType["MAP"] = "map";
-    EntityType["GAME_OVER"] = "gameOver";
-    EntityType["LASER"] = "laser";
-    EntityType["MAIN_THEME"] = "shockWave";
-    EntityType["EXPLOSION_I"] = "explosion1";
-    EntityType["EXPLOSION_II"] = "explosion2";
-    EntityType["BOX"] = "box";
-    EntityType["ARENA"] = "arena";
-})(EntityType = exports.EntityType || (exports.EntityType = {}));
-
-
-/***/ }),
-/* 1 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-const Observable_1 = __webpack_require__(5);
+const Observable_1 = __webpack_require__(6);
 var Actions;
 (function (Actions) {
     Actions["UP"] = "UP";
@@ -197,7 +172,7 @@ exports.default = InputManager;
 
 
 /***/ }),
-/* 2 */
+/* 1 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -306,24 +281,48 @@ exports.default = Vector2;
 
 
 /***/ }),
+/* 2 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var EntityType;
+(function (EntityType) {
+    EntityType["PLAYER"] = "ship";
+    EntityType["ENEMY"] = "enemy";
+    EntityType["ENEMY_BULLET"] = "bulletEnemy";
+    EntityType["PLAYER_BULLET"] = "bullet";
+    EntityType["BACKGROUND"] = "background";
+    EntityType["MAP"] = "map";
+    EntityType["GAME_OVER"] = "gameOver";
+    EntityType["LASER"] = "laser";
+    EntityType["MAIN_THEME"] = "shockWave";
+    EntityType["EXPLOSION_I"] = "explosion1";
+    EntityType["EXPLOSION_II"] = "explosion2";
+    EntityType["BOX"] = "box";
+    EntityType["ARENA"] = "arena";
+})(EntityType = exports.EntityType || (exports.EntityType = {}));
+
+
+/***/ }),
 /* 3 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-const SpriteSheet_1 = __webpack_require__(9);
-const Sound_1 = __webpack_require__(10);
+const SpriteSheet_1 = __webpack_require__(10);
 const Ajax_1 = __webpack_require__(11);
 var AssetType;
 (function (AssetType) {
     AssetType["SPRITE"] = "SPRITE";
     AssetType["SPRITE_SHEET"] = "SPRITE_SHEET";
     AssetType["AUDIO"] = "AUDIO";
-    AssetType["AUDIO_LOOP"] = "LOOP";
+    AssetType["AUDIO_AMB"] = "LOOP";
 })(AssetType = exports.AssetType || (exports.AssetType = {}));
 class AssetManager {
-    constructor() {
+    constructor(audioManager) {
         this.cache = {
             sprites: {},
             spriteSheets: {},
@@ -331,34 +330,7 @@ class AssetManager {
         };
         this.downloadCount = 0;
         this.queue = [];
-        this.initAudioContext();
-    }
-    initAudioContext() {
-        try {
-            window.AudioContext = window.AudioContext || webkitAudioContext;
-            this.audioContext = new AudioContext();
-            this.masterGain = this.audioContext.createGain();
-            this.effectsGain = this.audioContext.createGain();
-            this.ambientGain = this.audioContext.createGain();
-            this.masterGain.gain.value = 1;
-            this.masterGain.connect(this.audioContext.destination);
-            this.effectsGain.connect(this.masterGain);
-            this.ambientGain.connect(this.masterGain);
-            this.ambientGain.gain.value = 1;
-            this.effectsGain.gain.value = 1;
-        }
-        catch (e) {
-            console.log('Web Audio API is not supported in this browser');
-        }
-    }
-    adjustMasterVolume(value) {
-        this.masterGain.gain.value = value;
-    }
-    adjustAmbientVolume(value) {
-        this.ambientGain.gain.value = value;
-    }
-    adjustEffectsVolume(value) {
-        this.effectsGain.gain.value = value;
+        this.audioManager = audioManager;
     }
     done() {
         return this.downloadCount === this.queue.length;
@@ -371,23 +343,20 @@ class AssetManager {
             opts: opts
         });
     }
-    loadAudioFromUrl(item, callback) {
+    loadAudio(item, callback) {
         Ajax_1.default.create({
             method: 'GET',
             url: item.path,
             responseType: 'arraybuffer'
         }, response => {
-            this.decodeAudio(response, item.id, callback);
+            this.audioManager.decodeAudio(response, item.id, buffer => {
+                this.cache.audio[item.id] = buffer;
+                this.downloadCount += 1;
+                if (this.done()) {
+                    callback();
+                }
+            });
         });
-    }
-    decodeAudio(data, id, callback) {
-        this.audioContext.decodeAudioData(data).then(buffer => {
-            this.cache.audio[id] = buffer;
-            this.downloadCount += 1;
-            if (this.done()) {
-                callback();
-            }
-        }, error => { console.log('Error with decoding audio data' + error); });
     }
     loadSprite(item, callback) {
         let sprite = new Image();
@@ -414,7 +383,7 @@ class AssetManager {
     downloadAll(callback) {
         this.queue.forEach(item => {
             if (item.type === AssetType.AUDIO) {
-                this.loadAudioFromUrl(item, callback);
+                this.loadAudio(item, callback);
             }
             else if (item.type === AssetType.SPRITE) {
                 this.loadSprite(item, callback);
@@ -425,14 +394,8 @@ class AssetManager {
         });
     }
     getSound(id, type) {
-        let gain;
-        if (type === AssetType.AUDIO) {
-            gain = this.effectsGain;
-        }
-        else {
-            gain = this.ambientGain;
-        }
-        return new Sound_1.default(this.audioContext, gain, this.cache.audio[id]);
+        let ambient = type === AssetType.AUDIO_AMB;
+        return this.audioManager.createSound(this.cache.audio[id], ambient);
     }
     getSprite(id) {
         return this.cache.sprites[id];
@@ -451,8 +414,33 @@ exports.default = AssetManager;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-const Vector2_1 = __webpack_require__(2);
-const CollideAble_1 = __webpack_require__(0);
+var AssetId;
+(function (AssetId) {
+    AssetId["PLAYER"] = "ship";
+    AssetId["ENEMY"] = "enemy";
+    AssetId["ENEMY_BULLET"] = "bulletEnemy";
+    AssetId["PLAYER_BULLET"] = "bullet";
+    AssetId["BACKGROUND"] = "background";
+    AssetId["MAP"] = "map";
+    AssetId["GAME_OVER"] = "gameOver";
+    AssetId["LASER"] = "laser";
+    AssetId["MAIN_THEME"] = "shockWave";
+    AssetId["EXPLOSION_I"] = "explosion1";
+    AssetId["EXPLOSION_II"] = "explosion2";
+    AssetId["BOX"] = "box";
+    AssetId["ARENA"] = "arena";
+})(AssetId = exports.AssetId || (exports.AssetId = {}));
+
+
+/***/ }),
+/* 5 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+const Vector2_1 = __webpack_require__(1);
+const CollideAble_1 = __webpack_require__(2);
 class HitBox {
     constructor(x, y, width, height) {
         this.position = new Vector2_1.default(x, y);
@@ -471,7 +459,7 @@ exports.default = HitBox;
 
 
 /***/ }),
-/* 5 */
+/* 6 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -512,13 +500,13 @@ exports.default = Observable;
 
 
 /***/ }),
-/* 6 */
+/* 7 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-const InputManager_1 = __webpack_require__(1);
+const InputManager_1 = __webpack_require__(0);
 class Settings {
     constructor() {
         this.keyBoard = {
@@ -559,9 +547,9 @@ exports.default = Settings;
 
 
 /***/ }),
-/* 7 */,
 /* 8 */,
-/* 9 */
+/* 9 */,
+/* 10 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -603,37 +591,6 @@ class SpriteSheet {
     }
 }
 exports.default = SpriteSheet;
-
-
-/***/ }),
-/* 10 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-class Sound {
-    constructor(audioContext, masterGain, buffer) {
-        this.audioContext = audioContext;
-        this.masterGain = masterGain;
-        this.buffer = buffer;
-        this.gainNode = this.audioContext.createGain();
-        this.gainNode.gain.value = 0.2;
-        this.gainNode.connect(this.masterGain);
-        this.playing = false;
-    }
-    play(loop = false) {
-        this.source = this.audioContext.createBufferSource();
-        this.source.buffer = this.buffer;
-        this.source.loop = loop;
-        this.source.connect(this.gainNode);
-        this.source.start(0);
-    }
-    stop() {
-        this.source.stop(0);
-    }
-}
-exports.default = Sound;
 
 
 /***/ }),
@@ -679,7 +636,7 @@ exports.default = Ajax;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-const HitBox_1 = __webpack_require__(4);
+const HitBox_1 = __webpack_require__(5);
 class QuadTree {
     constructor(hitBox = new HitBox_1.default(0, 0, 0, 0), level = 0) {
         this.level = level;
@@ -813,8 +770,88 @@ exports.default = CollisionManager;
 
 
 /***/ }),
-/* 14 */,
+/* 14 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+const Sound_1 = __webpack_require__(15);
+class AudioManager {
+    constructor() {
+        this.initAudioContext();
+    }
+    initAudioContext() {
+        try {
+            window.AudioContext = window.AudioContext || webkitAudioContext;
+            this.audioContext = new AudioContext();
+            this.masterGain = this.audioContext.createGain();
+            this.effectsGain = this.audioContext.createGain();
+            this.ambientGain = this.audioContext.createGain();
+            this.masterGain.gain.value = 1;
+            this.masterGain.connect(this.audioContext.destination);
+            this.effectsGain.connect(this.masterGain);
+            this.ambientGain.connect(this.masterGain);
+            this.ambientGain.gain.value = 1;
+            this.effectsGain.gain.value = 1;
+        }
+        catch (e) {
+            console.log('Web Audio API is not supported in this browser');
+        }
+    }
+    decodeAudio(data, id, callback) {
+        this.audioContext.decodeAudioData(data).then(buffer => callback(buffer), error => { console.log('Error with decoding audio data' + error); });
+    }
+    adjustMasterVolume(value) {
+        this.masterGain.gain.value = value;
+    }
+    adjustAmbientVolume(value) {
+        this.ambientGain.gain.value = value;
+    }
+    adjustEffectsVolume(value) {
+        this.effectsGain.gain.value = value;
+    }
+    createSound(buffer, ambient) {
+        return new Sound_1.default(this.audioContext, ambient ? this.ambientGain : this.effectsGain, buffer);
+    }
+}
+exports.default = AudioManager;
+
+
+/***/ }),
 /* 15 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+class Sound {
+    constructor(audioContext, masterGain, buffer) {
+        this.audioContext = audioContext;
+        this.masterGain = masterGain;
+        this.buffer = buffer;
+        this.gainNode = this.audioContext.createGain();
+        this.gainNode.gain.value = 0.2;
+        this.gainNode.connect(this.masterGain);
+        this.playing = false;
+    }
+    play(loop = false) {
+        this.source = this.audioContext.createBufferSource();
+        this.source.buffer = this.buffer;
+        this.source.loop = loop;
+        this.source.connect(this.gainNode);
+        this.source.start(0);
+    }
+    stop() {
+        this.source.stop(0);
+    }
+}
+exports.default = Sound;
+
+
+/***/ }),
+/* 16 */,
+/* 17 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -829,22 +866,24 @@ exports.default = EventHandler;
 
 
 /***/ }),
-/* 16 */,
-/* 17 */,
-/* 18 */
+/* 18 */,
+/* 19 */,
+/* 20 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
 const AssetManager_1 = __webpack_require__(3);
-const SpaceGame_1 = __webpack_require__(19);
-const InputManager_1 = __webpack_require__(1);
-const Settings_1 = __webpack_require__(6);
-const SettingsMenu_1 = __webpack_require__(25);
-const CollideAble_1 = __webpack_require__(0);
-const EventHandler_1 = __webpack_require__(15);
-const assetManager = new AssetManager_1.default();
+const SpaceGame_1 = __webpack_require__(21);
+const InputManager_1 = __webpack_require__(0);
+const Settings_1 = __webpack_require__(7);
+const SettingsMenu_1 = __webpack_require__(27);
+const EventHandler_1 = __webpack_require__(17);
+const AssetId_1 = __webpack_require__(4);
+const AudioManager_1 = __webpack_require__(14);
+const audioManager = new AudioManager_1.default();
+const assetManager = new AssetManager_1.default(audioManager);
 const canvases = {
     background: document.getElementById('background'),
     ship: document.getElementById('ship'),
@@ -852,16 +891,16 @@ const canvases = {
 };
 const settings = new Settings_1.default();
 const inputManager = new InputManager_1.default(settings);
-const settingsMenu = new SettingsMenu_1.default(document.getElementById('settings-menu'), settings, assetManager);
-assetManager.queueDownload(CollideAble_1.EntityType.BACKGROUND, 'assets/textures/background.png', AssetManager_1.AssetType.SPRITE);
-assetManager.queueDownload(CollideAble_1.EntityType.PLAYER, 'assets/sprites/ship.png', AssetManager_1.AssetType.SPRITE);
-assetManager.queueDownload(CollideAble_1.EntityType.PLAYER_BULLET, 'assets/sprites/bullet.png', AssetManager_1.AssetType.SPRITE);
-assetManager.queueDownload(CollideAble_1.EntityType.ENEMY, 'assets/sprites/enemy.png', AssetManager_1.AssetType.SPRITE);
-assetManager.queueDownload(CollideAble_1.EntityType.ENEMY_BULLET, 'assets/sprites/bullet_enemy.png', AssetManager_1.AssetType.SPRITE);
-assetManager.queueDownload(CollideAble_1.EntityType.MAIN_THEME, 'assets/audio/kick_shock.wav', AssetManager_1.AssetType.AUDIO);
-assetManager.queueDownload(CollideAble_1.EntityType.LASER, 'assets/audio/laser.wav', AssetManager_1.AssetType.AUDIO);
-assetManager.queueDownload(CollideAble_1.EntityType.EXPLOSION_I, 'assets/audio/explosion.wav', AssetManager_1.AssetType.AUDIO);
-assetManager.queueDownload(CollideAble_1.EntityType.GAME_OVER, 'assets/audio/game_over.wav', AssetManager_1.AssetType.AUDIO);
+const settingsMenu = new SettingsMenu_1.default(document.getElementById('settings-menu'), settings, assetManager, audioManager);
+assetManager.queueDownload(AssetId_1.AssetId.BACKGROUND, 'assets/textures/background.png', AssetManager_1.AssetType.SPRITE);
+assetManager.queueDownload(AssetId_1.AssetId.PLAYER, 'assets/sprites/ship.png', AssetManager_1.AssetType.SPRITE);
+assetManager.queueDownload(AssetId_1.AssetId.PLAYER_BULLET, 'assets/sprites/bullet.png', AssetManager_1.AssetType.SPRITE);
+assetManager.queueDownload(AssetId_1.AssetId.ENEMY, 'assets/sprites/enemy.png', AssetManager_1.AssetType.SPRITE);
+assetManager.queueDownload(AssetId_1.AssetId.ENEMY_BULLET, 'assets/sprites/bullet_enemy.png', AssetManager_1.AssetType.SPRITE);
+assetManager.queueDownload(AssetId_1.AssetId.MAIN_THEME, 'assets/audio/kick_shock.wav', AssetManager_1.AssetType.AUDIO);
+assetManager.queueDownload(AssetId_1.AssetId.LASER, 'assets/audio/laser.wav', AssetManager_1.AssetType.AUDIO);
+assetManager.queueDownload(AssetId_1.AssetId.EXPLOSION_I, 'assets/audio/explosion.wav', AssetManager_1.AssetType.AUDIO);
+assetManager.queueDownload(AssetId_1.AssetId.GAME_OVER, 'assets/audio/game_over.wav', AssetManager_1.AssetType.AUDIO);
 assetManager.downloadAll(() => {
     const game = new SpaceGame_1.default(assetManager, inputManager, settings, canvases);
     settingsMenu.init();
@@ -884,21 +923,22 @@ assetManager.downloadAll(() => {
 
 
 /***/ }),
-/* 19 */
+/* 21 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-const Background_1 = __webpack_require__(20);
+const Background_1 = __webpack_require__(22);
 const AssetManager_1 = __webpack_require__(3);
-const InputManager_1 = __webpack_require__(1);
-const Ship_1 = __webpack_require__(21);
-const Pool_1 = __webpack_require__(22);
+const InputManager_1 = __webpack_require__(0);
+const Ship_1 = __webpack_require__(23);
+const Pool_1 = __webpack_require__(24);
 const QuadTree_1 = __webpack_require__(12);
-const HitBox_1 = __webpack_require__(4);
-const CollideAble_1 = __webpack_require__(0);
+const HitBox_1 = __webpack_require__(5);
+const CollideAble_1 = __webpack_require__(2);
 const CollisionManager_1 = __webpack_require__(13);
+const AssetId_1 = __webpack_require__(4);
 class SpaceGame {
     constructor(assetManager, inputManager, settings, canvases) {
         this.playing = false;
@@ -913,18 +953,18 @@ class SpaceGame {
             this.shipContext = this.canvases.ship.getContext('2d');
             this.mainContext = this.canvases.main.getContext('2d');
             this.playerScore = 0;
-            this.background = new Background_1.default(0, 0, this.canvases.background.width, this.canvases.background.height, this.backgroundContext, this.assetManager.getSprite(CollideAble_1.EntityType.BACKGROUND));
-            this.shipStartX = this.canvases.ship.width / 2 - assetManager.getSprite(CollideAble_1.EntityType.PLAYER).width;
-            this.shipStartY = this.canvases.ship.height / 4 * 3 + assetManager.getSprite(CollideAble_1.EntityType.PLAYER).height * 2;
-            this.ship = new Ship_1.default(this.shipStartX, this.shipStartY, assetManager.getSprite(CollideAble_1.EntityType.PLAYER).width, assetManager.getSprite(CollideAble_1.EntityType.PLAYER).height, this.canvases.ship.width, this.canvases.ship.height, this.shipContext, assetManager, new Pool_1.default(assetManager, this.mainContext, this.canvases.main.width, this.canvases.main.height, 80, CollideAble_1.EntityType.PLAYER_BULLET), settings.player);
-            this.enemyBulletPool = new Pool_1.default(assetManager, this.mainContext, this.canvases.main.width, this.canvases.main.height, 50, CollideAble_1.EntityType.ENEMY_BULLET);
-            this.enemyPool = new Pool_1.default(assetManager, this.mainContext, this.canvases.main.width, this.canvases.main.height, 30, CollideAble_1.EntityType.ENEMY, this.enemyBulletPool, this);
+            this.background = new Background_1.default(0, 0, this.canvases.background.width, this.canvases.background.height, this.backgroundContext, this.assetManager.getSprite(AssetId_1.AssetId.BACKGROUND));
+            this.shipStartX = this.canvases.ship.width / 2 - assetManager.getSprite(AssetId_1.AssetId.PLAYER).width;
+            this.shipStartY = this.canvases.ship.height / 4 * 3 + assetManager.getSprite(AssetId_1.AssetId.PLAYER).height * 2;
+            this.ship = new Ship_1.default(this.shipStartX, this.shipStartY, assetManager.getSprite(AssetId_1.AssetId.PLAYER).width, assetManager.getSprite(AssetId_1.AssetId.PLAYER).height, this.canvases.ship.width, this.canvases.ship.height, this.shipContext, assetManager, new Pool_1.default(assetManager, this.mainContext, this.canvases.main.width, this.canvases.main.height, 80, CollideAble_1.EntityType.PLAYER_BULLET, AssetId_1.AssetId.PLAYER_BULLET), settings.player);
+            this.enemyBulletPool = new Pool_1.default(assetManager, this.mainContext, this.canvases.main.width, this.canvases.main.height, 50, CollideAble_1.EntityType.ENEMY_BULLET, AssetId_1.AssetId.ENEMY_BULLET);
+            this.enemyPool = new Pool_1.default(assetManager, this.mainContext, this.canvases.main.width, this.canvases.main.height, 30, CollideAble_1.EntityType.ENEMY, AssetId_1.AssetId.ENEMY, this.enemyBulletPool, this);
             this.spawnWave();
             inputManager.register(this.ship);
             inputManager.register(this);
             this.quadTree = new QuadTree_1.default(new HitBox_1.default(0, 0, this.canvases.main.width, this.canvases.main.height));
             this.collisionManager = new CollisionManager_1.default(this.quadTree);
-            this.backgroundAudio = this.assetManager.getSound(CollideAble_1.EntityType.MAIN_THEME, AssetManager_1.AssetType.AUDIO_LOOP);
+            this.backgroundAudio = this.assetManager.getSound(AssetId_1.AssetId.MAIN_THEME, AssetManager_1.AssetType.AUDIO_AMB);
             this.backgroundAudio.play(true);
             this.start();
         }
@@ -933,8 +973,8 @@ class SpaceGame {
         this.paused = !this.paused;
     }
     spawnWave() {
-        const height = this.assetManager.getSprite(CollideAble_1.EntityType.ENEMY).height;
-        const width = this.assetManager.getSprite(CollideAble_1.EntityType.ENEMY).width;
+        const height = this.assetManager.getSprite(AssetId_1.AssetId.ENEMY).height;
+        const width = this.assetManager.getSprite(AssetId_1.AssetId.ENEMY).width;
         let x = 200;
         let y = -height;
         const spacer = y * 1.5;
@@ -991,7 +1031,7 @@ class SpaceGame {
     gameOver() {
         this.backgroundAudio.stop();
         document.getElementById('game-over').style.display = 'block';
-        this.gameOverAudio = this.assetManager.getSound(CollideAble_1.EntityType.GAME_OVER, AssetManager_1.AssetType.AUDIO_LOOP);
+        this.gameOverAudio = this.assetManager.getSound(AssetId_1.AssetId.GAME_OVER, AssetManager_1.AssetType.AUDIO_AMB);
         this.gameOverAudio.play(true);
     }
     restart() {
@@ -1023,14 +1063,14 @@ exports.default = SpaceGame;
 
 
 /***/ }),
-/* 20 */
+/* 22 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-const Vector2_1 = __webpack_require__(2);
-const CollideAble_1 = __webpack_require__(0);
+const Vector2_1 = __webpack_require__(1);
+const CollideAble_1 = __webpack_require__(2);
 class Background {
     constructor(x, y, width, height, context, sprite) {
         this.position = new Vector2_1.default(x, y);
@@ -1059,16 +1099,17 @@ exports.default = Background;
 
 
 /***/ }),
-/* 21 */
+/* 23 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-const Vector2_1 = __webpack_require__(2);
-const CollideAble_1 = __webpack_require__(0);
-const InputManager_1 = __webpack_require__(1);
+const Vector2_1 = __webpack_require__(1);
+const CollideAble_1 = __webpack_require__(2);
+const InputManager_1 = __webpack_require__(0);
 const AssetManager_1 = __webpack_require__(3);
+const AssetId_1 = __webpack_require__(4);
 class Ship {
     constructor(x, y, width, height, canvasWidth, canvasHeight, context, assetManager, pool, settings) {
         this.position = new Vector2_1.default(x, y);
@@ -1080,7 +1121,7 @@ class Ship {
         this.canvasWidth = canvasWidth;
         this.canvasHeight = canvasHeight;
         this.context = context;
-        this.sprite = assetManager.getSprite(CollideAble_1.EntityType.PLAYER);
+        this.sprite = assetManager.getSprite(AssetId_1.AssetId.PLAYER);
         this.type = CollideAble_1.EntityType.PLAYER;
         this.pool = pool;
         this.counter = 0;
@@ -1090,7 +1131,7 @@ class Ship {
         this.state = {};
         this.settings = settings;
         this.maxTop = Math.floor(this.canvasHeight / 4 * 3);
-        this.laserSound = assetManager.getSound(CollideAble_1.EntityType.LASER, AssetManager_1.AssetType.AUDIO);
+        this.laserSound = assetManager.getSound(AssetId_1.AssetId.LASER, AssetManager_1.AssetType.AUDIO);
     }
     reset() {
         this.position.setVector(this.startPosition);
@@ -1159,23 +1200,24 @@ exports.default = Ship;
 
 
 /***/ }),
-/* 22 */
+/* 24 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-const Bullet_1 = __webpack_require__(23);
-const Enemy_1 = __webpack_require__(24);
-const CollideAble_1 = __webpack_require__(0);
+const Bullet_1 = __webpack_require__(25);
+const Enemy_1 = __webpack_require__(26);
+const CollideAble_1 = __webpack_require__(2);
 class Pool {
-    constructor(assetManager, context, canvasWidth, canvasHeight, maxSize, type, pool = null, game = null) {
+    constructor(assetManager, context, canvasWidth, canvasHeight, maxSize, type, asId, pool = null, game = null) {
         this.assetManager = assetManager;
         this.context = context;
         this.canvasWidth = canvasWidth;
         this.canvasHeight = canvasHeight;
         this.maxSize = maxSize;
         this.type = type;
+        this.assetId = asId;
         this.pool = [];
         this.subPool = pool;
         this.game = game;
@@ -1183,14 +1225,14 @@ class Pool {
     }
     init() {
         if (this.type === CollideAble_1.EntityType.ENEMY) {
-            let sprite = this.assetManager.getSprite(this.type);
+            let sprite = this.assetManager.getSprite(this.assetId);
             for (let i = 0; i < this.maxSize; i++) {
                 this.pool[i] = new Enemy_1.default(0, 0, sprite.width, sprite.height, this.canvasWidth, this.canvasHeight, 0, this.context, sprite, this.type, this.subPool, this.game);
             }
         }
         else {
             for (let i = 0; i < this.maxSize; i++) {
-                let sprite = this.assetManager.getSprite(this.type);
+                let sprite = this.assetManager.getSprite(this.assetId);
                 this.pool[i] = new Bullet_1.default(0, 0, sprite.width, sprite.height, this.canvasWidth, this.canvasHeight, 0, this.context, sprite, this.type);
             }
         }
@@ -1239,14 +1281,14 @@ exports.default = Pool;
 
 
 /***/ }),
-/* 23 */
+/* 25 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-const Vector2_1 = __webpack_require__(2);
-const CollideAble_1 = __webpack_require__(0);
+const Vector2_1 = __webpack_require__(1);
+const CollideAble_1 = __webpack_require__(2);
 class Bullet {
     constructor(x, y, width, height, canvasWidth, canvasHeight, speed, context, sprite, type) {
         this.position = new Vector2_1.default(x, y);
@@ -1304,15 +1346,16 @@ exports.default = Bullet;
 
 
 /***/ }),
-/* 24 */
+/* 26 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-const Vector2_1 = __webpack_require__(2);
-const CollideAble_1 = __webpack_require__(0);
+const Vector2_1 = __webpack_require__(1);
+const CollideAble_1 = __webpack_require__(2);
 const AssetManager_1 = __webpack_require__(3);
+const AssetId_1 = __webpack_require__(4);
 class Enemy {
     constructor(x, y, width, height, canvasWidth, canvasHeight, speed, context, sprite, type, bulletPool, game) {
         this.position = new Vector2_1.default(x, y);
@@ -1332,7 +1375,7 @@ class Enemy {
         this.colliding = false;
         this.bulletPool = bulletPool;
         this.game = game;
-        this.explosionSound = this.game.assetManager.getSound(CollideAble_1.EntityType.EXPLOSION_I, AssetManager_1.AssetType.AUDIO);
+        this.explosionSound = this.game.assetManager.getSound(AssetId_1.AssetId.EXPLOSION_I, AssetManager_1.AssetType.AUDIO);
     }
     spawn(x, y, speed) {
         this.position.x = x;
@@ -1395,19 +1438,20 @@ exports.default = Enemy;
 
 
 /***/ }),
-/* 25 */
+/* 27 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-const InputManager_1 = __webpack_require__(1);
-const EventHandler_1 = __webpack_require__(15);
+const InputManager_1 = __webpack_require__(0);
+const EventHandler_1 = __webpack_require__(17);
 class SettingsMenu {
-    constructor(element, settings, assetManager) {
+    constructor(element, settings, assetManager, audioManager) {
         this.element = element;
         this.settings = settings;
         this.assetManager = assetManager;
+        this.audioManager = audioManager;
         this.showing = false;
     }
     createMainMenu() {
@@ -1518,7 +1562,7 @@ class SettingsMenu {
         audioSlide.setAttribute('min', '0');
         audioSlide.setAttribute('max', '1');
         audioSlide.setAttribute('step', '0.1');
-        audioSlide.addEventListener('change', event => this.assetManager.adjustMasterVolume(Number(audioSlide.value)));
+        audioSlide.addEventListener('change', event => this.audioManager.adjustMasterVolume(Number(audioSlide.value)));
         div.appendChild(audioTitle);
         div.appendChild(audioLabel);
         div.appendChild(audioSlide);
@@ -1534,7 +1578,7 @@ class SettingsMenu {
         ambientSlide.setAttribute('min', '0');
         ambientSlide.setAttribute('max', '1');
         ambientSlide.setAttribute('step', '0.1');
-        ambientSlide.addEventListener('change', event => this.assetManager.adjustAmbientVolume(Number(ambientSlide.value)));
+        ambientSlide.addEventListener('change', event => this.audioManager.adjustAmbientVolume(Number(ambientSlide.value)));
         ambientDiv.appendChild(ambientLabel);
         ambientDiv.appendChild(ambientSlide);
         audioDiv.appendChild(ambientDiv);
@@ -1549,7 +1593,7 @@ class SettingsMenu {
         effectsSlide.setAttribute('min', '0');
         effectsSlide.setAttribute('max', '1');
         effectsSlide.setAttribute('step', '0.1');
-        effectsSlide.addEventListener('change', event => this.assetManager.adjustEffectsVolume(Number(effectsSlide.value)));
+        effectsSlide.addEventListener('change', event => this.audioManager.adjustEffectsVolume(Number(effectsSlide.value)));
         effectsDiv.appendChild(effectsLabel);
         effectsDiv.appendChild(effectsSlide);
         audioDiv.appendChild(effectsDiv);

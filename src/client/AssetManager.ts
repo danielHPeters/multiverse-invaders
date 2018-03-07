@@ -1,10 +1,11 @@
-import { EntityType } from '../game/interfaces/CollideAble'
 import SpriteSheet from '../graphics/2D/SpriteSheet'
 import Sound from '../audio/Sound'
 import Ajax from '../lib/ajax/Ajax'
+import { AssetId } from '../enum/AssetId'
+import AudioManager from './AudioManager'
 
 export enum AssetType {
-  SPRITE = 'SPRITE', SPRITE_SHEET = 'SPRITE_SHEET', AUDIO = 'AUDIO', AUDIO_LOOP = 'LOOP'
+  SPRITE = 'SPRITE', SPRITE_SHEET = 'SPRITE_SHEET', AUDIO = 'AUDIO', AUDIO_AMB = 'LOOP'
 }
 
 /**
@@ -14,18 +15,17 @@ export enum AssetType {
  * @version 1.0
  */
 export default class AssetManager {
-  audioContext
-  cache
-  queue
-  downloadCount: number
-  masterGain: GainNode
-  effectsGain: GainNode
-  ambientGain: GainNode
+  private cache
+  private queue
+  private downloadCount: number
+  private audioManager: AudioManager
 
   /**
+   * Constructor.
    *
+   * @param {AudioManager} audioManager
    */
-  constructor () {
+  constructor (audioManager: AudioManager) {
     this.cache = {
       sprites: {},
       spriteSheets: {},
@@ -33,38 +33,7 @@ export default class AssetManager {
     }
     this.downloadCount = 0
     this.queue = []
-    this.initAudioContext()
-  }
-
-  initAudioContext (): void {
-    try {
-      // Fix for browsers using prefixes
-      window.AudioContext = window.AudioContext || webkitAudioContext
-      this.audioContext = new AudioContext()
-      this.masterGain = this.audioContext.createGain()
-      this.effectsGain = this.audioContext.createGain()
-      this.ambientGain = this.audioContext.createGain()
-      this.masterGain.gain.value = 1
-      this.masterGain.connect(this.audioContext.destination)
-      this.effectsGain.connect(this.masterGain)
-      this.ambientGain.connect(this.masterGain)
-      this.ambientGain.gain.value = 1
-      this.effectsGain.gain.value = 1
-    } catch (e) {
-      console.log('Web Audio API is not supported in this browser')
-    }
-  }
-
-  adjustMasterVolume (value: number): void {
-    this.masterGain.gain.value = value
-  }
-
-  adjustAmbientVolume (value: number): void {
-    this.ambientGain.gain.value = value
-  }
-
-  adjustEffectsVolume (value: number): void {
-    this.effectsGain.gain.value = value
+    this.audioManager = audioManager
   }
 
   /**
@@ -77,12 +46,12 @@ export default class AssetManager {
 
   /**
    *
-   * @param {EntityType} id
+   * @param {AssetId} id
    * @param {string} path
    * @param {AssetType} type
    * @param {{}} opts
    */
-  queueDownload (id: EntityType, path: string, type: AssetType, opts = null): void {
+  queueDownload (id: AssetId, path: string, type: AssetType, opts = null): void {
     this.queue.push({
       id: id,
       path: path,
@@ -92,32 +61,25 @@ export default class AssetManager {
   }
 
   /**
-   * Build an AJAX Request to loadAudioFromUrl audio file into the buffer cache.
+   * Build an AJAX Request to loadAudio audio file into the buffer cache.
    *
    * @param item object with name of file and path to file
    * @param callback function to execute on done
    */
-  loadAudioFromUrl (item, callback): void {
+  loadAudio (item, callback): void {
     Ajax.create({
       method: 'GET',
       url: item.path,
       responseType: 'arraybuffer'
     }, response => {
-      this.decodeAudio(response, item.id, callback)
-    })
-  }
-
-  decodeAudio (data, id, callback): void {
-    this.audioContext.decodeAudioData(data).then(
-      buffer => {
-        this.cache.audio[id] = buffer
+      this.audioManager.decodeAudio(response, item.id, buffer => {
+        this.cache.audio[item.id] = buffer
         this.downloadCount += 1
         if (this.done()) {
           callback()
         }
-      },
-      error => { console.log('Error with decoding audio data' + error) }
-    )
+      })
+    })
   }
 
   /**
@@ -162,7 +124,7 @@ export default class AssetManager {
   downloadAll (callback): void {
     this.queue.forEach(item => {
       if (item.type === AssetType.AUDIO) {
-        this.loadAudioFromUrl(item, callback)
+        this.loadAudio(item, callback)
       } else if (item.type === AssetType.SPRITE) {
         this.loadSprite(item, callback)
       } else if (item.type === AssetType.SPRITE_SHEET) {
@@ -175,35 +137,30 @@ export default class AssetManager {
    * Create an audio buffer source node from cached buffer.
    * Send it to the destination of the audio context and play it.
    *
-   * @param {EntityType} id file id
+   * @param {AssetId} id file id
    * @param {AssetType} type
    */
-  getSound (id: EntityType, type: AssetType): Sound {
-    let gain
-    if (type === AssetType.AUDIO) {
-      gain = this.effectsGain
-    } else {
-      gain = this.ambientGain
-    }
-    return new Sound(this.audioContext, gain, this.cache.audio[id])
+  getSound (id: AssetId, type: AssetType): Sound {
+    let ambient = type === AssetType.AUDIO_AMB
+    return this.audioManager.createSound(this.cache.audio[id], ambient)
   }
 
   /**
    *
-   * @param {string} id
-   * @returns {EntityType}
+   * @param {AssetId} id
+   * @returns {any}
    */
-  getSprite (id: EntityType): any {
+  getSprite (id: AssetId): any {
     return this.cache.sprites[id]
   }
 
   /**
    * Get sprite sheet by name.
    *
-   * @param {EntityType} id
+   * @param {AssetId} id
    * @returns {SpriteSheet}
    */
-  getSpriteSheet (id: EntityType): SpriteSheet {
+  getSpriteSheet (id: AssetId): SpriteSheet {
     return this.cache.spriteSheets[id]
   }
 }

@@ -60,19 +60,19 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 49);
+/******/ 	return __webpack_require__(__webpack_require__.s = 51);
 /******/ })
 /************************************************************************/
 /******/ ({
 
-/***/ 49:
+/***/ 51:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-const PostFixCalculator_1 = __webpack_require__(50);
-const MatrixFactory_1 = __webpack_require__(51);
+const PostFixCalculator_1 = __webpack_require__(52);
+const MatrixFactory_1 = __webpack_require__(53);
 const calculator = document.getElementById('calculator');
 const input = document.getElementById('expression');
 calculator.addEventListener('submit', ev => {
@@ -121,7 +121,7 @@ console.log(matrix4.mArray);
 
 /***/ }),
 
-/***/ 50:
+/***/ 52:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -180,13 +180,13 @@ exports.default = PostFixCalculator;
 
 /***/ }),
 
-/***/ 51:
+/***/ 53:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-const Matrix_1 = __webpack_require__(8);
+const Matrix_1 = __webpack_require__(9);
 class MatrixFactory {
     static createMatrix(mArray) {
         const length = mArray[0].length;
@@ -203,7 +203,7 @@ exports.default = MatrixFactory;
 
 /***/ }),
 
-/***/ 8:
+/***/ 9:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";

@@ -2,18 +2,27 @@ import Settings from './Settings'
 import { Actions } from './InputManager'
 import AssetManager from './AssetManager'
 import EventHandler from '../lib/event/EventHandler'
+import AudioManager from './AudioManager'
 
+/**
+ * Simple settings menu.
+ *
+ * @author Daniel Peters
+ * @version 1.0
+ */
 export default class SettingsMenu {
   element: HTMLDivElement
   mainMenu: HTMLDivElement
   settings: Settings
   assetManager: AssetManager
+  audioManager: AudioManager
   showing: boolean
 
-  constructor (element, settings: Settings, assetManager: AssetManager) {
+  constructor (element, settings: Settings, assetManager: AssetManager, audioManager: AudioManager) {
     this.element = element
     this.settings = settings
     this.assetManager = assetManager
+    this.audioManager = audioManager
     this.showing = false
   }
 
@@ -141,7 +150,7 @@ export default class SettingsMenu {
     audioSlide.setAttribute('min', '0')
     audioSlide.setAttribute('max', '1')
     audioSlide.setAttribute('step', '0.1')
-    audioSlide.addEventListener('change', event => this.assetManager.adjustMasterVolume(Number(audioSlide.value)))
+    audioSlide.addEventListener('change', event => this.audioManager.adjustMasterVolume(Number(audioSlide.value)))
     div.appendChild(audioTitle)
     div.appendChild(audioLabel)
     div.appendChild(audioSlide)
@@ -158,7 +167,7 @@ export default class SettingsMenu {
     ambientSlide.setAttribute('min', '0')
     ambientSlide.setAttribute('max', '1')
     ambientSlide.setAttribute('step', '0.1')
-    ambientSlide.addEventListener('change', event => this.assetManager.adjustAmbientVolume(Number(ambientSlide.value)))
+    ambientSlide.addEventListener('change', event => this.audioManager.adjustAmbientVolume(Number(ambientSlide.value)))
     ambientDiv.appendChild(ambientLabel)
     ambientDiv.appendChild(ambientSlide)
     audioDiv.appendChild(ambientDiv)
@@ -174,7 +183,7 @@ export default class SettingsMenu {
     effectsSlide.setAttribute('min', '0')
     effectsSlide.setAttribute('max', '1')
     effectsSlide.setAttribute('step', '0.1')
-    effectsSlide.addEventListener('change', event => this.assetManager.adjustEffectsVolume(Number(effectsSlide.value)))
+    effectsSlide.addEventListener('change', event => this.audioManager.adjustEffectsVolume(Number(effectsSlide.value)))
     effectsDiv.appendChild(effectsLabel)
     effectsDiv.appendChild(effectsSlide)
     audioDiv.appendChild(effectsDiv)

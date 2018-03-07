@@ -60,7 +60,7 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 26);
+/******/ 	return __webpack_require__(__webpack_require__.s = 28);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -70,32 +70,7 @@
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var EntityType;
-(function (EntityType) {
-    EntityType["PLAYER"] = "ship";
-    EntityType["ENEMY"] = "enemy";
-    EntityType["ENEMY_BULLET"] = "bulletEnemy";
-    EntityType["PLAYER_BULLET"] = "bullet";
-    EntityType["BACKGROUND"] = "background";
-    EntityType["MAP"] = "map";
-    EntityType["GAME_OVER"] = "gameOver";
-    EntityType["LASER"] = "laser";
-    EntityType["MAIN_THEME"] = "shockWave";
-    EntityType["EXPLOSION_I"] = "explosion1";
-    EntityType["EXPLOSION_II"] = "explosion2";
-    EntityType["BOX"] = "box";
-    EntityType["ARENA"] = "arena";
-})(EntityType = exports.EntityType || (exports.EntityType = {}));
-
-
-/***/ }),
-/* 1 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-const Observable_1 = __webpack_require__(5);
+const Observable_1 = __webpack_require__(6);
 var Actions;
 (function (Actions) {
     Actions["UP"] = "UP";
@@ -197,7 +172,7 @@ exports.default = InputManager;
 
 
 /***/ }),
-/* 2 */
+/* 1 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -306,24 +281,48 @@ exports.default = Vector2;
 
 
 /***/ }),
+/* 2 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var EntityType;
+(function (EntityType) {
+    EntityType["PLAYER"] = "ship";
+    EntityType["ENEMY"] = "enemy";
+    EntityType["ENEMY_BULLET"] = "bulletEnemy";
+    EntityType["PLAYER_BULLET"] = "bullet";
+    EntityType["BACKGROUND"] = "background";
+    EntityType["MAP"] = "map";
+    EntityType["GAME_OVER"] = "gameOver";
+    EntityType["LASER"] = "laser";
+    EntityType["MAIN_THEME"] = "shockWave";
+    EntityType["EXPLOSION_I"] = "explosion1";
+    EntityType["EXPLOSION_II"] = "explosion2";
+    EntityType["BOX"] = "box";
+    EntityType["ARENA"] = "arena";
+})(EntityType = exports.EntityType || (exports.EntityType = {}));
+
+
+/***/ }),
 /* 3 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-const SpriteSheet_1 = __webpack_require__(9);
-const Sound_1 = __webpack_require__(10);
+const SpriteSheet_1 = __webpack_require__(10);
 const Ajax_1 = __webpack_require__(11);
 var AssetType;
 (function (AssetType) {
     AssetType["SPRITE"] = "SPRITE";
     AssetType["SPRITE_SHEET"] = "SPRITE_SHEET";
     AssetType["AUDIO"] = "AUDIO";
-    AssetType["AUDIO_LOOP"] = "LOOP";
+    AssetType["AUDIO_AMB"] = "LOOP";
 })(AssetType = exports.AssetType || (exports.AssetType = {}));
 class AssetManager {
-    constructor() {
+    constructor(audioManager) {
         this.cache = {
             sprites: {},
             spriteSheets: {},
@@ -331,34 +330,7 @@ class AssetManager {
         };
         this.downloadCount = 0;
         this.queue = [];
-        this.initAudioContext();
-    }
-    initAudioContext() {
-        try {
-            window.AudioContext = window.AudioContext || webkitAudioContext;
-            this.audioContext = new AudioContext();
-            this.masterGain = this.audioContext.createGain();
-            this.effectsGain = this.audioContext.createGain();
-            this.ambientGain = this.audioContext.createGain();
-            this.masterGain.gain.value = 1;
-            this.masterGain.connect(this.audioContext.destination);
-            this.effectsGain.connect(this.masterGain);
-            this.ambientGain.connect(this.masterGain);
-            this.ambientGain.gain.value = 1;
-            this.effectsGain.gain.value = 1;
-        }
-        catch (e) {
-            console.log('Web Audio API is not supported in this browser');
-        }
-    }
-    adjustMasterVolume(value) {
-        this.masterGain.gain.value = value;
-    }
-    adjustAmbientVolume(value) {
-        this.ambientGain.gain.value = value;
-    }
-    adjustEffectsVolume(value) {
-        this.effectsGain.gain.value = value;
+        this.audioManager = audioManager;
     }
     done() {
         return this.downloadCount === this.queue.length;
@@ -371,23 +343,20 @@ class AssetManager {
             opts: opts
         });
     }
-    loadAudioFromUrl(item, callback) {
+    loadAudio(item, callback) {
         Ajax_1.default.create({
             method: 'GET',
             url: item.path,
             responseType: 'arraybuffer'
         }, response => {
-            this.decodeAudio(response, item.id, callback);
+            this.audioManager.decodeAudio(response, item.id, buffer => {
+                this.cache.audio[item.id] = buffer;
+                this.downloadCount += 1;
+                if (this.done()) {
+                    callback();
+                }
+            });
         });
-    }
-    decodeAudio(data, id, callback) {
-        this.audioContext.decodeAudioData(data).then(buffer => {
-            this.cache.audio[id] = buffer;
-            this.downloadCount += 1;
-            if (this.done()) {
-                callback();
-            }
-        }, error => { console.log('Error with decoding audio data' + error); });
     }
     loadSprite(item, callback) {
         let sprite = new Image();
@@ -414,7 +383,7 @@ class AssetManager {
     downloadAll(callback) {
         this.queue.forEach(item => {
             if (item.type === AssetType.AUDIO) {
-                this.loadAudioFromUrl(item, callback);
+                this.loadAudio(item, callback);
             }
             else if (item.type === AssetType.SPRITE) {
                 this.loadSprite(item, callback);
@@ -425,14 +394,8 @@ class AssetManager {
         });
     }
     getSound(id, type) {
-        let gain;
-        if (type === AssetType.AUDIO) {
-            gain = this.effectsGain;
-        }
-        else {
-            gain = this.ambientGain;
-        }
-        return new Sound_1.default(this.audioContext, gain, this.cache.audio[id]);
+        let ambient = type === AssetType.AUDIO_AMB;
+        return this.audioManager.createSound(this.cache.audio[id], ambient);
     }
     getSprite(id) {
         return this.cache.sprites[id];
@@ -451,8 +414,33 @@ exports.default = AssetManager;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-const Vector2_1 = __webpack_require__(2);
-const CollideAble_1 = __webpack_require__(0);
+var AssetId;
+(function (AssetId) {
+    AssetId["PLAYER"] = "ship";
+    AssetId["ENEMY"] = "enemy";
+    AssetId["ENEMY_BULLET"] = "bulletEnemy";
+    AssetId["PLAYER_BULLET"] = "bullet";
+    AssetId["BACKGROUND"] = "background";
+    AssetId["MAP"] = "map";
+    AssetId["GAME_OVER"] = "gameOver";
+    AssetId["LASER"] = "laser";
+    AssetId["MAIN_THEME"] = "shockWave";
+    AssetId["EXPLOSION_I"] = "explosion1";
+    AssetId["EXPLOSION_II"] = "explosion2";
+    AssetId["BOX"] = "box";
+    AssetId["ARENA"] = "arena";
+})(AssetId = exports.AssetId || (exports.AssetId = {}));
+
+
+/***/ }),
+/* 5 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+const Vector2_1 = __webpack_require__(1);
+const CollideAble_1 = __webpack_require__(2);
 class HitBox {
     constructor(x, y, width, height) {
         this.position = new Vector2_1.default(x, y);
@@ -471,7 +459,7 @@ exports.default = HitBox;
 
 
 /***/ }),
-/* 5 */
+/* 6 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -512,13 +500,13 @@ exports.default = Observable;
 
 
 /***/ }),
-/* 6 */
+/* 7 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-const InputManager_1 = __webpack_require__(1);
+const InputManager_1 = __webpack_require__(0);
 class Settings {
     constructor() {
         this.keyBoard = {
@@ -559,9 +547,9 @@ exports.default = Settings;
 
 
 /***/ }),
-/* 7 */,
 /* 8 */,
-/* 9 */
+/* 9 */,
+/* 10 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -603,37 +591,6 @@ class SpriteSheet {
     }
 }
 exports.default = SpriteSheet;
-
-
-/***/ }),
-/* 10 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-class Sound {
-    constructor(audioContext, masterGain, buffer) {
-        this.audioContext = audioContext;
-        this.masterGain = masterGain;
-        this.buffer = buffer;
-        this.gainNode = this.audioContext.createGain();
-        this.gainNode.gain.value = 0.2;
-        this.gainNode.connect(this.masterGain);
-        this.playing = false;
-    }
-    play(loop = false) {
-        this.source = this.audioContext.createBufferSource();
-        this.source.buffer = this.buffer;
-        this.source.loop = loop;
-        this.source.connect(this.gainNode);
-        this.source.start(0);
-    }
-    stop() {
-        this.source.stop(0);
-    }
-}
-exports.default = Sound;
 
 
 /***/ }),
@@ -679,7 +636,7 @@ exports.default = Ajax;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-const HitBox_1 = __webpack_require__(4);
+const HitBox_1 = __webpack_require__(5);
 class QuadTree {
     constructor(hitBox = new HitBox_1.default(0, 0, 0, 0), level = 0) {
         this.level = level;
@@ -813,8 +770,86 @@ exports.default = CollisionManager;
 
 
 /***/ }),
-/* 14 */,
-/* 15 */,
+/* 14 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+const Sound_1 = __webpack_require__(15);
+class AudioManager {
+    constructor() {
+        this.initAudioContext();
+    }
+    initAudioContext() {
+        try {
+            window.AudioContext = window.AudioContext || webkitAudioContext;
+            this.audioContext = new AudioContext();
+            this.masterGain = this.audioContext.createGain();
+            this.effectsGain = this.audioContext.createGain();
+            this.ambientGain = this.audioContext.createGain();
+            this.masterGain.gain.value = 1;
+            this.masterGain.connect(this.audioContext.destination);
+            this.effectsGain.connect(this.masterGain);
+            this.ambientGain.connect(this.masterGain);
+            this.ambientGain.gain.value = 1;
+            this.effectsGain.gain.value = 1;
+        }
+        catch (e) {
+            console.log('Web Audio API is not supported in this browser');
+        }
+    }
+    decodeAudio(data, id, callback) {
+        this.audioContext.decodeAudioData(data).then(buffer => callback(buffer), error => { console.log('Error with decoding audio data' + error); });
+    }
+    adjustMasterVolume(value) {
+        this.masterGain.gain.value = value;
+    }
+    adjustAmbientVolume(value) {
+        this.ambientGain.gain.value = value;
+    }
+    adjustEffectsVolume(value) {
+        this.effectsGain.gain.value = value;
+    }
+    createSound(buffer, ambient) {
+        return new Sound_1.default(this.audioContext, ambient ? this.ambientGain : this.effectsGain, buffer);
+    }
+}
+exports.default = AudioManager;
+
+
+/***/ }),
+/* 15 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+class Sound {
+    constructor(audioContext, masterGain, buffer) {
+        this.audioContext = audioContext;
+        this.masterGain = masterGain;
+        this.buffer = buffer;
+        this.gainNode = this.audioContext.createGain();
+        this.gainNode.gain.value = 0.2;
+        this.gainNode.connect(this.masterGain);
+        this.playing = false;
+    }
+    play(loop = false) {
+        this.source = this.audioContext.createBufferSource();
+        this.source.buffer = this.buffer;
+        this.source.loop = loop;
+        this.source.connect(this.gainNode);
+        this.source.start(0);
+    }
+    stop() {
+        this.source.stop(0);
+    }
+}
+exports.default = Sound;
+
+
+/***/ }),
 /* 16 */,
 /* 17 */,
 /* 18 */,
@@ -825,47 +860,51 @@ exports.default = CollisionManager;
 /* 23 */,
 /* 24 */,
 /* 25 */,
-/* 26 */
+/* 26 */,
+/* 27 */,
+/* 28 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-const Rpg_1 = __webpack_require__(27);
+const Rpg_1 = __webpack_require__(29);
 document.addEventListener('DOMContentLoaded', () => new Rpg_1.default());
 
 
 /***/ }),
-/* 27 */
+/* 29 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
 const QuadTree_1 = __webpack_require__(12);
-const Entity_1 = __webpack_require__(28);
+const Entity_1 = __webpack_require__(30);
 const CollisionManager_1 = __webpack_require__(13);
-const Area_1 = __webpack_require__(29);
-const Camera_1 = __webpack_require__(30);
-const InputManager_1 = __webpack_require__(1);
-const Settings_1 = __webpack_require__(6);
+const Area_1 = __webpack_require__(31);
+const Camera_1 = __webpack_require__(32);
+const InputManager_1 = __webpack_require__(0);
+const Settings_1 = __webpack_require__(7);
 const AssetManager_1 = __webpack_require__(3);
-const TileSetMap_1 = __webpack_require__(32);
-const CollideAble_1 = __webpack_require__(0);
-const HitBox_1 = __webpack_require__(4);
+const TileSetMap_1 = __webpack_require__(34);
+const HitBox_1 = __webpack_require__(5);
+const AssetId_1 = __webpack_require__(4);
+const AudioManager_1 = __webpack_require__(14);
 class Rpg {
     constructor() {
         this.canvas = document.getElementById('background');
         this.canvasPlayer = document.getElementById('player');
-        this.assetManager = new AssetManager_1.default();
+        this.audioManager = new AudioManager_1.default();
+        this.assetManager = new AssetManager_1.default(this.audioManager);
         this.settings = new Settings_1.default();
         this.inputManager = new InputManager_1.default(this.settings);
         this.init();
     }
     init() {
-        this.assetManager.queueDownload(CollideAble_1.EntityType.MAP, 'assets/tilesets/tileset.png', AssetManager_1.AssetType.SPRITE);
-        this.assetManager.queueDownload(CollideAble_1.EntityType.PLAYER, 'assets/sprites/player.png', AssetManager_1.AssetType.SPRITE);
-        this.assetManager.queueDownload(CollideAble_1.EntityType.BACKGROUND, 'assets/audio/amb_wilderness.mp3', AssetManager_1.AssetType.AUDIO);
+        this.assetManager.queueDownload(AssetId_1.AssetId.MAP, 'assets/tilesets/tileset.png', AssetManager_1.AssetType.SPRITE);
+        this.assetManager.queueDownload(AssetId_1.AssetId.PLAYER, 'assets/sprites/player.png', AssetManager_1.AssetType.SPRITE);
+        this.assetManager.queueDownload(AssetId_1.AssetId.BACKGROUND, 'assets/audio/amb_wilderness.mp3', AssetManager_1.AssetType.AUDIO);
         this.assetManager.downloadAll(() => {
             let ground = [
                 [172, 172, 172, 79, 34, 34, 34, 34, 34, 34, 34, 34, 56, 57, 54, 55, 56, 147, 67, 67, 68, 79, 79, 171, 172, 172, 173, 79, 79, 55, 55, 55, 55, 55, 55, 55, 55, 55, 55, 55, 55, 55, 55, 55, 55, 55, 55, 55, 55, 55, 55, 55, 55, 55, 55, 55],
@@ -945,8 +984,8 @@ class Rpg {
                 [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
                 [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
             ];
-            this.player = new Entity_1.default(350, 370, this.assetManager.getSprite(CollideAble_1.EntityType.PLAYER), this.canvasPlayer.getContext('2d'));
-            this.area = new Area_1.default(new TileSetMap_1.default(this.assetManager.getSprite(CollideAble_1.EntityType.MAP), [ground, topLayer], this.canvas.getContext('2d'), 32, ground[0].length, ground.length, 16));
+            this.player = new Entity_1.default(350, 370, this.assetManager.getSprite(AssetId_1.AssetId.PLAYER), this.canvasPlayer.getContext('2d'));
+            this.area = new Area_1.default(new TileSetMap_1.default(this.assetManager.getSprite(AssetId_1.AssetId.MAP), [ground, topLayer], this.canvas.getContext('2d'), 32, ground[0].length, ground.length, 16));
             this.canvas.width = window.innerWidth > this.area.map.width ? this.area.map.width : window.innerWidth;
             this.canvas.height = window.innerHeight > this.area.map.height ? this.area.map.height : window.innerHeight;
             this.canvasPlayer.width = window.innerWidth > this.area.map.width ? this.area.map.width : window.innerWidth;
@@ -957,16 +996,19 @@ class Rpg {
             this.area.map.generate();
             this.inputManager.register(this.player);
             this.camera.follow(this.player, this.canvas.width / 2, this.canvas.height / 2);
-            let ambient = this.assetManager.getSound(CollideAble_1.EntityType.BACKGROUND, AssetManager_1.AssetType.AUDIO_LOOP);
+            let ambient = this.assetManager.getSound(AssetId_1.AssetId.BACKGROUND, AssetManager_1.AssetType.AUDIO_AMB);
             ambient.play(true);
             this.run();
         });
     }
     start() {
+        console.log('Not implemented');
     }
     animationCallback(timeStamp) {
+        console.log('Not implemented');
     }
     stop() {
+        console.log('Not implemented');
     }
     update() {
         this.quadTree.clear();
@@ -990,15 +1032,15 @@ exports.default = Rpg;
 
 
 /***/ }),
-/* 28 */
+/* 30 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-const Vector2_1 = __webpack_require__(2);
-const InputManager_1 = __webpack_require__(1);
-const CollideAble_1 = __webpack_require__(0);
+const Vector2_1 = __webpack_require__(1);
+const InputManager_1 = __webpack_require__(0);
+const CollideAble_1 = __webpack_require__(2);
 class Entity {
     constructor(x, y, sprite, context) {
         this.position = new Vector2_1.default(x, y);
@@ -1073,7 +1115,7 @@ exports.default = Entity;
 
 
 /***/ }),
-/* 29 */
+/* 31 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1088,14 +1130,14 @@ exports.default = Area;
 
 
 /***/ }),
-/* 30 */
+/* 32 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-const Vector2_1 = __webpack_require__(2);
-const Rectangle_1 = __webpack_require__(31);
+const Vector2_1 = __webpack_require__(1);
+const Rectangle_1 = __webpack_require__(33);
 var AXIS;
 (function (AXIS) {
     AXIS["NONE"] = "none";
@@ -1160,7 +1202,7 @@ exports.default = Camera;
 
 
 /***/ }),
-/* 31 */
+/* 33 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1200,13 +1242,13 @@ exports.default = Rectangle;
 
 
 /***/ }),
-/* 32 */
+/* 34 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-const HitBox_1 = __webpack_require__(4);
+const HitBox_1 = __webpack_require__(5);
 class TileSetMap {
     constructor(image, mapLayers, context, tileSize, tilesPerRow, tilesPerColumn, imageTilesPerRow) {
         this.tileSetImage = image;

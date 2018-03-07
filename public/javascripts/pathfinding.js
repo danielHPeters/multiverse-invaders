@@ -60,12 +60,12 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 46);
+/******/ 	return __webpack_require__(__webpack_require__.s = 48);
 /******/ })
 /************************************************************************/
 /******/ ({
 
-/***/ 17:
+/***/ 19:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -102,16 +102,16 @@ exports.default = Location;
 
 /***/ }),
 
-/***/ 46:
+/***/ 48:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-const Location_1 = __webpack_require__(17);
-const Point_1 = __webpack_require__(7);
-const PathFinding_1 = __webpack_require__(47);
-const Visualization_1 = __webpack_require__(48);
+const Location_1 = __webpack_require__(19);
+const Point_1 = __webpack_require__(8);
+const PathFinding_1 = __webpack_require__(49);
+const Visualization_1 = __webpack_require__(50);
 const algorithm = new PathFinding_1.default();
 algorithm.init(8, 4);
 algorithm.grid[0][0] = Location_1.Status.START;
@@ -128,14 +128,14 @@ gui.init();
 
 /***/ }),
 
-/***/ 47:
+/***/ 49:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-const Location_1 = __webpack_require__(17);
-const Point_1 = __webpack_require__(7);
+const Location_1 = __webpack_require__(19);
+const Point_1 = __webpack_require__(8);
 class PathFinding {
     constructor() {
         this.grid = [];
@@ -222,7 +222,7 @@ exports.default = PathFinding;
 
 /***/ }),
 
-/***/ 48:
+/***/ 50:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -257,7 +257,7 @@ exports.default = Visualisation;
 
 /***/ }),
 
-/***/ 7:
+/***/ 8:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";

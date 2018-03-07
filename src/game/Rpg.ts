@@ -7,15 +7,17 @@ import InputManager from '../client/InputManager'
 import Settings from '../client/Settings'
 import AssetManager, { AssetType } from '../client/AssetManager'
 import TileSetMap from '../lib/tileset/TileSetMap'
-import { EntityType } from './interfaces/CollideAble'
 import HitBox from '../lib/collision/HitBox'
 import IGame from '../lib/interfaces/IGame'
+import { AssetId } from '../enum/AssetId'
+import AudioManager from '../client/AudioManager'
 
 export default class Rpg implements IGame {
   playing: boolean
   canvas: HTMLCanvasElement
   context: CanvasRenderingContext2D
   canvasPlayer: HTMLCanvasElement
+  audioManager: AudioManager
   assetManager: AssetManager
   inputManager: InputManager
   settings: Settings
@@ -28,16 +30,17 @@ export default class Rpg implements IGame {
   constructor () {
     this.canvas = document.getElementById('background') as HTMLCanvasElement
     this.canvasPlayer = document.getElementById('player') as HTMLCanvasElement
-    this.assetManager = new AssetManager()
+    this.audioManager = new AudioManager()
+    this.assetManager = new AssetManager(this.audioManager)
     this.settings = new Settings()
     this.inputManager = new InputManager(this.settings)
     this.init()
   }
 
   init (): void {
-    this.assetManager.queueDownload(EntityType.MAP, 'assets/tilesets/tileset.png', AssetType.SPRITE)
-    this.assetManager.queueDownload(EntityType.PLAYER, 'assets/sprites/player.png', AssetType.SPRITE)
-    this.assetManager.queueDownload(EntityType.BACKGROUND, 'assets/audio/amb_wilderness.mp3', AssetType.AUDIO)
+    this.assetManager.queueDownload(AssetId.MAP, 'assets/tilesets/tileset.png', AssetType.SPRITE)
+    this.assetManager.queueDownload(AssetId.PLAYER, 'assets/sprites/player.png', AssetType.SPRITE)
+    this.assetManager.queueDownload(AssetId.BACKGROUND, 'assets/audio/amb_wilderness.mp3', AssetType.AUDIO)
     this.assetManager.downloadAll(() => {
       let ground = [
         [172, 172, 172, 79, 34, 34, 34, 34, 34, 34, 34, 34, 56, 57, 54, 55, 56, 147, 67, 67, 68, 79, 79, 171, 172, 172, 173, 79, 79, 55, 55, 55, 55, 55, 55, 55, 55, 55, 55, 55, 55, 55, 55, 55, 55, 55, 55, 55, 55, 55, 55, 55, 55, 55, 55, 55],
@@ -119,10 +122,10 @@ export default class Rpg implements IGame {
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
       ]
-      this.player = new Entity(350, 370, this.assetManager.getSprite(EntityType.PLAYER), this.canvasPlayer.getContext('2d'))
+      this.player = new Entity(350, 370, this.assetManager.getSprite(AssetId.PLAYER), this.canvasPlayer.getContext('2d'))
       this.area = new Area(
         new TileSetMap(
-          this.assetManager.getSprite(EntityType.MAP),
+          this.assetManager.getSprite(AssetId.MAP),
           [ground, topLayer],
           this.canvas.getContext('2d'),
           32, ground[0].length,
@@ -142,21 +145,22 @@ export default class Rpg implements IGame {
       this.area.map.generate()
       this.inputManager.register(this.player)
       this.camera.follow(this.player, this.canvas.width / 2, this.canvas.height / 2)
-      let ambient = this.assetManager.getSound(EntityType.BACKGROUND, AssetType.AUDIO_LOOP)
+      let ambient = this.assetManager.getSound(AssetId.BACKGROUND, AssetType.AUDIO_AMB)
       ambient.play(true)
       this.run()
     })
   }
 
   start (): void {
-
+    console.log('Not implemented')
   }
 
   animationCallback (timeStamp: number): void {
+    console.log('Not implemented')
   }
 
   stop (): void {
-
+    console.log('Not implemented')
   }
 
   update (): void {

@@ -10,6 +10,10 @@ import { EntityType } from './interfaces/CollideAble'
 import CollisionManager from '../lib/collision/CollisionManager'
 import Sound from '../audio/Sound'
 import Observer from '../lib/observer/Observer'
+import { AssetId } from '../enum/AssetId'
+import IGame from '../lib/interfaces/IGame'
+import IGameState from '../lib/interfaces/IGameState'
+import ICollisionManager from '../lib/interfaces/ICollisionManager'
 
 /**
  * Space game main class.
@@ -17,7 +21,8 @@ import Observer from '../lib/observer/Observer'
  * @author Daniel Peters
  * @version 1.0
  */
-export default class SpaceGame implements Observer {
+export default class SpaceGame implements Observer, IGame {
+  state: IGameState
   background: Background
   ship: Ship
   enemyPool: Pool
@@ -29,7 +34,7 @@ export default class SpaceGame implements Observer {
   window
   assetManager: AssetManager
   inputManager: InputManager
-  collisionManager: CollisionManager
+  collisionManager: ICollisionManager
   settings: Settings
   quadTree: QuadTree
   playerScore: number
@@ -56,7 +61,10 @@ export default class SpaceGame implements Observer {
     this.inputManager = inputManager
     this.settings = settings
     this.canvases = canvases
+    this.init()
+  }
 
+  init (): void {
     if (this.canvases.background.getContext) {
       this.backgroundContext = this.canvases.background.getContext('2d')
       this.shipContext = this.canvases.ship.getContext('2d')
@@ -68,30 +76,30 @@ export default class SpaceGame implements Observer {
         this.canvases.background.width,
         this.canvases.background.height,
         this.backgroundContext,
-        this.assetManager.getSprite(EntityType.BACKGROUND)
+        this.assetManager.getSprite(AssetId.BACKGROUND)
       )
-      this.shipStartX = this.canvases.ship.width / 2 - assetManager.getSprite(EntityType.PLAYER).width
-      this.shipStartY = this.canvases.ship.height / 4 * 3 + assetManager.getSprite(EntityType.PLAYER).height * 2
+      this.shipStartX = this.canvases.ship.width / 2 - this.assetManager.getSprite(AssetId.PLAYER).width
+      this.shipStartY = this.canvases.ship.height / 4 * 3 + this.assetManager.getSprite(AssetId.PLAYER).height * 2
       this.ship = new Ship(
         this.shipStartX,
         this.shipStartY,
-        assetManager.getSprite(EntityType.PLAYER).width,
-        assetManager.getSprite(EntityType.PLAYER).height,
+        this.assetManager.getSprite(AssetId.PLAYER).width,
+        this.assetManager.getSprite(AssetId.PLAYER).height,
         this.canvases.ship.width,
         this.canvases.ship.height,
         this.shipContext,
-        assetManager,
-        new Pool(assetManager, this.mainContext, this.canvases.main.width, this.canvases.main.height, 80, EntityType.PLAYER_BULLET),
-        settings.player
+        this.assetManager,
+        new Pool(this.assetManager, this.mainContext, this.canvases.main.width, this.canvases.main.height, 80, EntityType.PLAYER_BULLET, AssetId.PLAYER_BULLET),
+        this.settings.player
       )
-      this.enemyBulletPool = new Pool(assetManager, this.mainContext, this.canvases.main.width, this.canvases.main.height, 50, EntityType.ENEMY_BULLET)
-      this.enemyPool = new Pool(assetManager, this.mainContext, this.canvases.main.width, this.canvases.main.height, 30, EntityType.ENEMY, this.enemyBulletPool, this)
+      this.enemyBulletPool = new Pool(this.assetManager, this.mainContext, this.canvases.main.width, this.canvases.main.height, 50, EntityType.ENEMY_BULLET, AssetId.ENEMY_BULLET)
+      this.enemyPool = new Pool(this.assetManager, this.mainContext, this.canvases.main.width, this.canvases.main.height, 30, EntityType.ENEMY, AssetId.ENEMY, this.enemyBulletPool, this)
       this.spawnWave()
-      inputManager.register(this.ship)
-      inputManager.register(this)
+      this.inputManager.register(this.ship)
+      this.inputManager.register(this)
       this.quadTree = new QuadTree(new HitBox(0, 0, this.canvases.main.width, this.canvases.main.height))
       this.collisionManager = new CollisionManager(this.quadTree)
-      this.backgroundAudio = this.assetManager.getSound(EntityType.MAIN_THEME, AssetType.AUDIO_LOOP)
+      this.backgroundAudio = this.assetManager.getSound(AssetId.MAIN_THEME, AssetType.AUDIO_AMB)
       this.backgroundAudio.play(true)
       this.start()
     }
@@ -105,8 +113,8 @@ export default class SpaceGame implements Observer {
    *
    */
   spawnWave (): void {
-    const height = this.assetManager.getSprite(EntityType.ENEMY).height
-    const width = this.assetManager.getSprite(EntityType.ENEMY).width
+    const height = this.assetManager.getSprite(AssetId.ENEMY).height
+    const width = this.assetManager.getSprite(AssetId.ENEMY).width
     let x = 200
     let y = -height
     const spacer = y * 1.5
@@ -176,7 +184,7 @@ export default class SpaceGame implements Observer {
   gameOver (): void {
     this.backgroundAudio.stop()
     document.getElementById('game-over').style.display = 'block'
-    this.gameOverAudio = this.assetManager.getSound(EntityType.GAME_OVER, AssetType.AUDIO_LOOP)
+    this.gameOverAudio = this.assetManager.getSound(AssetId.GAME_OVER, AssetType.AUDIO_AMB)
     this.gameOverAudio.play(true)
   }
 

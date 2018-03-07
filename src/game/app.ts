@@ -3,10 +3,13 @@ import SpaceGame from './SpaceGame'
 import InputManager from '../client/InputManager'
 import Settings from '../client/Settings'
 import SettingsMenu from '../client/SettingsMenu'
-import { EntityType } from './interfaces/CollideAble'
 import EventHandler from '../lib/event/EventHandler'
+import { AssetId } from '../enum/AssetId'
+import AudioManager from '../client/AudioManager'
+import GameLoop from './GameLoop'
 
-const assetManager = new AssetManager()
+const audioManager = new AudioManager()
+const assetManager = new AssetManager(audioManager)
 const canvases = {
   background: document.getElementById('background') as HTMLCanvasElement,
   ship: document.getElementById('ship') as HTMLCanvasElement,
@@ -14,18 +17,19 @@ const canvases = {
 }
 const settings = new Settings()
 const inputManager = new InputManager(settings)
-const settingsMenu = new SettingsMenu(document.getElementById('settings-menu'), settings, assetManager)
-assetManager.queueDownload(EntityType.BACKGROUND, 'assets/textures/background.png', AssetType.SPRITE)
-assetManager.queueDownload(EntityType.PLAYER, 'assets/sprites/ship.png', AssetType.SPRITE)
-assetManager.queueDownload(EntityType.PLAYER_BULLET, 'assets/sprites/bullet.png', AssetType.SPRITE)
-assetManager.queueDownload(EntityType.ENEMY, 'assets/sprites/enemy.png', AssetType.SPRITE)
-assetManager.queueDownload(EntityType.ENEMY_BULLET, 'assets/sprites/bullet_enemy.png', AssetType.SPRITE)
-assetManager.queueDownload(EntityType.MAIN_THEME, 'assets/audio/kick_shock.wav', AssetType.AUDIO)
-assetManager.queueDownload(EntityType.LASER, 'assets/audio/laser.wav', AssetType.AUDIO)
-assetManager.queueDownload(EntityType.EXPLOSION_I, 'assets/audio/explosion.wav', AssetType.AUDIO)
-assetManager.queueDownload(EntityType.GAME_OVER, 'assets/audio/game_over.wav', AssetType.AUDIO)
+const settingsMenu = new SettingsMenu(document.getElementById('settings-menu'), settings, assetManager, audioManager)
+assetManager.queueDownload(AssetId.BACKGROUND, 'assets/textures/background.png', AssetType.SPRITE)
+assetManager.queueDownload(AssetId.PLAYER, 'assets/sprites/ship.png', AssetType.SPRITE)
+assetManager.queueDownload(AssetId.PLAYER_BULLET, 'assets/sprites/bullet.png', AssetType.SPRITE)
+assetManager.queueDownload(AssetId.ENEMY, 'assets/sprites/enemy.png', AssetType.SPRITE)
+assetManager.queueDownload(AssetId.ENEMY_BULLET, 'assets/sprites/bullet_enemy.png', AssetType.SPRITE)
+assetManager.queueDownload(AssetId.MAIN_THEME, 'assets/audio/kick_shock.wav', AssetType.AUDIO)
+assetManager.queueDownload(AssetId.LASER, 'assets/audio/laser.wav', AssetType.AUDIO)
+assetManager.queueDownload(AssetId.EXPLOSION_I, 'assets/audio/explosion.wav', AssetType.AUDIO)
+assetManager.queueDownload(AssetId.GAME_OVER, 'assets/audio/game_over.wav', AssetType.AUDIO)
 assetManager.downloadAll(() => {
   const game = new SpaceGame(assetManager, inputManager, settings, canvases)
+  const loop = new GameLoop(game)
   settingsMenu.init()
   let gameOver = document.getElementById('game-over')
   let set = document.getElementById('settings')

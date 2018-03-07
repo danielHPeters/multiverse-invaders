@@ -60,7 +60,7 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 54);
+/******/ 	return __webpack_require__(__webpack_require__.s = 56);
 /******/ })
 /************************************************************************/
 /******/ ({
@@ -71,33 +71,7 @@
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var EntityType;
-(function (EntityType) {
-    EntityType["PLAYER"] = "ship";
-    EntityType["ENEMY"] = "enemy";
-    EntityType["ENEMY_BULLET"] = "bulletEnemy";
-    EntityType["PLAYER_BULLET"] = "bullet";
-    EntityType["BACKGROUND"] = "background";
-    EntityType["MAP"] = "map";
-    EntityType["GAME_OVER"] = "gameOver";
-    EntityType["LASER"] = "laser";
-    EntityType["MAIN_THEME"] = "shockWave";
-    EntityType["EXPLOSION_I"] = "explosion1";
-    EntityType["EXPLOSION_II"] = "explosion2";
-    EntityType["BOX"] = "box";
-    EntityType["ARENA"] = "arena";
-})(EntityType = exports.EntityType || (exports.EntityType = {}));
-
-
-/***/ }),
-
-/***/ 1:
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-const Observable_1 = __webpack_require__(5);
+const Observable_1 = __webpack_require__(6);
 var Actions;
 (function (Actions) {
     Actions["UP"] = "UP";
@@ -200,7 +174,7 @@ exports.default = InputManager;
 
 /***/ }),
 
-/***/ 2:
+/***/ 1:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -310,58 +284,42 @@ exports.default = Vector2;
 
 /***/ }),
 
-/***/ 5:
+/***/ 2:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-class Observable {
-    constructor() {
-        this._observers = [];
-        this._state = {};
-    }
-    register(observer) {
-        this._observers.push(observer);
-    }
-    unRegister(observer) {
-        this._observers = this._observers.filter(obs => {
-            return obs !== observer;
-        });
-    }
-    notify() {
-        this._observers.forEach(observer => {
-            observer.update(this._state);
-        });
-    }
-    get observers() {
-        return this._observers;
-    }
-    set observers(observers) {
-        this._observers = observers;
-    }
-    get state() {
-        return this._state;
-    }
-    set state(state) {
-        this._state = state;
-    }
-}
-exports.default = Observable;
+var EntityType;
+(function (EntityType) {
+    EntityType["PLAYER"] = "ship";
+    EntityType["ENEMY"] = "enemy";
+    EntityType["ENEMY_BULLET"] = "bulletEnemy";
+    EntityType["PLAYER_BULLET"] = "bullet";
+    EntityType["BACKGROUND"] = "background";
+    EntityType["MAP"] = "map";
+    EntityType["GAME_OVER"] = "gameOver";
+    EntityType["LASER"] = "laser";
+    EntityType["MAIN_THEME"] = "shockWave";
+    EntityType["EXPLOSION_I"] = "explosion1";
+    EntityType["EXPLOSION_II"] = "explosion2";
+    EntityType["BOX"] = "box";
+    EntityType["ARENA"] = "arena";
+})(EntityType = exports.EntityType || (exports.EntityType = {}));
 
 
 /***/ }),
 
-/***/ 54:
+/***/ 56:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-const Tetris_1 = __webpack_require__(55);
-const InputManager_1 = __webpack_require__(1);
-const Settings_1 = __webpack_require__(6);
-const Piece_1 = __webpack_require__(58);
+const Tetris_1 = __webpack_require__(57);
+const InputManager_1 = __webpack_require__(0);
+const Settings_1 = __webpack_require__(7);
+const Piece_1 = __webpack_require__(60);
 const settings = new Settings_1.default();
 const inputManager = new InputManager_1.default(settings);
 const canvas = document.getElementById('tetris');
@@ -373,14 +331,14 @@ tetris.start();
 
 /***/ }),
 
-/***/ 55:
+/***/ 57:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-const Player_1 = __webpack_require__(56);
-const Arena_1 = __webpack_require__(57);
+const Player_1 = __webpack_require__(58);
+const Arena_1 = __webpack_require__(59);
 const colors = [
     null,
     '#FF0D72',
@@ -450,13 +408,13 @@ exports.default = Tetris;
 
 /***/ }),
 
-/***/ 56:
+/***/ 58:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-const InputManager_1 = __webpack_require__(1);
+const InputManager_1 = __webpack_require__(0);
 class Player {
     constructor(id, name, piece, arena) {
         this.id = id;
@@ -493,14 +451,14 @@ exports.default = Player;
 
 /***/ }),
 
-/***/ 57:
+/***/ 59:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-const Matrix_1 = __webpack_require__(8);
-const Vector2_1 = __webpack_require__(2);
+const Matrix_1 = __webpack_require__(9);
+const Vector2_1 = __webpack_require__(1);
 class Arena {
     constructor() {
         this.postition = new Vector2_1.default(0, 0);
@@ -543,16 +501,58 @@ exports.default = Arena;
 
 /***/ }),
 
-/***/ 58:
+/***/ 6:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-const Matrix_1 = __webpack_require__(8);
-const Vector2_1 = __webpack_require__(2);
-const CollideAble_1 = __webpack_require__(0);
-const MatrixCollisionManager_1 = __webpack_require__(59);
+class Observable {
+    constructor() {
+        this._observers = [];
+        this._state = {};
+    }
+    register(observer) {
+        this._observers.push(observer);
+    }
+    unRegister(observer) {
+        this._observers = this._observers.filter(obs => {
+            return obs !== observer;
+        });
+    }
+    notify() {
+        this._observers.forEach(observer => {
+            observer.update(this._state);
+        });
+    }
+    get observers() {
+        return this._observers;
+    }
+    set observers(observers) {
+        this._observers = observers;
+    }
+    get state() {
+        return this._state;
+    }
+    set state(state) {
+        this._state = state;
+    }
+}
+exports.default = Observable;
+
+
+/***/ }),
+
+/***/ 60:
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+const Matrix_1 = __webpack_require__(9);
+const Vector2_1 = __webpack_require__(1);
+const CollideAble_1 = __webpack_require__(2);
+const MatrixCollisionManager_1 = __webpack_require__(61);
 exports.types = {
     I: [
         [0, 1, 0, 0],
@@ -649,7 +649,7 @@ exports.default = Piece;
 
 /***/ }),
 
-/***/ 59:
+/***/ 61:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -677,13 +677,13 @@ exports.default = MatrixCollisionManager;
 
 /***/ }),
 
-/***/ 6:
+/***/ 7:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-const InputManager_1 = __webpack_require__(1);
+const InputManager_1 = __webpack_require__(0);
 class Settings {
     constructor() {
         this.keyBoard = {
@@ -725,7 +725,7 @@ exports.default = Settings;
 
 /***/ }),
 
-/***/ 8:
+/***/ 9:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
