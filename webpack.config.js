@@ -3,10 +3,8 @@ const path = require('path')
 
 module.exports = {
   entry: {
-    'multiverseInvaders': './src/app.ts',
-    'pathfinding': './src/algorithm/pathfinding/app.ts',
-    'multiverseInvaders.min': './src/app.ts',
-    'pathfinding.min': './src/algorithm/pathfinding/app.ts'
+    'invaders': './src/app.ts',
+    'invaders.min': './src/app.ts'
   },
   devtool: 'source-map',
   output: {
