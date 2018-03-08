@@ -1,8 +1,8 @@
 import Vector2 from '../math/Vector2'
 import { Actions } from '../client/InputManager'
 import Observer from '../observer/Observer'
-import CollideAble, { EntityType } from '../../game/interfaces/CollideAble'
-import Drawable from '../../game/interfaces/Drawable'
+import ICollideAble, { EntityType } from '../interfaces/ICollideAble'
+import IDrawable from '../interfaces/IDrawable'
 
 /**
  * Base entity class.
@@ -10,7 +10,7 @@ import Drawable from '../../game/interfaces/Drawable'
  * @author Daniel Peters
  * @version 1.0
  */
-export default class Entity implements Observer, CollideAble, Drawable {
+export default class Entity implements Observer, ICollideAble, IDrawable {
   speed: number
   canvasWidth: number
   canvasHeight: number
@@ -139,7 +139,7 @@ export default class Entity implements Observer, CollideAble, Drawable {
    * @param {CollideAble} other
    * @returns {boolean}
    */
-  isCollideAbleWith (other: CollideAble): boolean {
+  isCollideAbleWith (other: ICollideAble): boolean {
     return this.collidesWith.includes(other.type.toString())
   }
 }

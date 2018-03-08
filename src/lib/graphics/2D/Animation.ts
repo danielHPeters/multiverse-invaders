@@ -1,9 +1,3 @@
-/**
- * Implements sprite animation using sprite sheet.
- *
- * @author Daniel Peters
- * @version 0.3
- */
 import SpriteSheet from './SpriteSheet'
 
 /**

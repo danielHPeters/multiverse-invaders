@@ -1,5 +1,11 @@
 import HitBox from '../collision/HitBox'
 
+/**
+ * Creates a map out of a tileset.
+ *
+ * @author Daniel Peters
+ * @version 1.0
+ */
 export default class TileSetMap {
   tileSetImage: HTMLImageElement
   image: HTMLImageElement
@@ -13,6 +19,16 @@ export default class TileSetMap {
   imageTilesPerRow: number
   hitBoxes: Array<HitBox>
 
+  /**
+   *
+   * @param image
+   * @param mapLayers
+   * @param context
+   * @param {number} tileSize
+   * @param {number} tilesPerRow
+   * @param {number} tilesPerColumn
+   * @param {number} imageTilesPerRow
+   */
   constructor (image, mapLayers, context, tileSize: number, tilesPerRow: number, tilesPerColumn: number, imageTilesPerRow: number) {
     this.tileSetImage = image
     this.width = tilesPerRow * tileSize
@@ -28,6 +44,9 @@ export default class TileSetMap {
     console.log(this.height)
   }
 
+  /**
+   *
+   */
   generate (): void {
     let ctx = document.createElement('canvas').getContext('2d')
     ctx.canvas.width = this.width
@@ -43,6 +62,11 @@ export default class TileSetMap {
     ctx = null
   }
 
+  /**
+   *
+   * @param ctx
+   * @param layer
+   */
   generateLayer (ctx, layer): void {
     for (let row = 0; row < this.tilesPerColumn; row++) {
       for (let col = 0; col < this.tilesPerRow; col++) {

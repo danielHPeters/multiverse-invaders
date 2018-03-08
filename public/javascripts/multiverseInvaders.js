@@ -60,7 +60,7 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 20);
+/******/ 	return __webpack_require__(__webpack_require__.s = 9);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -70,105 +70,22 @@
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-const Observable_1 = __webpack_require__(6);
-var Actions;
-(function (Actions) {
-    Actions["UP"] = "UP";
-    Actions["DOWN"] = "DOWN";
-    Actions["LEFT"] = "LEFT";
-    Actions["RIGHT"] = "RIGHT";
-    Actions["SHOOT"] = "SHOOT";
-    Actions["RESTART"] = "RESTART";
-    Actions["ROTATE_LEFT"] = "R-LEFT";
-    Actions["ROTATE_RIGHT"] = "R-RIGHT";
-})(Actions = exports.Actions || (exports.Actions = {}));
-class InputManager extends Observable_1.default {
-    constructor(settings) {
-        super();
-        this.inputMap = settings.keyBoard;
-        this.init();
-        this.initializeTouchHandler();
-        this.touches = {
-            start: [],
-            move: []
-        };
-    }
-    init() {
-        window.addEventListener('keydown', event => {
-            let key = event.key !== ' ' ? event.key : 'space';
-            this.state[this.inputMap[key]] = true;
-            this.notify();
-        });
-        window.addEventListener('keyup', event => {
-            let key = event.key !== ' ' ? event.key : 'space';
-            this.state[this.inputMap[key]] = false;
-            this.notify();
-        });
-    }
-    initializeTouchHandler() {
-        let button = document.getElementById('move');
-        let el = button ? button : window;
-        el.addEventListener('touchstart', handleTouchStart, false);
-        el.addEventListener('touchmove', handleTouchMove, false);
-        el.addEventListener('touchend', handleTouchEnd, false);
-        el.addEventListener('contextmenu', event => {
-            event.preventDefault();
-            return false;
-        });
-        let start = [];
-        let move = [];
-        let touchstartX = 0;
-        let touchstartY = 0;
-        let toucheMoveX = 0;
-        let touchMoveY = 0;
-        let thisInstance = this;
-        function handleTouchStart(evt) {
-            evt.preventDefault();
-            start = evt.touches;
-            touchstartX = evt.touches[0].pageX;
-            touchstartY = evt.touches[0].pageY;
-        }
-        function handleTouchMove(evt) {
-            thisInstance.reset();
-            evt.preventDefault();
-            move = evt.changedTouches;
-            toucheMoveX = evt.touches[0].pageX;
-            touchMoveY = evt.touches[0].pageY;
-            for (let i = 0; i < evt.touches.length; i++) {
-                if (move[i].pageX < start[i].pageX) {
-                    thisInstance.state[thisInstance.inputMap['a']] = true;
-                }
-                if (move[i].pageX > start[i].pageX) {
-                    thisInstance.state[thisInstance.inputMap['d']] = true;
-                }
-                if (move[i].pageY < start[i].pageY) {
-                    thisInstance.state[thisInstance.inputMap['w']] = true;
-                }
-                if (move[i].pageY > start[i].pageY) {
-                    thisInstance.state[thisInstance.inputMap['s']] = true;
-                }
-                thisInstance.notify();
-            }
-        }
-        function handleTouchEnd(evt) {
-            evt.preventDefault();
-            thisInstance.reset();
-        }
-    }
-    shoot() {
-        this.state[this.inputMap['space']] = true;
-    }
-    cancelShoot() {
-        this.state[this.inputMap['space']] = false;
-    }
-    reset() {
-        this.state[this.inputMap['w']] = false;
-        this.state[this.inputMap['a']] = false;
-        this.state[this.inputMap['s']] = false;
-        this.state[this.inputMap['d']] = false;
-    }
-}
-exports.default = InputManager;
+var EntityType;
+(function (EntityType) {
+    EntityType["PLAYER"] = "ship";
+    EntityType["ENEMY"] = "enemy";
+    EntityType["ENEMY_BULLET"] = "bulletEnemy";
+    EntityType["PLAYER_BULLET"] = "bullet";
+    EntityType["BACKGROUND"] = "background";
+    EntityType["MAP"] = "map";
+    EntityType["GAME_OVER"] = "gameOver";
+    EntityType["LASER"] = "laser";
+    EntityType["MAIN_THEME"] = "shockWave";
+    EntityType["EXPLOSION_I"] = "explosion1";
+    EntityType["EXPLOSION_II"] = "explosion2";
+    EntityType["BOX"] = "box";
+    EntityType["ARENA"] = "arena";
+})(EntityType = exports.EntityType || (exports.EntityType = {}));
 
 
 /***/ }),
@@ -287,22 +204,105 @@ exports.default = Vector2;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var EntityType;
-(function (EntityType) {
-    EntityType["PLAYER"] = "ship";
-    EntityType["ENEMY"] = "enemy";
-    EntityType["ENEMY_BULLET"] = "bulletEnemy";
-    EntityType["PLAYER_BULLET"] = "bullet";
-    EntityType["BACKGROUND"] = "background";
-    EntityType["MAP"] = "map";
-    EntityType["GAME_OVER"] = "gameOver";
-    EntityType["LASER"] = "laser";
-    EntityType["MAIN_THEME"] = "shockWave";
-    EntityType["EXPLOSION_I"] = "explosion1";
-    EntityType["EXPLOSION_II"] = "explosion2";
-    EntityType["BOX"] = "box";
-    EntityType["ARENA"] = "arena";
-})(EntityType = exports.EntityType || (exports.EntityType = {}));
+const Observable_1 = __webpack_require__(14);
+var Actions;
+(function (Actions) {
+    Actions["UP"] = "UP";
+    Actions["DOWN"] = "DOWN";
+    Actions["LEFT"] = "LEFT";
+    Actions["RIGHT"] = "RIGHT";
+    Actions["SHOOT"] = "SHOOT";
+    Actions["RESTART"] = "RESTART";
+    Actions["ROTATE_LEFT"] = "R-LEFT";
+    Actions["ROTATE_RIGHT"] = "R-RIGHT";
+})(Actions = exports.Actions || (exports.Actions = {}));
+class InputManager extends Observable_1.default {
+    constructor(settings) {
+        super();
+        this.inputMap = settings.keyBoard;
+        this.init();
+        this.initializeTouchHandler();
+        this.touches = {
+            start: [],
+            move: []
+        };
+    }
+    init() {
+        window.addEventListener('keydown', event => {
+            let key = event.key !== ' ' ? event.key : 'space';
+            this.state[this.inputMap[key]] = true;
+            this.notify();
+        });
+        window.addEventListener('keyup', event => {
+            let key = event.key !== ' ' ? event.key : 'space';
+            this.state[this.inputMap[key]] = false;
+            this.notify();
+        });
+    }
+    initializeTouchHandler() {
+        let button = document.getElementById('move');
+        let el = button ? button : window;
+        el.addEventListener('touchstart', handleTouchStart, false);
+        el.addEventListener('touchmove', handleTouchMove, false);
+        el.addEventListener('touchend', handleTouchEnd, false);
+        el.addEventListener('contextmenu', event => {
+            event.preventDefault();
+            return false;
+        });
+        let start = [];
+        let move = [];
+        let touchstartX = 0;
+        let touchstartY = 0;
+        let toucheMoveX = 0;
+        let touchMoveY = 0;
+        let thisInstance = this;
+        function handleTouchStart(evt) {
+            evt.preventDefault();
+            start = evt.touches;
+            touchstartX = evt.touches[0].pageX;
+            touchstartY = evt.touches[0].pageY;
+        }
+        function handleTouchMove(evt) {
+            thisInstance.reset();
+            evt.preventDefault();
+            move = evt.changedTouches;
+            toucheMoveX = evt.touches[0].pageX;
+            touchMoveY = evt.touches[0].pageY;
+            for (let i = 0; i < evt.touches.length; i++) {
+                if (move[i].pageX < start[i].pageX) {
+                    thisInstance.state[thisInstance.inputMap['a']] = true;
+                }
+                if (move[i].pageX > start[i].pageX) {
+                    thisInstance.state[thisInstance.inputMap['d']] = true;
+                }
+                if (move[i].pageY < start[i].pageY) {
+                    thisInstance.state[thisInstance.inputMap['w']] = true;
+                }
+                if (move[i].pageY > start[i].pageY) {
+                    thisInstance.state[thisInstance.inputMap['s']] = true;
+                }
+                thisInstance.notify();
+            }
+        }
+        function handleTouchEnd(evt) {
+            evt.preventDefault();
+            thisInstance.reset();
+        }
+    }
+    shoot() {
+        this.state[this.inputMap['space']] = true;
+    }
+    cancelShoot() {
+        this.state[this.inputMap['space']] = false;
+    }
+    reset() {
+        this.state[this.inputMap['w']] = false;
+        this.state[this.inputMap['a']] = false;
+        this.state[this.inputMap['s']] = false;
+        this.state[this.inputMap['d']] = false;
+    }
+}
+exports.default = InputManager;
 
 
 /***/ }),
@@ -440,7 +440,7 @@ var AssetId;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 const Vector2_1 = __webpack_require__(1);
-const CollideAble_1 = __webpack_require__(2);
+const ICollideAble_1 = __webpack_require__(0);
 class HitBox {
     constructor(x, y, width, height) {
         this.position = new Vector2_1.default(x, y);
@@ -448,8 +448,8 @@ class HitBox {
         this.height = height;
         this.colliding = false;
         this.collidesWith = [];
-        this.type = CollideAble_1.EntityType.BOX;
-        this.collidesWith.push(CollideAble_1.EntityType.PLAYER);
+        this.type = ICollideAble_1.EntityType.BOX;
+        this.collidesWith.push(ICollideAble_1.EntityType.PLAYER);
     }
     isCollideAbleWith(other) {
         return this.collidesWith.includes(other.type.toString());
@@ -465,90 +465,74 @@ exports.default = HitBox;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-class Observable {
-    constructor() {
-        this._observers = [];
-        this._state = {};
-    }
-    register(observer) {
-        this._observers.push(observer);
-    }
-    unRegister(observer) {
-        this._observers = this._observers.filter(obs => {
-            return obs !== observer;
-        });
-    }
-    notify() {
-        this._observers.forEach(observer => {
-            observer.update(this._state);
-        });
-    }
-    get observers() {
-        return this._observers;
-    }
-    set observers(observers) {
-        this._observers = observers;
-    }
-    get state() {
-        return this._state;
-    }
-    set state(state) {
-        this._state = state;
+class EventHandler {
+    static registerOnElement(element, events, listener) {
+        events.forEach(event => element.addEventListener(event, listener));
     }
 }
-exports.default = Observable;
+exports.default = EventHandler;
 
 
 /***/ }),
-/* 7 */
+/* 7 */,
+/* 8 */,
+/* 9 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-const InputManager_1 = __webpack_require__(0);
-class Settings {
-    constructor() {
-        this.keyBoard = {
-            'w': InputManager_1.Actions.UP,
-            's': InputManager_1.Actions.DOWN,
-            'a': InputManager_1.Actions.LEFT,
-            'd': InputManager_1.Actions.RIGHT,
-            'space': InputManager_1.Actions.SHOOT,
-            'r': InputManager_1.Actions.RESTART,
-            'q': InputManager_1.Actions.ROTATE_LEFT,
-            'e': InputManager_1.Actions.ROTATE_RIGHT
-        };
-        this.player = {
-            maxVelocity: 15,
-            fireDelay: 15,
-            friction: 0.7,
-            acceleration: 3
-        };
-        this.audio = {
-            master: 1,
-            ambient: 1,
-            effects: 1
-        };
-    }
-    findKey(value) {
-        return Object.keys(this.keyBoard).filter(key => this.keyBoard[key] === value)[0];
-    }
-    setKey(newKey, action) {
-        let oldKey = this.findKey(action);
-        if (newKey !== oldKey) {
-            console.log('old:' + oldKey, ' new: ' + newKey + ' value: ' + action);
-            this.keyBoard[newKey] = this.keyBoard[oldKey];
-            delete this.keyBoard[oldKey];
-        }
-    }
-}
-exports.default = Settings;
+const AssetManager_1 = __webpack_require__(3);
+const SpaceGame_1 = __webpack_require__(12);
+const InputManager_1 = __webpack_require__(2);
+const Settings_1 = __webpack_require__(21);
+const SettingsMenu_1 = __webpack_require__(22);
+const EventHandler_1 = __webpack_require__(6);
+const AssetId_1 = __webpack_require__(4);
+const AudioManager_1 = __webpack_require__(23);
+const GameLoop_1 = __webpack_require__(25);
+const audioManager = new AudioManager_1.default();
+const assetManager = new AssetManager_1.default(audioManager);
+const canvases = {
+    background: document.getElementById('background'),
+    ship: document.getElementById('ship'),
+    main: document.getElementById('main')
+};
+const settings = new Settings_1.default();
+const inputManager = new InputManager_1.default(settings);
+const settingsMenu = new SettingsMenu_1.default(document.getElementById('settings-menu'), settings, assetManager, audioManager);
+assetManager.queueDownload(AssetId_1.AssetId.BACKGROUND, 'assets/textures/background.png', AssetManager_1.AssetType.SPRITE);
+assetManager.queueDownload(AssetId_1.AssetId.PLAYER, 'assets/sprites/ship.png', AssetManager_1.AssetType.SPRITE);
+assetManager.queueDownload(AssetId_1.AssetId.PLAYER_BULLET, 'assets/sprites/bullet.png', AssetManager_1.AssetType.SPRITE);
+assetManager.queueDownload(AssetId_1.AssetId.ENEMY, 'assets/sprites/enemy.png', AssetManager_1.AssetType.SPRITE);
+assetManager.queueDownload(AssetId_1.AssetId.ENEMY_BULLET, 'assets/sprites/bullet_enemy.png', AssetManager_1.AssetType.SPRITE);
+assetManager.queueDownload(AssetId_1.AssetId.MAIN_THEME, 'assets/audio/kick_shock.wav', AssetManager_1.AssetType.AUDIO);
+assetManager.queueDownload(AssetId_1.AssetId.LASER, 'assets/audio/laser.wav', AssetManager_1.AssetType.AUDIO);
+assetManager.queueDownload(AssetId_1.AssetId.EXPLOSION_I, 'assets/audio/explosion.wav', AssetManager_1.AssetType.AUDIO);
+assetManager.queueDownload(AssetId_1.AssetId.GAME_OVER, 'assets/audio/game_over.wav', AssetManager_1.AssetType.AUDIO);
+assetManager.downloadAll(() => {
+    const game = new SpaceGame_1.default(assetManager, inputManager, settings, canvases);
+    const loop = new GameLoop_1.default(game);
+    settingsMenu.init();
+    let gameOver = document.getElementById('game-over');
+    let set = document.getElementById('settings');
+    let shoot = document.getElementById('shoot');
+    let events = ['click', 'touchstart'];
+    shoot.addEventListener('touchstart', () => inputManager.shoot());
+    shoot.addEventListener('touchend', () => inputManager.cancelShoot());
+    shoot.addEventListener('contextmenu', event => {
+        event.preventDefault();
+        return false;
+    });
+    EventHandler_1.default.registerOnElement(gameOver, events, () => game.restart());
+    EventHandler_1.default.registerOnElement(set, events, () => {
+        settingsMenu.toggleShow();
+        game.togglePause();
+    });
+});
 
 
 /***/ }),
-/* 8 */,
-/* 9 */,
 /* 10 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -631,6 +615,565 @@ exports.default = Ajax;
 
 /***/ }),
 /* 12 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+const Background_1 = __webpack_require__(13);
+const AssetManager_1 = __webpack_require__(3);
+const InputManager_1 = __webpack_require__(2);
+const Ship_1 = __webpack_require__(15);
+const Pool_1 = __webpack_require__(16);
+const QuadTree_1 = __webpack_require__(19);
+const HitBox_1 = __webpack_require__(5);
+const ICollideAble_1 = __webpack_require__(0);
+const CollisionManager_1 = __webpack_require__(20);
+const AssetId_1 = __webpack_require__(4);
+class SpaceGame {
+    constructor(assetManager, inputManager, settings, canvases) {
+        this.playing = false;
+        this.paused = false;
+        this.window = window;
+        this.assetManager = assetManager;
+        this.inputManager = inputManager;
+        this.settings = settings;
+        this.canvases = canvases;
+        this.init();
+    }
+    init() {
+        if (this.canvases.background.getContext) {
+            this.backgroundContext = this.canvases.background.getContext('2d');
+            this.shipContext = this.canvases.ship.getContext('2d');
+            this.mainContext = this.canvases.main.getContext('2d');
+            this.playerScore = 0;
+            this.background = new Background_1.default(0, 0, this.canvases.background.width, this.canvases.background.height, this.backgroundContext, this.assetManager.getSprite(AssetId_1.AssetId.BACKGROUND));
+            this.shipStartX = this.canvases.ship.width / 2 - this.assetManager.getSprite(AssetId_1.AssetId.PLAYER).width;
+            this.shipStartY = this.canvases.ship.height / 4 * 3 + this.assetManager.getSprite(AssetId_1.AssetId.PLAYER).height * 2;
+            this.ship = new Ship_1.default(this.shipStartX, this.shipStartY, this.assetManager.getSprite(AssetId_1.AssetId.PLAYER).width, this.assetManager.getSprite(AssetId_1.AssetId.PLAYER).height, this.canvases.ship.width, this.canvases.ship.height, this.shipContext, this.assetManager, new Pool_1.default(this.assetManager, this.mainContext, this.canvases.main.width, this.canvases.main.height, 80, ICollideAble_1.EntityType.PLAYER_BULLET, AssetId_1.AssetId.PLAYER_BULLET), this.settings.player);
+            this.enemyBulletPool = new Pool_1.default(this.assetManager, this.mainContext, this.canvases.main.width, this.canvases.main.height, 50, ICollideAble_1.EntityType.ENEMY_BULLET, AssetId_1.AssetId.ENEMY_BULLET);
+            this.enemyPool = new Pool_1.default(this.assetManager, this.mainContext, this.canvases.main.width, this.canvases.main.height, 30, ICollideAble_1.EntityType.ENEMY, AssetId_1.AssetId.ENEMY, this.enemyBulletPool, this);
+            this.spawnWave();
+            this.inputManager.register(this.ship);
+            this.inputManager.register(this);
+            this.quadTree = new QuadTree_1.default(new HitBox_1.default(0, 0, this.canvases.main.width, this.canvases.main.height));
+            this.collisionManager = new CollisionManager_1.default(this.quadTree);
+            this.backgroundAudio = this.assetManager.getSound(AssetId_1.AssetId.MAIN_THEME, AssetManager_1.AssetType.AUDIO_AMB);
+            this.backgroundAudio.play(true);
+            this.start();
+        }
+    }
+    togglePause() {
+        this.paused = !this.paused;
+    }
+    spawnWave() {
+        const height = this.assetManager.getSprite(AssetId_1.AssetId.ENEMY).height;
+        const width = this.assetManager.getSprite(AssetId_1.AssetId.ENEMY).width;
+        let x = 200;
+        let y = -height;
+        const spacer = y * 1.5;
+        for (let i = 1; i <= 21; i++) {
+            this.enemyPool.get(x, y, 4);
+            x += width + 25;
+            if (i % 7 === 0) {
+                x = 200;
+                y += spacer;
+            }
+        }
+    }
+    render() {
+        if (this.playing) {
+            if (!this.paused) {
+                document.getElementById('score').innerHTML = this.playerScore.toString();
+                this.quadTree.clear();
+                this.quadTree.insert(this.ship);
+                this.quadTree.insert(this.ship.pool.getPool());
+                this.quadTree.insert(this.enemyPool.getPool());
+                this.quadTree.insert(this.enemyBulletPool.getPool());
+                this.collisionManager.detectCollision();
+                if (this.enemyPool.getPool().length === 0) {
+                    this.spawnWave();
+                }
+                if (this.ship.alive()) {
+                    this.background.draw();
+                    this.ship.move();
+                    this.ship.pool.render();
+                    this.enemyPool.render();
+                    this.enemyBulletPool.render();
+                }
+                else {
+                    this.playing = false;
+                    this.gameOver();
+                }
+            }
+            this.animReqID = window.requestAnimationFrame(() => this.render());
+        }
+    }
+    scorePoints() {
+        this.playerScore += 10;
+    }
+    update(state) {
+        if (state[InputManager_1.Actions.RESTART]) {
+            this.restart();
+        }
+    }
+    start() {
+        this.playing = true;
+        this.render();
+        this.ship.draw();
+    }
+    gameOver() {
+        this.backgroundAudio.stop();
+        document.getElementById('game-over').style.display = 'block';
+        this.gameOverAudio = this.assetManager.getSound(AssetId_1.AssetId.GAME_OVER, AssetManager_1.AssetType.AUDIO_AMB);
+        this.gameOverAudio.play(true);
+    }
+    restart() {
+        if (!this.playing) {
+            this.gameOverAudio.stop();
+            this.backgroundAudio.play(true);
+            document.getElementById('game-over').style.display = 'none';
+        }
+        else {
+            window.cancelAnimationFrame(this.animReqID);
+            this.playing = false;
+            this.backgroundAudio.stop();
+            this.backgroundAudio.play(true);
+        }
+        this.backgroundContext.clearRect(0, 0, this.canvases.background.width, this.canvases.background.height);
+        this.shipContext.clearRect(0, 0, this.canvases.ship.width, this.canvases.ship.height);
+        this.mainContext.clearRect(0, 0, this.canvases.main.width, this.canvases.main.height);
+        this.quadTree.clear();
+        this.background.reset();
+        this.playerScore = 0;
+        this.ship.reset();
+        this.enemyBulletPool.clearAll();
+        this.enemyPool.clearAll();
+        this.ship.pool.clearAll();
+        this.start();
+    }
+}
+exports.default = SpaceGame;
+
+
+/***/ }),
+/* 13 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+const Vector2_1 = __webpack_require__(1);
+const ICollideAble_1 = __webpack_require__(0);
+class Background {
+    constructor(x, y, width, height, context, sprite) {
+        this.position = new Vector2_1.default(x, y);
+        this.speed = 1;
+        this.width = width;
+        this.height = height;
+        this.canvasWidth = width;
+        this.canvasHeight = height;
+        this.context = context;
+        this.sprite = sprite;
+        this.type = ICollideAble_1.EntityType.BACKGROUND;
+    }
+    reset() {
+        this.position.set(0, 0);
+    }
+    draw() {
+        this.position.y += this.speed;
+        this.context.drawImage(this.sprite, this.position.x, this.position.y);
+        this.context.drawImage(this.sprite, this.position.x, this.position.y - this.height);
+        if (this.position.y >= this.height) {
+            this.position.y = 0;
+        }
+    }
+}
+exports.default = Background;
+
+
+/***/ }),
+/* 14 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+class Observable {
+    constructor() {
+        this._observers = [];
+        this._state = {};
+    }
+    register(observer) {
+        this._observers.push(observer);
+    }
+    unRegister(observer) {
+        this._observers = this._observers.filter(obs => {
+            return obs !== observer;
+        });
+    }
+    notify() {
+        this._observers.forEach(observer => {
+            observer.update(this._state);
+        });
+    }
+    get observers() {
+        return this._observers;
+    }
+    set observers(observers) {
+        this._observers = observers;
+    }
+    get state() {
+        return this._state;
+    }
+    set state(state) {
+        this._state = state;
+    }
+}
+exports.default = Observable;
+
+
+/***/ }),
+/* 15 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+const Vector2_1 = __webpack_require__(1);
+const ICollideAble_1 = __webpack_require__(0);
+const InputManager_1 = __webpack_require__(2);
+const AssetManager_1 = __webpack_require__(3);
+const AssetId_1 = __webpack_require__(4);
+class Ship {
+    constructor(x, y, width, height, canvasWidth, canvasHeight, context, assetManager, pool, settings) {
+        this.position = new Vector2_1.default(x, y);
+        this.startPosition = new Vector2_1.default(x, y);
+        this.acceleration = new Vector2_1.default(0, 0);
+        this.velocity = new Vector2_1.default(0, 0);
+        this.width = width;
+        this.height = height;
+        this.canvasWidth = canvasWidth;
+        this.canvasHeight = canvasHeight;
+        this.context = context;
+        this.sprite = assetManager.getSprite(AssetId_1.AssetId.PLAYER);
+        this.type = ICollideAble_1.EntityType.PLAYER;
+        this.pool = pool;
+        this.counter = 0;
+        this.collidesWith = [];
+        this.collidesWith.push(ICollideAble_1.EntityType.ENEMY_BULLET);
+        this.colliding = false;
+        this.state = {};
+        this.settings = settings;
+        this.maxTop = Math.floor(this.canvasHeight / 4 * 3);
+        this.laserSound = assetManager.getSound(AssetId_1.AssetId.LASER, AssetManager_1.AssetType.AUDIO);
+    }
+    reset() {
+        this.position.setVector(this.startPosition);
+        this.velocity.set(0, 0);
+        this.colliding = false;
+    }
+    move() {
+        if (!this.colliding) {
+            this.counter++;
+            this.context.clearRect(Math.floor(this.position.x), Math.floor(this.position.y), this.width, this.height);
+            this.acceleration.set(0, 0);
+            if (this.state[InputManager_1.Actions.LEFT]) {
+                this.acceleration.add(-this.settings.acceleration, 0);
+            }
+            if (this.state[InputManager_1.Actions.RIGHT]) {
+                this.acceleration.add(this.settings.acceleration, 0);
+            }
+            if (this.state[InputManager_1.Actions.UP]) {
+                this.acceleration.add(0, -this.settings.acceleration);
+            }
+            if (this.state[InputManager_1.Actions.DOWN]) {
+                this.acceleration.add(0, this.settings.acceleration);
+            }
+            this.velocity.multiply(this.settings.friction);
+            this.velocity.addVector(this.acceleration);
+            this.velocity.limit(this.settings.maxVelocity);
+            this.position.addVector(this.velocity);
+            if (this.position.x <= 0) {
+                this.position.x = 0;
+                this.velocity.x += -1;
+            }
+            if (this.position.x >= this.canvasWidth - this.width) {
+                this.position.x = this.canvasWidth - this.width;
+            }
+            if (this.position.y <= this.maxTop) {
+                this.position.y = this.maxTop;
+            }
+            if (this.position.y >= this.canvasHeight - this.height) {
+                this.position.y = this.canvasHeight - this.height;
+            }
+            this.draw();
+            if (this.state[InputManager_1.Actions.SHOOT] && this.counter >= this.settings.fireDelay && !this.colliding) {
+                this.fire();
+                this.counter = 0;
+            }
+        }
+    }
+    alive() {
+        return !this.colliding;
+    }
+    draw() {
+        this.context.drawImage(this.sprite, Math.floor(this.position.x), Math.floor(this.position.y));
+    }
+    update(state) {
+        this.state = state;
+    }
+    fire() {
+        this.pool.getTwo(Math.floor(this.position.x) + 12, Math.floor(this.position.y), 6, Math.floor(this.position.x) + 66, Math.floor(this.position.y), 6);
+        this.laserSound.play();
+    }
+    isCollideAbleWith(other) {
+        return this.collidesWith.includes(other.type.toString());
+    }
+}
+exports.default = Ship;
+
+
+/***/ }),
+/* 16 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+const Bullet_1 = __webpack_require__(17);
+const Enemy_1 = __webpack_require__(18);
+const ICollideAble_1 = __webpack_require__(0);
+class Pool {
+    constructor(assetManager, context, canvasWidth, canvasHeight, maxSize, type, asId, pool = null, game = null) {
+        this.assetManager = assetManager;
+        this.context = context;
+        this.canvasWidth = canvasWidth;
+        this.canvasHeight = canvasHeight;
+        this.maxSize = maxSize;
+        this.type = type;
+        this.assetId = asId;
+        this.pool = [];
+        this.subPool = pool;
+        this.game = game;
+        this.init();
+    }
+    init() {
+        if (this.type === ICollideAble_1.EntityType.ENEMY) {
+            let sprite = this.assetManager.getSprite(this.assetId);
+            for (let i = 0; i < this.maxSize; i++) {
+                this.pool[i] = new Enemy_1.default(0, 0, sprite.width, sprite.height, this.canvasWidth, this.canvasHeight, 0, this.context, sprite, this.type, this.subPool, this.game);
+            }
+        }
+        else {
+            for (let i = 0; i < this.maxSize; i++) {
+                let sprite = this.assetManager.getSprite(this.assetId);
+                this.pool[i] = new Bullet_1.default(0, 0, sprite.width, sprite.height, this.canvasWidth, this.canvasHeight, 0, this.context, sprite, this.type);
+            }
+        }
+    }
+    get(x, y, speed) {
+        let lastElement = this.pool[this.maxSize - 1];
+        if (!lastElement.alive) {
+            lastElement.spawn(x, y, speed);
+            this.pool.unshift(this.pool.pop());
+        }
+    }
+    getTwo(x1, y1, speed1, x2, y2, speed2) {
+        if (!this.pool[this.maxSize - 1].alive &&
+            !this.pool[this.maxSize - 2].alive) {
+            this.get(x1, y1, speed1);
+            this.get(x2, y2, speed2);
+        }
+    }
+    render() {
+        for (let i = 0; i < this.pool.length; i++) {
+            if (this.pool[i].alive) {
+                if (this.pool[i].draw()) {
+                    this.pool[i].clear();
+                    this.pool.push((this.pool.splice(i, 1))[0]);
+                }
+            }
+            else {
+                break;
+            }
+        }
+    }
+    clearAll() {
+        this.pool.forEach(object => object.clear());
+    }
+    getPool() {
+        let objects = [];
+        this.pool.forEach(object => {
+            if (object.alive) {
+                objects.push(object);
+            }
+        });
+        return objects;
+    }
+}
+exports.default = Pool;
+
+
+/***/ }),
+/* 17 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+const Vector2_1 = __webpack_require__(1);
+const ICollideAble_1 = __webpack_require__(0);
+class Bullet {
+    constructor(x, y, width, height, canvasWidth, canvasHeight, speed, context, sprite, type) {
+        this.position = new Vector2_1.default(x, y);
+        this.speed = speed;
+        this.width = width;
+        this.height = height;
+        this.canvasWidth = canvasWidth;
+        this.canvasHeight = canvasHeight;
+        this.context = context;
+        this.sprite = sprite;
+        this.alive = false;
+        this.type = type;
+        this.colliding = false;
+        this.collidesWith = [];
+        if (this.type === ICollideAble_1.EntityType.PLAYER_BULLET) {
+            this.collidesWith.push(ICollideAble_1.EntityType.ENEMY);
+        }
+        else if (this.type === ICollideAble_1.EntityType.ENEMY_BULLET) {
+            this.collidesWith.push(ICollideAble_1.EntityType.PLAYER);
+        }
+    }
+    spawn(x, y, speed) {
+        this.position.set(x, y);
+        this.speed = speed;
+        this.alive = true;
+    }
+    draw() {
+        this.context.clearRect(this.position.x - 1, this.position.y - 1, this.width + 1, this.height + 1);
+        this.position.y -= this.speed;
+        if (this.colliding) {
+            return true;
+        }
+        else if (this.type === ICollideAble_1.EntityType.PLAYER_BULLET && this.position.y <= 0 - this.height) {
+            return true;
+        }
+        else if (this.type === ICollideAble_1.EntityType.ENEMY_BULLET && this.position.y >= this.canvasHeight) {
+            return true;
+        }
+        else {
+            this.context.drawImage(this.sprite, this.position.x, this.position.y);
+            return false;
+        }
+    }
+    clear() {
+        this.position.set(0, 0);
+        this.speed = 0;
+        this.alive = false;
+        this.colliding = false;
+    }
+    isCollideAbleWith(other) {
+        return this.collidesWith.includes(other.type.toString());
+    }
+}
+exports.default = Bullet;
+
+
+/***/ }),
+/* 18 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+const Vector2_1 = __webpack_require__(1);
+const ICollideAble_1 = __webpack_require__(0);
+const AssetManager_1 = __webpack_require__(3);
+const AssetId_1 = __webpack_require__(4);
+class Enemy {
+    constructor(x, y, width, height, canvasWidth, canvasHeight, speed, context, sprite, type, bulletPool, game) {
+        this.position = new Vector2_1.default(x, y);
+        this.width = width;
+        this.height = height;
+        this.canvasWidth = canvasWidth;
+        this.canvasHeight = canvasHeight;
+        this.speed = speed;
+        this.context = context;
+        this.sprite = sprite;
+        this.percentFire = 0.001;
+        this.chance = 0;
+        this.alive = false;
+        this.type = type;
+        this.collidesWith = [];
+        this.collidesWith.push(ICollideAble_1.EntityType.PLAYER_BULLET);
+        this.colliding = false;
+        this.bulletPool = bulletPool;
+        this.game = game;
+        this.explosionSound = this.game.assetManager.getSound(AssetId_1.AssetId.EXPLOSION_I, AssetManager_1.AssetType.AUDIO);
+    }
+    spawn(x, y, speed) {
+        this.position.x = x;
+        this.position.y = y;
+        this.speed = speed;
+        this.speedX = 0;
+        this.speedY = speed;
+        this.alive = true;
+        this.leftEdge = this.position.x - 180;
+        this.rightEdge = this.position.x + 180;
+        this.bottomEdge = this.position.y + 280;
+    }
+    draw() {
+        this.context.clearRect(this.position.x - 1, this.position.y, this.width + 1, this.height);
+        this.position.x += this.speedX;
+        this.position.y += this.speedY;
+        if (this.position.x <= this.leftEdge) {
+            this.speedX = this.speed;
+        }
+        else if (this.position.x >= this.rightEdge + this.width) {
+            this.speedX = -this.speed;
+        }
+        else if (this.position.y >= this.bottomEdge) {
+            this.speed = 1.5;
+            this.speedY = 0;
+            this.position.y -= 5;
+            this.speedX = -this.speed;
+        }
+        if (!this.colliding) {
+            this.context.drawImage(this.sprite, this.position.x, this.position.y);
+            this.chance = Math.floor(Math.random() * 101);
+            if (this.chance / 100 < this.percentFire) {
+                this.fire();
+            }
+            return false;
+        }
+        else {
+            this.game.scorePoints();
+            this.explosionSound.play();
+            return true;
+        }
+    }
+    fire() {
+        this.bulletPool.get(Math.floor(this.position.x + this.width / 2), Math.floor(this.position.y + this.height), -5);
+    }
+    clear() {
+        this.position.x = 0;
+        this.position.y = 0;
+        this.speed = 0;
+        this.speedX = 0;
+        this.speedY = 0;
+        this.alive = false;
+        this.colliding = false;
+    }
+    isCollideAbleWith(other) {
+        return this.collidesWith.includes(other.type.toString());
+    }
+}
+exports.default = Enemy;
+
+
+/***/ }),
+/* 19 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -737,7 +1280,7 @@ exports.default = QuadTree;
 
 
 /***/ }),
-/* 13 */
+/* 20 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -770,296 +1313,50 @@ exports.default = CollisionManager;
 
 
 /***/ }),
-/* 14 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-const Sound_1 = __webpack_require__(15);
-class AudioManager {
-    constructor() {
-        this.initAudioContext();
-    }
-    initAudioContext() {
-        try {
-            window.AudioContext = window.AudioContext || webkitAudioContext;
-            this.audioContext = new AudioContext();
-            this.masterGain = this.audioContext.createGain();
-            this.effectsGain = this.audioContext.createGain();
-            this.ambientGain = this.audioContext.createGain();
-            this.masterGain.gain.value = 1;
-            this.masterGain.connect(this.audioContext.destination);
-            this.effectsGain.connect(this.masterGain);
-            this.ambientGain.connect(this.masterGain);
-            this.ambientGain.gain.value = 1;
-            this.effectsGain.gain.value = 1;
-        }
-        catch (e) {
-            console.log('Web Audio API is not supported in this browser');
-        }
-    }
-    decodeAudio(data, id, callback) {
-        this.audioContext.decodeAudioData(data).then(buffer => callback(buffer), error => { console.log('Error with decoding audio data' + error); });
-    }
-    adjustMasterVolume(value) {
-        this.masterGain.gain.value = value;
-    }
-    adjustAmbientVolume(value) {
-        this.ambientGain.gain.value = value;
-    }
-    adjustEffectsVolume(value) {
-        this.effectsGain.gain.value = value;
-    }
-    createSound(buffer, ambient) {
-        return new Sound_1.default(this.audioContext, ambient ? this.ambientGain : this.effectsGain, buffer);
-    }
-}
-exports.default = AudioManager;
-
-
-/***/ }),
-/* 15 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-class Sound {
-    constructor(audioContext, masterGain, buffer) {
-        this.audioContext = audioContext;
-        this.masterGain = masterGain;
-        this.buffer = buffer;
-        this.gainNode = this.audioContext.createGain();
-        this.gainNode.gain.value = 0.2;
-        this.gainNode.connect(this.masterGain);
-        this.playing = false;
-    }
-    play(loop = false) {
-        this.source = this.audioContext.createBufferSource();
-        this.source.buffer = this.buffer;
-        this.source.loop = loop;
-        this.source.connect(this.gainNode);
-        this.source.start(0);
-    }
-    stop() {
-        this.source.stop(0);
-    }
-}
-exports.default = Sound;
-
-
-/***/ }),
-/* 16 */,
-/* 17 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-class EventHandler {
-    static registerOnElement(element, events, listener) {
-        events.forEach(event => element.addEventListener(event, listener));
-    }
-}
-exports.default = EventHandler;
-
-
-/***/ }),
-/* 18 */,
-/* 19 */,
-/* 20 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-const AssetManager_1 = __webpack_require__(3);
-const SpaceGame_1 = __webpack_require__(21);
-const InputManager_1 = __webpack_require__(0);
-const Settings_1 = __webpack_require__(7);
-const SettingsMenu_1 = __webpack_require__(27);
-const EventHandler_1 = __webpack_require__(17);
-const AssetId_1 = __webpack_require__(4);
-const AudioManager_1 = __webpack_require__(14);
-const audioManager = new AudioManager_1.default();
-const assetManager = new AssetManager_1.default(audioManager);
-const canvases = {
-    background: document.getElementById('background'),
-    ship: document.getElementById('ship'),
-    main: document.getElementById('main')
-};
-const settings = new Settings_1.default();
-const inputManager = new InputManager_1.default(settings);
-const settingsMenu = new SettingsMenu_1.default(document.getElementById('settings-menu'), settings, assetManager, audioManager);
-assetManager.queueDownload(AssetId_1.AssetId.BACKGROUND, 'assets/textures/background.png', AssetManager_1.AssetType.SPRITE);
-assetManager.queueDownload(AssetId_1.AssetId.PLAYER, 'assets/sprites/ship.png', AssetManager_1.AssetType.SPRITE);
-assetManager.queueDownload(AssetId_1.AssetId.PLAYER_BULLET, 'assets/sprites/bullet.png', AssetManager_1.AssetType.SPRITE);
-assetManager.queueDownload(AssetId_1.AssetId.ENEMY, 'assets/sprites/enemy.png', AssetManager_1.AssetType.SPRITE);
-assetManager.queueDownload(AssetId_1.AssetId.ENEMY_BULLET, 'assets/sprites/bullet_enemy.png', AssetManager_1.AssetType.SPRITE);
-assetManager.queueDownload(AssetId_1.AssetId.MAIN_THEME, 'assets/audio/kick_shock.wav', AssetManager_1.AssetType.AUDIO);
-assetManager.queueDownload(AssetId_1.AssetId.LASER, 'assets/audio/laser.wav', AssetManager_1.AssetType.AUDIO);
-assetManager.queueDownload(AssetId_1.AssetId.EXPLOSION_I, 'assets/audio/explosion.wav', AssetManager_1.AssetType.AUDIO);
-assetManager.queueDownload(AssetId_1.AssetId.GAME_OVER, 'assets/audio/game_over.wav', AssetManager_1.AssetType.AUDIO);
-assetManager.downloadAll(() => {
-    const game = new SpaceGame_1.default(assetManager, inputManager, settings, canvases);
-    settingsMenu.init();
-    let gameOver = document.getElementById('game-over');
-    let set = document.getElementById('settings');
-    let shoot = document.getElementById('shoot');
-    let events = ['click', 'touchstart'];
-    shoot.addEventListener('touchstart', () => inputManager.shoot());
-    shoot.addEventListener('touchend', () => inputManager.cancelShoot());
-    shoot.addEventListener('contextmenu', event => {
-        event.preventDefault();
-        return false;
-    });
-    EventHandler_1.default.registerOnElement(gameOver, events, () => game.restart());
-    EventHandler_1.default.registerOnElement(set, events, () => {
-        settingsMenu.toggleShow();
-        game.togglePause();
-    });
-});
-
-
-/***/ }),
 /* 21 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-const Background_1 = __webpack_require__(22);
-const AssetManager_1 = __webpack_require__(3);
-const InputManager_1 = __webpack_require__(0);
-const Ship_1 = __webpack_require__(23);
-const Pool_1 = __webpack_require__(24);
-const QuadTree_1 = __webpack_require__(12);
-const HitBox_1 = __webpack_require__(5);
-const CollideAble_1 = __webpack_require__(2);
-const CollisionManager_1 = __webpack_require__(13);
-const AssetId_1 = __webpack_require__(4);
-class SpaceGame {
-    constructor(assetManager, inputManager, settings, canvases) {
-        this.playing = false;
-        this.paused = false;
-        this.window = window;
-        this.assetManager = assetManager;
-        this.inputManager = inputManager;
-        this.settings = settings;
-        this.canvases = canvases;
-        if (this.canvases.background.getContext) {
-            this.backgroundContext = this.canvases.background.getContext('2d');
-            this.shipContext = this.canvases.ship.getContext('2d');
-            this.mainContext = this.canvases.main.getContext('2d');
-            this.playerScore = 0;
-            this.background = new Background_1.default(0, 0, this.canvases.background.width, this.canvases.background.height, this.backgroundContext, this.assetManager.getSprite(AssetId_1.AssetId.BACKGROUND));
-            this.shipStartX = this.canvases.ship.width / 2 - assetManager.getSprite(AssetId_1.AssetId.PLAYER).width;
-            this.shipStartY = this.canvases.ship.height / 4 * 3 + assetManager.getSprite(AssetId_1.AssetId.PLAYER).height * 2;
-            this.ship = new Ship_1.default(this.shipStartX, this.shipStartY, assetManager.getSprite(AssetId_1.AssetId.PLAYER).width, assetManager.getSprite(AssetId_1.AssetId.PLAYER).height, this.canvases.ship.width, this.canvases.ship.height, this.shipContext, assetManager, new Pool_1.default(assetManager, this.mainContext, this.canvases.main.width, this.canvases.main.height, 80, CollideAble_1.EntityType.PLAYER_BULLET, AssetId_1.AssetId.PLAYER_BULLET), settings.player);
-            this.enemyBulletPool = new Pool_1.default(assetManager, this.mainContext, this.canvases.main.width, this.canvases.main.height, 50, CollideAble_1.EntityType.ENEMY_BULLET, AssetId_1.AssetId.ENEMY_BULLET);
-            this.enemyPool = new Pool_1.default(assetManager, this.mainContext, this.canvases.main.width, this.canvases.main.height, 30, CollideAble_1.EntityType.ENEMY, AssetId_1.AssetId.ENEMY, this.enemyBulletPool, this);
-            this.spawnWave();
-            inputManager.register(this.ship);
-            inputManager.register(this);
-            this.quadTree = new QuadTree_1.default(new HitBox_1.default(0, 0, this.canvases.main.width, this.canvases.main.height));
-            this.collisionManager = new CollisionManager_1.default(this.quadTree);
-            this.backgroundAudio = this.assetManager.getSound(AssetId_1.AssetId.MAIN_THEME, AssetManager_1.AssetType.AUDIO_AMB);
-            this.backgroundAudio.play(true);
-            this.start();
+const InputManager_1 = __webpack_require__(2);
+class Settings {
+    constructor() {
+        this.keyBoard = {
+            'w': InputManager_1.Actions.UP,
+            's': InputManager_1.Actions.DOWN,
+            'a': InputManager_1.Actions.LEFT,
+            'd': InputManager_1.Actions.RIGHT,
+            'space': InputManager_1.Actions.SHOOT,
+            'r': InputManager_1.Actions.RESTART,
+            'q': InputManager_1.Actions.ROTATE_LEFT,
+            'e': InputManager_1.Actions.ROTATE_RIGHT
+        };
+        this.player = {
+            maxVelocity: 15,
+            fireDelay: 15,
+            friction: 0.7,
+            acceleration: 3
+        };
+        this.audio = {
+            master: 1,
+            ambient: 1,
+            effects: 1
+        };
+    }
+    findKey(value) {
+        return Object.keys(this.keyBoard).filter(key => this.keyBoard[key] === value)[0];
+    }
+    setKey(newKey, action) {
+        let oldKey = this.findKey(action);
+        if (newKey !== oldKey) {
+            console.log('old:' + oldKey, ' new: ' + newKey + ' value: ' + action);
+            this.keyBoard[newKey] = this.keyBoard[oldKey];
+            delete this.keyBoard[oldKey];
         }
-    }
-    togglePause() {
-        this.paused = !this.paused;
-    }
-    spawnWave() {
-        const height = this.assetManager.getSprite(AssetId_1.AssetId.ENEMY).height;
-        const width = this.assetManager.getSprite(AssetId_1.AssetId.ENEMY).width;
-        let x = 200;
-        let y = -height;
-        const spacer = y * 1.5;
-        for (let i = 1; i <= 21; i++) {
-            this.enemyPool.get(x, y, 4);
-            x += width + 25;
-            if (i % 7 === 0) {
-                x = 200;
-                y += spacer;
-            }
-        }
-    }
-    render() {
-        if (this.playing) {
-            if (!this.paused) {
-                document.getElementById('score').innerHTML = this.playerScore.toString();
-                this.quadTree.clear();
-                this.quadTree.insert(this.ship);
-                this.quadTree.insert(this.ship.pool.getPool());
-                this.quadTree.insert(this.enemyPool.getPool());
-                this.quadTree.insert(this.enemyBulletPool.getPool());
-                this.collisionManager.detectCollision();
-                if (this.enemyPool.getPool().length === 0) {
-                    this.spawnWave();
-                }
-                if (this.ship.alive()) {
-                    this.background.draw();
-                    this.ship.move();
-                    this.ship.pool.render();
-                    this.enemyPool.render();
-                    this.enemyBulletPool.render();
-                }
-                else {
-                    this.playing = false;
-                    this.gameOver();
-                }
-            }
-            this.animReqID = window.requestAnimationFrame(() => this.render());
-        }
-    }
-    scorePoints() {
-        this.playerScore += 10;
-    }
-    update(state) {
-        if (state[InputManager_1.Actions.RESTART]) {
-            this.restart();
-        }
-    }
-    start() {
-        this.playing = true;
-        this.render();
-        this.ship.draw();
-    }
-    gameOver() {
-        this.backgroundAudio.stop();
-        document.getElementById('game-over').style.display = 'block';
-        this.gameOverAudio = this.assetManager.getSound(AssetId_1.AssetId.GAME_OVER, AssetManager_1.AssetType.AUDIO_AMB);
-        this.gameOverAudio.play(true);
-    }
-    restart() {
-        if (!this.playing) {
-            this.gameOverAudio.stop();
-            this.backgroundAudio.play(true);
-            document.getElementById('game-over').style.display = 'none';
-        }
-        else {
-            window.cancelAnimationFrame(this.animReqID);
-            this.playing = false;
-            this.backgroundAudio.stop();
-            this.backgroundAudio.play(true);
-        }
-        this.backgroundContext.clearRect(0, 0, this.canvases.background.width, this.canvases.background.height);
-        this.shipContext.clearRect(0, 0, this.canvases.ship.width, this.canvases.ship.height);
-        this.mainContext.clearRect(0, 0, this.canvases.main.width, this.canvases.main.height);
-        this.quadTree.clear();
-        this.background.reset();
-        this.playerScore = 0;
-        this.ship.reset();
-        this.enemyBulletPool.clearAll();
-        this.enemyPool.clearAll();
-        this.ship.pool.clearAll();
-        this.start();
     }
 }
-exports.default = SpaceGame;
+exports.default = Settings;
 
 
 /***/ }),
@@ -1069,383 +1366,8 @@ exports.default = SpaceGame;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-const Vector2_1 = __webpack_require__(1);
-const CollideAble_1 = __webpack_require__(2);
-class Background {
-    constructor(x, y, width, height, context, sprite) {
-        this.position = new Vector2_1.default(x, y);
-        this.speed = 1;
-        this.width = width;
-        this.height = height;
-        this.canvasWidth = width;
-        this.canvasHeight = height;
-        this.context = context;
-        this.sprite = sprite;
-        this.type = CollideAble_1.EntityType.BACKGROUND;
-    }
-    reset() {
-        this.position.set(0, 0);
-    }
-    draw() {
-        this.position.y += this.speed;
-        this.context.drawImage(this.sprite, this.position.x, this.position.y);
-        this.context.drawImage(this.sprite, this.position.x, this.position.y - this.height);
-        if (this.position.y >= this.height) {
-            this.position.y = 0;
-        }
-    }
-}
-exports.default = Background;
-
-
-/***/ }),
-/* 23 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-const Vector2_1 = __webpack_require__(1);
-const CollideAble_1 = __webpack_require__(2);
-const InputManager_1 = __webpack_require__(0);
-const AssetManager_1 = __webpack_require__(3);
-const AssetId_1 = __webpack_require__(4);
-class Ship {
-    constructor(x, y, width, height, canvasWidth, canvasHeight, context, assetManager, pool, settings) {
-        this.position = new Vector2_1.default(x, y);
-        this.startPosition = new Vector2_1.default(x, y);
-        this.acceleration = new Vector2_1.default(0, 0);
-        this.velocity = new Vector2_1.default(0, 0);
-        this.width = width;
-        this.height = height;
-        this.canvasWidth = canvasWidth;
-        this.canvasHeight = canvasHeight;
-        this.context = context;
-        this.sprite = assetManager.getSprite(AssetId_1.AssetId.PLAYER);
-        this.type = CollideAble_1.EntityType.PLAYER;
-        this.pool = pool;
-        this.counter = 0;
-        this.collidesWith = [];
-        this.collidesWith.push(CollideAble_1.EntityType.ENEMY_BULLET);
-        this.colliding = false;
-        this.state = {};
-        this.settings = settings;
-        this.maxTop = Math.floor(this.canvasHeight / 4 * 3);
-        this.laserSound = assetManager.getSound(AssetId_1.AssetId.LASER, AssetManager_1.AssetType.AUDIO);
-    }
-    reset() {
-        this.position.setVector(this.startPosition);
-        this.velocity.set(0, 0);
-        this.colliding = false;
-    }
-    move() {
-        if (!this.colliding) {
-            this.counter++;
-            this.context.clearRect(Math.floor(this.position.x), Math.floor(this.position.y), this.width, this.height);
-            this.acceleration.set(0, 0);
-            if (this.state[InputManager_1.Actions.LEFT]) {
-                this.acceleration.add(-this.settings.acceleration, 0);
-            }
-            if (this.state[InputManager_1.Actions.RIGHT]) {
-                this.acceleration.add(this.settings.acceleration, 0);
-            }
-            if (this.state[InputManager_1.Actions.UP]) {
-                this.acceleration.add(0, -this.settings.acceleration);
-            }
-            if (this.state[InputManager_1.Actions.DOWN]) {
-                this.acceleration.add(0, this.settings.acceleration);
-            }
-            this.velocity.multiply(this.settings.friction);
-            this.velocity.addVector(this.acceleration);
-            this.velocity.limit(this.settings.maxVelocity);
-            this.position.addVector(this.velocity);
-            if (this.position.x <= 0) {
-                this.position.x = 0;
-                this.velocity.x += -1;
-            }
-            if (this.position.x >= this.canvasWidth - this.width) {
-                this.position.x = this.canvasWidth - this.width;
-            }
-            if (this.position.y <= this.maxTop) {
-                this.position.y = this.maxTop;
-            }
-            if (this.position.y >= this.canvasHeight - this.height) {
-                this.position.y = this.canvasHeight - this.height;
-            }
-            this.draw();
-            if (this.state[InputManager_1.Actions.SHOOT] && this.counter >= this.settings.fireDelay && !this.colliding) {
-                this.fire();
-                this.counter = 0;
-            }
-        }
-    }
-    alive() {
-        return !this.colliding;
-    }
-    draw() {
-        this.context.drawImage(this.sprite, Math.floor(this.position.x), Math.floor(this.position.y));
-    }
-    update(state) {
-        this.state = state;
-    }
-    fire() {
-        this.pool.getTwo(Math.floor(this.position.x) + 12, Math.floor(this.position.y), 6, Math.floor(this.position.x) + 66, Math.floor(this.position.y), 6);
-        this.laserSound.play();
-    }
-    isCollideAbleWith(other) {
-        return this.collidesWith.includes(other.type.toString());
-    }
-}
-exports.default = Ship;
-
-
-/***/ }),
-/* 24 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-const Bullet_1 = __webpack_require__(25);
-const Enemy_1 = __webpack_require__(26);
-const CollideAble_1 = __webpack_require__(2);
-class Pool {
-    constructor(assetManager, context, canvasWidth, canvasHeight, maxSize, type, asId, pool = null, game = null) {
-        this.assetManager = assetManager;
-        this.context = context;
-        this.canvasWidth = canvasWidth;
-        this.canvasHeight = canvasHeight;
-        this.maxSize = maxSize;
-        this.type = type;
-        this.assetId = asId;
-        this.pool = [];
-        this.subPool = pool;
-        this.game = game;
-        this.init();
-    }
-    init() {
-        if (this.type === CollideAble_1.EntityType.ENEMY) {
-            let sprite = this.assetManager.getSprite(this.assetId);
-            for (let i = 0; i < this.maxSize; i++) {
-                this.pool[i] = new Enemy_1.default(0, 0, sprite.width, sprite.height, this.canvasWidth, this.canvasHeight, 0, this.context, sprite, this.type, this.subPool, this.game);
-            }
-        }
-        else {
-            for (let i = 0; i < this.maxSize; i++) {
-                let sprite = this.assetManager.getSprite(this.assetId);
-                this.pool[i] = new Bullet_1.default(0, 0, sprite.width, sprite.height, this.canvasWidth, this.canvasHeight, 0, this.context, sprite, this.type);
-            }
-        }
-    }
-    get(x, y, speed) {
-        let lastElement = this.pool[this.maxSize - 1];
-        if (!lastElement.alive) {
-            lastElement.spawn(x, y, speed);
-            this.pool.unshift(this.pool.pop());
-        }
-    }
-    getTwo(x1, y1, speed1, x2, y2, speed2) {
-        if (!this.pool[this.maxSize - 1].alive &&
-            !this.pool[this.maxSize - 2].alive) {
-            this.get(x1, y1, speed1);
-            this.get(x2, y2, speed2);
-        }
-    }
-    render() {
-        for (let i = 0; i < this.pool.length; i++) {
-            if (this.pool[i].alive) {
-                if (this.pool[i].draw()) {
-                    this.pool[i].clear();
-                    this.pool.push((this.pool.splice(i, 1))[0]);
-                }
-            }
-            else {
-                break;
-            }
-        }
-    }
-    clearAll() {
-        this.pool.forEach(object => object.clear());
-    }
-    getPool() {
-        let objects = [];
-        this.pool.forEach(object => {
-            if (object.alive) {
-                objects.push(object);
-            }
-        });
-        return objects;
-    }
-}
-exports.default = Pool;
-
-
-/***/ }),
-/* 25 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-const Vector2_1 = __webpack_require__(1);
-const CollideAble_1 = __webpack_require__(2);
-class Bullet {
-    constructor(x, y, width, height, canvasWidth, canvasHeight, speed, context, sprite, type) {
-        this.position = new Vector2_1.default(x, y);
-        this.speed = speed;
-        this.width = width;
-        this.height = height;
-        this.canvasWidth = canvasWidth;
-        this.canvasHeight = canvasHeight;
-        this.context = context;
-        this.sprite = sprite;
-        this.alive = false;
-        this.type = type;
-        this.colliding = false;
-        this.collidesWith = [];
-        if (this.type === CollideAble_1.EntityType.PLAYER_BULLET) {
-            this.collidesWith.push(CollideAble_1.EntityType.ENEMY);
-        }
-        else if (this.type === CollideAble_1.EntityType.ENEMY_BULLET) {
-            this.collidesWith.push(CollideAble_1.EntityType.PLAYER);
-        }
-    }
-    spawn(x, y, speed) {
-        this.position.set(x, y);
-        this.speed = speed;
-        this.alive = true;
-    }
-    draw() {
-        this.context.clearRect(this.position.x - 1, this.position.y - 1, this.width + 1, this.height + 1);
-        this.position.y -= this.speed;
-        if (this.colliding) {
-            return true;
-        }
-        else if (this.type === CollideAble_1.EntityType.PLAYER_BULLET && this.position.y <= 0 - this.height) {
-            return true;
-        }
-        else if (this.type === CollideAble_1.EntityType.ENEMY_BULLET && this.position.y >= this.canvasHeight) {
-            return true;
-        }
-        else {
-            this.context.drawImage(this.sprite, this.position.x, this.position.y);
-            return false;
-        }
-    }
-    clear() {
-        this.position.set(0, 0);
-        this.speed = 0;
-        this.alive = false;
-        this.colliding = false;
-    }
-    isCollideAbleWith(other) {
-        return this.collidesWith.includes(other.type.toString());
-    }
-}
-exports.default = Bullet;
-
-
-/***/ }),
-/* 26 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-const Vector2_1 = __webpack_require__(1);
-const CollideAble_1 = __webpack_require__(2);
-const AssetManager_1 = __webpack_require__(3);
-const AssetId_1 = __webpack_require__(4);
-class Enemy {
-    constructor(x, y, width, height, canvasWidth, canvasHeight, speed, context, sprite, type, bulletPool, game) {
-        this.position = new Vector2_1.default(x, y);
-        this.width = width;
-        this.height = height;
-        this.canvasWidth = canvasWidth;
-        this.canvasHeight = canvasHeight;
-        this.speed = speed;
-        this.context = context;
-        this.sprite = sprite;
-        this.percentFire = 0.001;
-        this.chance = 0;
-        this.alive = false;
-        this.type = type;
-        this.collidesWith = [];
-        this.collidesWith.push(CollideAble_1.EntityType.PLAYER_BULLET);
-        this.colliding = false;
-        this.bulletPool = bulletPool;
-        this.game = game;
-        this.explosionSound = this.game.assetManager.getSound(AssetId_1.AssetId.EXPLOSION_I, AssetManager_1.AssetType.AUDIO);
-    }
-    spawn(x, y, speed) {
-        this.position.x = x;
-        this.position.y = y;
-        this.speed = speed;
-        this.speedX = 0;
-        this.speedY = speed;
-        this.alive = true;
-        this.leftEdge = this.position.x - 180;
-        this.rightEdge = this.position.x + 180;
-        this.bottomEdge = this.position.y + 280;
-    }
-    draw() {
-        this.context.clearRect(this.position.x - 1, this.position.y, this.width + 1, this.height);
-        this.position.x += this.speedX;
-        this.position.y += this.speedY;
-        if (this.position.x <= this.leftEdge) {
-            this.speedX = this.speed;
-        }
-        else if (this.position.x >= this.rightEdge + this.width) {
-            this.speedX = -this.speed;
-        }
-        else if (this.position.y >= this.bottomEdge) {
-            this.speed = 1.5;
-            this.speedY = 0;
-            this.position.y -= 5;
-            this.speedX = -this.speed;
-        }
-        if (!this.colliding) {
-            this.context.drawImage(this.sprite, this.position.x, this.position.y);
-            this.chance = Math.floor(Math.random() * 101);
-            if (this.chance / 100 < this.percentFire) {
-                this.fire();
-            }
-            return false;
-        }
-        else {
-            this.game.scorePoints();
-            this.explosionSound.play();
-            return true;
-        }
-    }
-    fire() {
-        this.bulletPool.get(Math.floor(this.position.x + this.width / 2), Math.floor(this.position.y + this.height), -5);
-    }
-    clear() {
-        this.position.x = 0;
-        this.position.y = 0;
-        this.speed = 0;
-        this.speedX = 0;
-        this.speedY = 0;
-        this.alive = false;
-        this.colliding = false;
-    }
-    isCollideAbleWith(other) {
-        return this.collidesWith.includes(other.type.toString());
-    }
-}
-exports.default = Enemy;
-
-
-/***/ }),
-/* 27 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-const InputManager_1 = __webpack_require__(0);
-const EventHandler_1 = __webpack_require__(17);
+const InputManager_1 = __webpack_require__(2);
+const EventHandler_1 = __webpack_require__(6);
 class SettingsMenu {
     constructor(element, settings, assetManager, audioManager) {
         this.element = element;
@@ -1653,6 +1575,133 @@ class SettingsMenu {
     }
 }
 exports.default = SettingsMenu;
+
+
+/***/ }),
+/* 23 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+const Sound_1 = __webpack_require__(24);
+class AudioManager {
+    constructor() {
+        this.initAudioContext();
+    }
+    initAudioContext() {
+        try {
+            window.AudioContext = window.AudioContext || webkitAudioContext;
+            this.audioContext = new AudioContext();
+            this.masterGain = this.audioContext.createGain();
+            this.effectsGain = this.audioContext.createGain();
+            this.ambientGain = this.audioContext.createGain();
+            this.masterGain.gain.value = 1;
+            this.masterGain.connect(this.audioContext.destination);
+            this.effectsGain.connect(this.masterGain);
+            this.ambientGain.connect(this.masterGain);
+            this.ambientGain.gain.value = 1;
+            this.effectsGain.gain.value = 1;
+        }
+        catch (e) {
+            console.log('Web Audio API is not supported in this browser');
+        }
+    }
+    decodeAudio(data, id, callback) {
+        this.audioContext.decodeAudioData(data).then(buffer => callback(buffer), error => { console.log('Error with decoding audio data' + error); });
+    }
+    adjustMasterVolume(value) {
+        this.masterGain.gain.value = value;
+    }
+    adjustAmbientVolume(value) {
+        this.ambientGain.gain.value = value;
+    }
+    adjustEffectsVolume(value) {
+        this.effectsGain.gain.value = value;
+    }
+    createSound(buffer, ambient) {
+        return new Sound_1.default(this.audioContext, ambient ? this.ambientGain : this.effectsGain, buffer);
+    }
+}
+exports.default = AudioManager;
+
+
+/***/ }),
+/* 24 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+class Sound {
+    constructor(audioContext, masterGain, buffer) {
+        this.audioContext = audioContext;
+        this.masterGain = masterGain;
+        this.buffer = buffer;
+        this.gainNode = this.audioContext.createGain();
+        this.gainNode.gain.value = 0.2;
+        this.gainNode.connect(this.masterGain);
+        this.playing = false;
+    }
+    play(loop = false) {
+        this.source = this.audioContext.createBufferSource();
+        this.source.buffer = this.buffer;
+        this.source.loop = loop;
+        this.source.connect(this.gainNode);
+        this.source.start(0);
+    }
+    stop() {
+        this.source.stop(0);
+    }
+}
+exports.default = Sound;
+
+
+/***/ }),
+/* 25 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+class GameLoop {
+    constructor(game) {
+        this.game = game;
+        this.lastTime = null;
+    }
+    start() {
+        this.game.init();
+        this.game.state.running = true;
+        this.frameId = requestAnimationFrame(time => this.loop(time));
+    }
+    stop() {
+        this.game.state.running = false;
+        if (this.frameId) {
+            cancelAnimationFrame(this.frameId);
+        }
+    }
+    restart() {
+        this.stop();
+        this.start();
+    }
+    togglePause() {
+        this.game.state.paused = !this.game.state.paused;
+    }
+    loop(time) {
+        if (this.game.state.running) {
+            if (!this.game.state.paused) {
+                if (this.lastTime !== null) {
+                    const diff = time - this.lastTime;
+                    this.game.update(diff / 1000);
+                }
+                this.lastTime = time;
+                this.game.render();
+                this.frameId = requestAnimationFrame(time => this.loop(time));
+            }
+        }
+    }
+}
+exports.default = GameLoop;
 
 
 /***/ })

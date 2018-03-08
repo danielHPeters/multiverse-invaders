@@ -60,58 +60,21 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 48);
+/******/ 	return __webpack_require__(__webpack_require__.s = 26);
 /******/ })
 /************************************************************************/
 /******/ ({
 
-/***/ 19:
+/***/ 26:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var Direction;
-(function (Direction) {
-    Direction["NORTH"] = "North";
-    Direction["EAST"] = "East";
-    Direction["SOUTH"] = "South";
-    Direction["WEST"] = "West";
-})(Direction = exports.Direction || (exports.Direction = {}));
-var Status;
-(function (Status) {
-    Status["START"] = "start";
-    Status["VALID"] = "valid";
-    Status["INVALID"] = "invalid";
-    Status["BLOCKED"] = "blocked";
-    Status["UNKNOWN"] = "unknown";
-    Status["OBSTACLE"] = "obstacle";
-    Status["EMPTY"] = "empty";
-    Status["VISITED"] = "visited";
-    Status["GOAL"] = "goal";
-})(Status = exports.Status || (exports.Status = {}));
-class Location {
-    constructor(position, path = [], status = Status.UNKNOWN) {
-        this.position = position;
-        this.path = path;
-        this.status = status;
-    }
-}
-exports.default = Location;
-
-
-/***/ }),
-
-/***/ 48:
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-const Location_1 = __webpack_require__(19);
+const Location_1 = __webpack_require__(7);
 const Point_1 = __webpack_require__(8);
-const PathFinding_1 = __webpack_require__(49);
-const Visualization_1 = __webpack_require__(50);
+const PathFinding_1 = __webpack_require__(27);
+const Visualization_1 = __webpack_require__(28);
 const algorithm = new PathFinding_1.default();
 algorithm.init(8, 4);
 algorithm.grid[0][0] = Location_1.Status.START;
@@ -128,13 +91,13 @@ gui.init();
 
 /***/ }),
 
-/***/ 49:
+/***/ 27:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-const Location_1 = __webpack_require__(19);
+const Location_1 = __webpack_require__(7);
 const Point_1 = __webpack_require__(8);
 class PathFinding {
     constructor() {
@@ -222,7 +185,7 @@ exports.default = PathFinding;
 
 /***/ }),
 
-/***/ 50:
+/***/ 28:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -253,6 +216,43 @@ class Visualisation {
     }
 }
 exports.default = Visualisation;
+
+
+/***/ }),
+
+/***/ 7:
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var Direction;
+(function (Direction) {
+    Direction["NORTH"] = "North";
+    Direction["EAST"] = "East";
+    Direction["SOUTH"] = "South";
+    Direction["WEST"] = "West";
+})(Direction = exports.Direction || (exports.Direction = {}));
+var Status;
+(function (Status) {
+    Status["START"] = "start";
+    Status["VALID"] = "valid";
+    Status["INVALID"] = "invalid";
+    Status["BLOCKED"] = "blocked";
+    Status["UNKNOWN"] = "unknown";
+    Status["OBSTACLE"] = "obstacle";
+    Status["EMPTY"] = "empty";
+    Status["VISITED"] = "visited";
+    Status["GOAL"] = "goal";
+})(Status = exports.Status || (exports.Status = {}));
+class Location {
+    constructor(position, path = [], status = Status.UNKNOWN) {
+        this.position = position;
+        this.path = path;
+        this.status = status;
+    }
+}
+exports.default = Location;
 
 
 /***/ }),

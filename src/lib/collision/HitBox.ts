@@ -1,7 +1,13 @@
 import Vector2 from '../math/Vector2'
-import CollideAble, { EntityType } from '../../game/interfaces/CollideAble'
+import ICollideAble, { EntityType } from '../interfaces/ICollideAble'
 
-export default class HitBox implements CollideAble {
+/**
+ * Hitbox used for defining collision boundaries.
+ *
+ * @author Daniel Peters
+ * @version 1.0
+ */
+export default class HitBox implements ICollideAble {
   type: EntityType
   collidesWith
   colliding: boolean
@@ -26,7 +32,12 @@ export default class HitBox implements CollideAble {
     this.collidesWith.push(EntityType.PLAYER)
   }
 
-  isCollideAbleWith (other: CollideAble): boolean {
+  /**
+   *
+   * @param {ICollideAble} other
+   * @returns {boolean}
+   */
+  isCollideAbleWith (other: ICollideAble): boolean {
     return this.collidesWith.includes(other.type.toString())
   }
 }

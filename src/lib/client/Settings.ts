@@ -1,7 +1,7 @@
 import { Actions } from './InputManager'
 
 /**
- * Settings class for game applications.
+ * Settings class for models applications.
  *
  * @author Daniel Peters
  * @version 1.0

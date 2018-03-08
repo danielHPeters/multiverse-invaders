@@ -1,5 +1,5 @@
 import HitBox from './HitBox'
-import Drawable from '../../game/interfaces/Drawable'
+import ICollideAble from '../interfaces/ICollideAble'
 
 /**
  * QuadTree class used to optimize collision checking.
@@ -12,7 +12,7 @@ export default class QuadTree {
   maxObjects: number
   maxLevels: number
   hitBox: HitBox
-  objects: Drawable[]
+  objects: ICollideAble[]
   nodes: QuadTree[]
 
   /**
@@ -31,7 +31,7 @@ export default class QuadTree {
   }
 
   /**
-   * Clears the QuadTree and its sub nodes from all game objects.
+   * Clears the QuadTree and its sub nodes from all models objects.
    */
   clear (): void {
     this.objects = []

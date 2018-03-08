@@ -1,11 +1,11 @@
-import Drawable from '../interfaces/Drawable'
-import Vector2 from '../../lib/math/Vector2'
-import CollideAble, { EntityType } from '../interfaces/CollideAble'
+import IDrawable from '../lib/interfaces/IDrawable'
+import Vector2 from '../lib/math/Vector2'
+import ICollideAble, { EntityType } from '../lib/interfaces/ICollideAble'
 
 /**
  *
  */
-export default class Bullet implements Drawable, CollideAble {
+export default class Bullet implements IDrawable, ICollideAble {
   position: Vector2
   speed: number
   width: number
@@ -89,7 +89,7 @@ export default class Bullet implements Drawable, CollideAble {
     this.colliding = false
   }
 
-  isCollideAbleWith (other: CollideAble): boolean {
+  isCollideAbleWith (other: ICollideAble): boolean {
     return this.collidesWith.includes(other.type.toString())
   }
 }

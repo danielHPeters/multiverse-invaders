@@ -1,6 +1,6 @@
-import Entity from '../model/Entity'
-import QuadTree from '../lib/collision/QuadTree'
+import QuadTree from '../collision/QuadTree'
 import ICollideAble from './ICollideAble'
+import Entity from '../entity/Entity'
 
 /**
  * Game state interface.

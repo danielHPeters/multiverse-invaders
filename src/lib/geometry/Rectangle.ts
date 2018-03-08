@@ -12,6 +12,13 @@ export default class Rectangle {
   width: number
   height: number
 
+  /**
+   *
+   * @param {number} left
+   * @param {number} top
+   * @param {number} width
+   * @param {number} height
+   */
   constructor (left: number, top: number, width: number, height: number) {
     this.left = left
     this.top = top
@@ -21,6 +28,13 @@ export default class Rectangle {
     this.bottom = this.top + this.height
   }
 
+  /**
+   *
+   * @param {number} left
+   * @param {number} top
+   * @param {number} width
+   * @param {number} height
+   */
   set (left: number, top: number, width?: number, height?: number): void {
     this.left = left
     this.top = top
@@ -30,6 +44,11 @@ export default class Rectangle {
     this.bottom = (this.top + this.height)
   }
 
+  /**
+   *
+   * @param other
+   * @returns {boolean}
+   */
   within (other): boolean {
     return (other.left <= this.left &&
       other.right >= this.right &&
@@ -37,6 +56,11 @@ export default class Rectangle {
       other.bottom >= this.bottom)
   }
 
+  /**
+   *
+   * @param other
+   * @returns {boolean}
+   */
   overlaps (other): boolean {
     return (this.left < other.right &&
       other.left < this.right &&

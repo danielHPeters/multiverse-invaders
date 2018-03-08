@@ -3,14 +3,10 @@ const path = require('path')
 
 module.exports = {
   entry: {
-    'multiverseInvaders': './src/game/app.ts',
-    'tileSetMap': './src/lib/tileset/test.ts',
+    'multiverseInvaders': './src/app.ts',
     'pathfinding': './src/algorithm/pathfinding/app.ts',
-    'tetris': './src/tetris/game.ts',
-    'multiverseInvaders.min': './src/game/app.ts',
-    'tileSetMap.min': './src/lib/tileset/test.ts',
-    'pathfinding.min': './src/algorithm/pathfinding/app.ts',
-    'tetris.min': './src/tetris/game.ts'
+    'multiverseInvaders.min': './src/app.ts',
+    'pathfinding.min': './src/algorithm/pathfinding/app.ts'
   },
   devtool: 'source-map',
   output: {

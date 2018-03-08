@@ -1,11 +1,11 @@
-import Drawable from '../interfaces/Drawable'
-import Vector2 from '../../lib/math/Vector2'
-import Pool from '../structures/Pool'
-import CollideAble, { EntityType } from '../interfaces/CollideAble'
-import SpaceGame from '../SpaceGame'
-import { AssetType } from '../../lib/client/AssetManager'
-import Sound from '../../lib/audio/Sound'
-import { AssetId } from '../../enum/AssetId'
+import IDrawable from '../lib/interfaces/IDrawable'
+import Vector2 from '../lib/math/Vector2'
+import Pool from './Pool'
+import ICollideAble, { EntityType } from '../lib/interfaces/ICollideAble'
+import SpaceGame from '../application/SpaceGame'
+import { AssetType } from '../lib/client/AssetManager'
+import Sound from '../lib/audio/Sound'
+import { AssetId } from '../enum/AssetId'
 
 /**
  * Enemy ship class.
@@ -13,7 +13,7 @@ import { AssetId } from '../../enum/AssetId'
  * @author Daniel Peters
  * @version 1.0
  */
-export default class Enemy implements Drawable, CollideAble {
+export default class Enemy implements IDrawable, ICollideAble {
   position: Vector2
   speed: number
   speedX: number
@@ -147,7 +147,7 @@ export default class Enemy implements Drawable, CollideAble {
    *
    * @param {CollideAble} other
    */
-  isCollideAbleWith (other: CollideAble): boolean {
+  isCollideAbleWith (other: ICollideAble): boolean {
     return this.collidesWith.includes(other.type.toString())
   }
 }

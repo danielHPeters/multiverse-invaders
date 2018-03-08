@@ -1,4 +1,4 @@
-import IGameLoop from '../lib/interfaces/interfaces/IGameLoop'
+import IGameLoop from '../lib/interfaces/IGameLoop'
 import IGame from '../lib/interfaces/IGame'
 
 /**

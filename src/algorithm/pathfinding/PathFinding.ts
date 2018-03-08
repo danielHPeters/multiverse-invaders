@@ -13,6 +13,11 @@ export default class PathFinding {
     this.grid = []
   }
 
+  /**
+   *
+   * @param {number} height
+   * @param {number} width
+   */
   public init (height: number, width: number): void {
     for (let i = 0; i < height; i++) {
       this.grid[i] = []
@@ -22,6 +27,11 @@ export default class PathFinding {
     }
   }
 
+  /**
+   *
+   * @param {Point} startPoint
+   * @returns {Location | boolean}
+   */
   public findShortestPath (startPoint: Point): Location | boolean {
     let startLocation = new Location(startPoint, [], Status.START)
     let queue = [startLocation]
@@ -47,6 +57,12 @@ export default class PathFinding {
     return found
   }
 
+  /**
+   *
+   * @param {Location} location
+   * @param grid
+   * @returns {Status}
+   */
   private getLocationStatus (location: Location, grid): Status {
     let gridSize = grid.length
     let top = location.position.y
@@ -65,6 +81,13 @@ export default class PathFinding {
     }
   }
 
+  /**
+   *
+   * @param {Location} currentLocation
+   * @param {Direction} direction
+   * @param grid
+   * @returns {Location}
+   */
   private exploreDirection (currentLocation: Location, direction: Direction, grid): Location {
     let newPath = currentLocation.path.slice()
     let x = currentLocation.position.x

@@ -1,7 +1,7 @@
 import Vector2 from '../lib/math/Vector2'
 
 /**
- * Player snake class for snake game.
+ * Player snake class for snake models.
  *
  * @author Daniel Peters
  * @version 1.0

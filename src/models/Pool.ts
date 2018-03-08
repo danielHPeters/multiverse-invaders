@@ -1,10 +1,10 @@
-import AssetManager  from '../../lib/client/AssetManager'
-import Bullet from '../entities/Bullet'
-import Enemy from '../entities/Enemy'
-import SpaceGame from '../SpaceGame'
-import { EntityType } from '../interfaces/CollideAble'
-import Drawable from '../interfaces/Drawable'
-import { AssetId } from '../../enum/AssetId'
+import AssetManager from '../lib/client/AssetManager'
+import Bullet from './Bullet'
+import Enemy from './Enemy'
+import SpaceGame from '../application/SpaceGame'
+import { EntityType } from '../lib/interfaces/ICollideAble'
+import IDrawable from '../lib/interfaces/IDrawable'
+import { AssetId } from '../enum/AssetId'
 
 /**
  *
@@ -140,7 +140,7 @@ export default class Pool {
     this.pool.forEach(object => object.clear())
   }
 
-  getPool (): Drawable[] {
+  getPool (): IDrawable[] {
     let objects = []
     this.pool.forEach(object => {
       if (object.alive) {

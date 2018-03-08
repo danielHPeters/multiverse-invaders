@@ -1,8 +1,8 @@
-import Drawable from '../interfaces/Drawable'
-import Vector2 from '../../lib/math/Vector2'
-import { EntityType } from '../interfaces/CollideAble'
+import IDrawable from '../lib/interfaces/IDrawable'
+import Vector2 from '../lib/math/Vector2'
+import { EntityType } from '../lib/interfaces/ICollideAble'
 
-export default class Background implements Drawable {
+export default class Background implements IDrawable {
   position: Vector2
   speed: number
   width: number

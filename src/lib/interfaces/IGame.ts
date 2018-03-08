@@ -8,11 +8,7 @@ import ICollisionManager from './ICollisionManager'
  * @version 1.0
  */
 export default interface IGame {
-  /**
-   *
-   */
   state: IGameState
-
   collisionManager: ICollisionManager
 
   /**

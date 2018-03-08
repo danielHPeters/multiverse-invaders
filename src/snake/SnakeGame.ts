@@ -1,12 +1,16 @@
 import IGame from '../lib/interfaces/IGame'
+import IGameState from '../lib/interfaces/IGameState'
+import ICollisionManager from '../lib/interfaces/ICollisionManager'
 
 /**
- * Snake game.
+ * Snake models.
  *
  * @author Daniel Peters
  * @version 1.0
  */
 export class SnakeGame implements IGame {
+  state: IGameState
+  collisionManager: ICollisionManager
   canvas: HTMLCanvasElement
   context: CanvasRenderingContext2D
   playing: boolean
@@ -16,6 +20,9 @@ export class SnakeGame implements IGame {
     this.canvas = canvas
     this.context = this.canvas.getContext('2d')
     this.playing = false
+  }
+
+  init (): void {
   }
 
   start (): void {

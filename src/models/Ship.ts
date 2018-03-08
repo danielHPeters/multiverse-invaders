@@ -1,17 +1,17 @@
-import Drawable from '../interfaces/Drawable'
-import Vector2 from '../../lib/math/Vector2'
-import Pool from '../structures/Pool'
-import Observer from '../../lib/observer/Observer'
-import CollideAble, { EntityType } from '../interfaces/CollideAble'
-import { Actions } from '../../lib/client/InputManager'
-import AssetManager, { AssetType } from '../../lib/client/AssetManager'
-import Sound from '../../lib/audio/Sound'
-import { AssetId } from '../../enum/AssetId'
+import IDrawable from '../lib/interfaces/IDrawable'
+import Vector2 from '../lib/math/Vector2'
+import Pool from './Pool'
+import Observer from '../lib/observer/Observer'
+import ICollideAble, { EntityType } from '../lib/interfaces/ICollideAble'
+import { Actions } from '../lib/client/InputManager'
+import AssetManager, { AssetType } from '../lib/client/AssetManager'
+import Sound from '../lib/audio/Sound'
+import { AssetId } from '../enum/AssetId'
 
 /**
  *
  */
-export default class Ship implements Drawable, Observer, CollideAble {
+export default class Ship implements IDrawable, Observer, ICollideAble {
   position: Vector2
   speed: number
   acceleration: Vector2
@@ -148,7 +148,7 @@ export default class Ship implements Drawable, Observer, CollideAble {
    * @param {CollideAble} other
    * @returns {boolean}
    */
-  isCollideAbleWith (other: CollideAble): boolean {
+  isCollideAbleWith (other: ICollideAble): boolean {
     return this.collidesWith.includes(other.type.toString())
   }
 }

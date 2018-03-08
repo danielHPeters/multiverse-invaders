@@ -1,12 +1,12 @@
-import Background from './entities/Background'
+import Background from '../models/Background'
 import AssetManager, { AssetType } from '../lib/client/AssetManager'
 import InputManager, { Actions } from '../lib/client/InputManager'
-import Ship from './entities/Ship'
-import Pool from './structures/Pool'
+import Ship from '../models/Ship'
+import Pool from '../models/Pool'
 import QuadTree from '../lib/collision/QuadTree'
 import HitBox from '../lib/collision/HitBox'
 import Settings from '../lib/client/Settings'
-import { EntityType } from './interfaces/CollideAble'
+import { EntityType } from '../lib/interfaces/ICollideAble'
 import CollisionManager from '../lib/collision/CollisionManager'
 import Sound from '../lib/audio/Sound'
 import Observer from '../lib/observer/Observer'
@@ -16,7 +16,7 @@ import IGameState from '../lib/interfaces/IGameState'
 import ICollisionManager from '../lib/interfaces/ICollisionManager'
 
 /**
- * Space game main class.
+ * Space models main class.
  *
  * @author Daniel Peters
  * @version 1.0
