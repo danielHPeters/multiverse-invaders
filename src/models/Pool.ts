@@ -1,49 +1,47 @@
 import AssetManager from '../lib/client/AssetManager'
 import Bullet from './Bullet'
 import Enemy from './Enemy'
-import SpaceGame from '../application/SpaceGame'
 import { EntityType } from '../lib/interfaces/ICollideAble'
-import IDrawable from '../lib/interfaces/IDrawable'
 import { AssetId } from '../enum/AssetId'
+import Settings from '../config/Settings'
+import IRenderable from '../lib/interfaces/IRenderable'
+import { ContextId } from '../enum/ContextId'
+import IMovable from '../lib/interfaces/IMovable'
+import Vector2 from '../lib/math/Vector2'
 
 /**
  *
  */
-export default class Pool {
+export default class Pool implements IRenderable, IMovable {
+  velocity: Vector2
+  acceleration: Vector2
+  contextId: ContextId
   assetManager: AssetManager
-  context: any
-  canvasWidth: number
-  canvasHeight: number
   maxSize: number
   type: EntityType
   assetId: AssetId
   pool: any[]
   subPool: Pool
-  game: SpaceGame
+  settings: Settings
 
   /**
    *
    * @param {AssetManager} assetManager
-   * @param {a} context
-   * @param {number} canvasWidth
-   * @param {number} canvasHeight
    * @param {number} maxSize
-   * @param {string} type
+   * @param {EntityType} type
    * @param {AssetId} asId
+   * @param {Settings} settings
    * @param {Pool} pool
-   * @param {SpaceGame} game
    */
-  constructor (assetManager: AssetManager, context: any, canvasWidth: number, canvasHeight: number, maxSize: number, type: EntityType, asId: AssetId, pool: Pool = null, game: SpaceGame = null) {
+  constructor (assetManager: AssetManager, maxSize: number, type: EntityType, asId: AssetId, settings: Settings, pool: Pool = null) {
     this.assetManager = assetManager
-    this.context = context
-    this.canvasWidth = canvasWidth
-    this.canvasHeight = canvasHeight
     this.maxSize = maxSize
     this.type = type
     this.assetId = asId
     this.pool = []
     this.subPool = pool
-    this.game = game
+    this.settings = settings
+    this.contextId = ContextId.MAIN
     this.init()
   }
 
@@ -51,39 +49,14 @@ export default class Pool {
    *
    */
   init (): void {
+    let sprite = this.assetManager.getSprite(this.assetId)
     if (this.type === EntityType.ENEMY) {
-      let sprite = this.assetManager.getSprite(this.assetId)
       for (let i = 0; i < this.maxSize; i++) {
-        this.pool[i] = new Enemy(
-          0,
-          0,
-          sprite.width,
-          sprite.height,
-          this.canvasWidth,
-          this.canvasHeight,
-          0,
-          this.context,
-          sprite,
-          this.type,
-          this.subPool,
-          this.game
-        )
+        this.pool[i] = new Enemy(0, 0, sprite.width, sprite.height, 0, sprite, this.type, this.subPool, this.settings)
       }
     } else {
       for (let i = 0; i < this.maxSize; i++) {
-        let sprite = this.assetManager.getSprite(this.assetId)
-        this.pool[i] = new Bullet(
-          0,
-          0,
-          sprite.width,
-          sprite.height,
-          this.canvasWidth,
-          this.canvasHeight,
-          0,
-          this.context,
-          sprite,
-          this.type
-        )
+        this.pool[i] = new Bullet(0, 0, sprite.width, sprite.height, 0, sprite, this.type, this.settings)
       }
     }
   }
@@ -122,25 +95,28 @@ export default class Pool {
   /**
    *
    */
-  render (): void {
+  render (ctx: CanvasRenderingContext2D): void {
     for (let i = 0; i < this.pool.length; i++) {
       // Only draw until we find a bullet that is not alive
       if (this.pool[i].alive) {
-        if (this.pool[i].draw()) {
-          this.pool[i].clear()
-          this.pool.push((this.pool.splice(i, 1))[0])
-        }
+        this.pool[i].render(ctx)
+        this.pool[i].reset()
+        this.pool.push((this.pool.splice(i, 1))[0])
       } else {
         break
       }
     }
   }
 
-  clearAll (): void {
-    this.pool.forEach(object => object.clear())
+  move (dt: number): void {
+    this.pool.forEach(object => object.move(dt))
   }
 
-  getPool (): IDrawable[] {
+  clearAll (): void {
+    this.pool.forEach(object => object.reset())
+  }
+
+  getPool (): IMovable[] {
     let objects = []
     this.pool.forEach(object => {
       if (object.alive) {
@@ -148,5 +124,9 @@ export default class Pool {
       }
     })
     return objects
+  }
+
+  clear (ctx: CanvasRenderingContext2D): void {
+    this.pool.forEach(object => object.clear(ctx))
   }
 }

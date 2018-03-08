@@ -1,12 +1,13 @@
 import AssetManager, { AssetType } from './lib/client/AssetManager'
 import SpaceGame from './application/SpaceGame'
 import InputManager from './lib/client/InputManager'
-import Settings from './lib/client/Settings'
+import Settings from './config/Settings'
 import SettingsMenu from './lib/client/SettingsMenu'
 import EventHandler from './lib/event/EventHandler'
 import { AssetId } from './enum/AssetId'
 import AudioManager from './lib/client/AudioManager'
 import GameLoop from './application/GameLoop'
+import InvadersState from './application/InvadersState'
 
 const audioManager = new AudioManager()
 const assetManager = new AssetManager(audioManager)
@@ -15,7 +16,7 @@ const canvases = {
   ship: document.getElementById('ship') as HTMLCanvasElement,
   main: document.getElementById('main') as HTMLCanvasElement
 }
-const settings = new Settings()
+const settings = new Settings(canvases.background)
 const inputManager = new InputManager(settings)
 const settingsMenu = new SettingsMenu(document.getElementById('settings-menu'), settings, assetManager, audioManager)
 assetManager.queueDownload(AssetId.BACKGROUND, 'assets/textures/background.png', AssetType.SPRITE)
@@ -28,7 +29,8 @@ assetManager.queueDownload(AssetId.LASER, 'assets/audio/laser.wav', AssetType.AU
 assetManager.queueDownload(AssetId.EXPLOSION_I, 'assets/audio/explosion.wav', AssetType.AUDIO)
 assetManager.queueDownload(AssetId.GAME_OVER, 'assets/audio/game_over.wav', AssetType.AUDIO)
 assetManager.downloadAll(() => {
-  const game = new SpaceGame(assetManager, inputManager, settings, canvases)
+  const state = new InvadersState(settings, inputManager, assetManager)
+  const game = new SpaceGame(state, assetManager, inputManager, settings, canvases)
   const loop = new GameLoop(game)
   settingsMenu.init()
   let gameOver = document.getElementById('game-over')
@@ -41,9 +43,10 @@ assetManager.downloadAll(() => {
     event.preventDefault()
     return false
   })
-  EventHandler.registerOnElement(gameOver, events, () => game.restart())
+  EventHandler.registerOnElement(gameOver, events, () => loop.restart())
   EventHandler.registerOnElement(set, events, () => {
     settingsMenu.toggleShow()
-    game.togglePause()
+    loop.togglePause()
   })
+  loop.start()
 })

@@ -1,4 +1,5 @@
-import { Actions } from './InputManager'
+import { Actions } from '../lib/client/InputManager'
+import Dimension from '../lib/geometry/Dimension'
 
 /**
  * Settings class for models applications.
@@ -10,8 +11,9 @@ export default class Settings {
   keyBoard
   player
   audio
+  gameSize: Dimension
 
-  constructor () {
+  constructor (canvas: HTMLCanvasElement) {
     this.keyBoard = {
       'w': Actions.UP,
       's': Actions.DOWN,
@@ -23,16 +25,17 @@ export default class Settings {
       'e': Actions.ROTATE_RIGHT
     }
     this.player = {
-      maxVelocity: 15,
+      maxVelocity: 150,
       fireDelay: 15,
-      friction: 0.7,
-      acceleration: 3
+      friction: 0.9,
+      acceleration: 50
     }
     this.audio = {
       master: 1,
       ambient: 1,
       effects: 1
     }
+    this.gameSize = new Dimension(canvas.width, canvas.height)
   }
 
   findKey (value): string {

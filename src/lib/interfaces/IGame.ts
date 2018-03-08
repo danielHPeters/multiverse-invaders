@@ -25,5 +25,10 @@ export default interface IGame {
   /**
    *
    */
+  clear (): void
+
+  /**
+   *
+   */
   render (): void
 }

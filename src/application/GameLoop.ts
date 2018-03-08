@@ -58,15 +58,16 @@ export default class GameLoop implements IGameLoop {
    */
   public loop (time: number): void {
     if (this.game.state.running) {
-      if (!this.game.state.paused) {
-        if (this.lastTime !== null) {
-          const diff = time - this.lastTime
+      this.game.clear()
+      if (this.lastTime !== null) {
+        const diff = time - this.lastTime
+        if (!this.game.state.paused) {
           this.game.update(diff / 1000)
         }
-        this.lastTime = time
-        this.game.render()
-        this.frameId = requestAnimationFrame(time => this.loop(time))
       }
+      this.lastTime = time
+      this.game.render()
+      this.frameId = requestAnimationFrame(time => this.loop(time))
     }
   }
 }

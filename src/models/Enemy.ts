@@ -1,11 +1,14 @@
-import IDrawable from '../lib/interfaces/IDrawable'
 import Vector2 from '../lib/math/Vector2'
 import Pool from './Pool'
 import ICollideAble, { EntityType } from '../lib/interfaces/ICollideAble'
 import SpaceGame from '../application/SpaceGame'
-import { AssetType } from '../lib/client/AssetManager'
 import Sound from '../lib/audio/Sound'
-import { AssetId } from '../enum/AssetId'
+import Settings from '../config/Settings'
+import IRenderable from '../lib/interfaces/IRenderable'
+import IMovable from '../lib/interfaces/IMovable'
+import Entity from '../lib/entity/Entity'
+import Dimension from '../lib/geometry/Dimension'
+import { ContextId } from '../enum/ContextId'
 
 /**
  * Enemy ship class.
@@ -13,19 +16,16 @@ import { AssetId } from '../enum/AssetId'
  * @author Daniel Peters
  * @version 1.0
  */
-export default class Enemy implements IDrawable, ICollideAble {
-  position: Vector2
+export default class Enemy extends Entity implements IRenderable, IMovable, ICollideAble {
+  contextId: ContextId
+  velocity: Vector2
+  acceleration: Vector2
   speed: number
   speedX: number
   speedY: number
   leftEdge: number
   rightEdge: number
   bottomEdge: number
-  width: number
-  height: number
-  canvasWidth: number
-  canvasHeight: number
-  context: any
   sprite: any
   percentFire: number
   chance: number
@@ -34,7 +34,6 @@ export default class Enemy implements IDrawable, ICollideAble {
   collidesWith
   type: EntityType
   colliding: boolean
-  game: SpaceGame
   explosionSound: Sound
 
   /**
@@ -43,23 +42,15 @@ export default class Enemy implements IDrawable, ICollideAble {
    * @param {number} y
    * @param {number} width
    * @param {number} height
-   * @param {number} canvasWidth
-   * @param {number} canvasHeight
    * @param {number} speed
-   * @param {any} context
-   * @param {any} sprite
-   * @param {string} type
+   * @param sprite
+   * @param {EntityType} type
    * @param {Pool} bulletPool
-   * @param {SpaceGame} game
+   * @param {Settings} settings
    */
-  constructor (x: number, y: number, width: number, height: number, canvasWidth: number, canvasHeight: number, speed: number, context, sprite, type: EntityType, bulletPool: Pool, game: SpaceGame) {
-    this.position = new Vector2(x, y)
-    this.width = width
-    this.height = height
-    this.canvasWidth = canvasWidth
-    this.canvasHeight = canvasHeight
+  constructor (x: number, y: number, width: number, height: number, speed: number, sprite, type: EntityType, bulletPool: Pool, settings: Settings) {
+    super(new Vector2(x, y), new Dimension(width, height), settings)
     this.speed = speed
-    this.context = context
     this.sprite = sprite
     this.percentFire = 0.001
     this.chance = 0
@@ -69,8 +60,6 @@ export default class Enemy implements IDrawable, ICollideAble {
     this.collidesWith.push(EntityType.PLAYER_BULLET)
     this.colliding = false
     this.bulletPool = bulletPool
-    this.game = game
-    this.explosionSound = this.game.assetManager.getSound(AssetId.EXPLOSION_I, AssetType.AUDIO)
   }
 
   /**
@@ -91,49 +80,51 @@ export default class Enemy implements IDrawable, ICollideAble {
     this.bottomEdge = this.position.y + 280
   }
 
-  /**
-   *
-   */
-  draw () {
-    this.context.clearRect(this.position.x - 1, this.position.y, this.width + 1, this.height)
-    this.position.x += this.speedX
-    this.position.y += this.speedY
-    if (this.position.x <= this.leftEdge) {
-      this.speedX = this.speed
-    } else if (this.position.x >= this.rightEdge + this.width) {
-      this.speedX = -this.speed
-    } else if (this.position.y >= this.bottomEdge) {
-      this.speed = 1.5
-      this.speedY = 0
-      this.position.y -= 5
-      this.speedX = -this.speed
-    }
+  clear (ctx: CanvasRenderingContext2D): void {
+    ctx.clearRect(this.position.x - 1, this.position.y, this.dimension.width + 1, this.dimension.height)
+  }
+
+  move (dt: number): void {
     if (!this.colliding) {
-      this.context.drawImage(this.sprite, this.position.x, this.position.y)
-      // Enemy has a chance to shoot every movement
+      this.position.x += this.speedX
+      this.position.y += this.speedY
+      if (this.position.x <= this.leftEdge) {
+        this.speedX = this.speed
+      } else if (this.position.x >= this.rightEdge + this.dimension.width) {
+        this.speedX = -this.speed
+      } else if (this.position.y >= this.bottomEdge) {
+        this.speed = 1.5
+        this.speedY = 0
+        this.position.y -= 5
+        this.speedX = -this.speed
+      }
       this.chance = Math.floor(Math.random() * 101)
       if (this.chance / 100 < this.percentFire) {
         this.fire()
       }
-      return false
     } else {
-      this.game.scorePoints()
-      this.explosionSound.play()
-      return true
+      // this.game.scorePoints()
     }
+  }
+
+  /**
+   *
+   */
+  render (ctx: CanvasRenderingContext2D): void {
+    ctx.drawImage(this.sprite, this.position.x, this.position.y)
   }
 
   /**
    *
    */
   fire (): void {
-    this.bulletPool.get(Math.floor(this.position.x + this.width / 2), Math.floor(this.position.y + this.height), -5)
+    this.bulletPool.get(Math.floor(this.position.x + this.dimension.width / 2), Math.floor(this.position.y + this.dimension.height), -5)
   }
 
   /**
    *
    */
-  clear (): void {
+  reset (): void {
     this.position.x = 0
     this.position.y = 0
     this.speed = 0
@@ -145,7 +136,7 @@ export default class Enemy implements IDrawable, ICollideAble {
 
   /**
    *
-   * @param {CollideAble} other
+   * @param {ICollideAble} other
    */
   isCollideAbleWith (other: ICollideAble): boolean {
     return this.collidesWith.includes(other.type.toString())

@@ -1,4 +1,3 @@
-import IDrawable from '../lib/interfaces/IDrawable'
 import Vector2 from '../lib/math/Vector2'
 import Pool from './Pool'
 import Observer from '../lib/observer/Observer'
@@ -7,19 +6,19 @@ import { Actions } from '../lib/client/InputManager'
 import AssetManager, { AssetType } from '../lib/client/AssetManager'
 import Sound from '../lib/audio/Sound'
 import { AssetId } from '../enum/AssetId'
+import Entity from '../lib/entity/Entity'
+import Settings from '../config/Settings'
+import IMovable from '../lib/interfaces/IMovable'
+import IRenderable from '../lib/interfaces/IRenderable'
+import Dimension from '../lib/geometry/Dimension'
+import { ContextId } from '../enum/ContextId'
 
 /**
  *
  */
-export default class Ship implements IDrawable, Observer, ICollideAble {
-  position: Vector2
+export default class Ship extends Entity implements IRenderable, IMovable, Observer, ICollideAble {
   speed: number
   acceleration: Vector2
-  width: number
-  height: number
-  canvasWidth: number
-  canvasHeight: number
-  context: any
   sprite: any
   pool: Pool
   counter: number
@@ -30,13 +29,13 @@ export default class Ship implements IDrawable, Observer, ICollideAble {
   state
   maxTop: number
   startPosition
-  settings
+  settings: Settings
   laserSound: Sound
+  assetManager: AssetManager
+  contextId: ContextId
 
   /**
    *
-   * @param {number} x
-   * @param {number} y
    * @param {number} width
    * @param {number} height
    * @param {number} canvasWidth
@@ -46,16 +45,11 @@ export default class Ship implements IDrawable, Observer, ICollideAble {
    * @param {Pool} pool
    * @param settings
    */
-  constructor (x: number, y: number, width: number, height: number, canvasWidth: number, canvasHeight: number, context: any, assetManager: AssetManager, pool: Pool, settings) {
-    this.position = new Vector2(x, y)
-    this.startPosition = new Vector2(x, y)
+  constructor (width: number, height: number, assetManager: AssetManager, pool: Pool, settings: Settings) {
+    super(new Vector2(0, 0), new Dimension(width, height), settings)
+    this.startPosition = new Vector2(0, 0)
     this.acceleration = new Vector2(0, 0)
     this.velocity = new Vector2(0, 0)
-    this.width = width
-    this.height = height
-    this.canvasWidth = canvasWidth
-    this.canvasHeight = canvasHeight
-    this.context = context
     this.sprite = assetManager.getSprite(AssetId.PLAYER)
     this.type = EntityType.PLAYER
     this.pool = pool
@@ -65,58 +59,64 @@ export default class Ship implements IDrawable, Observer, ICollideAble {
     this.colliding = false
     this.state = {}
     this.settings = settings
-    this.maxTop = Math.floor(this.canvasHeight / 4 * 3)
+    this.assetManager = assetManager
+    this.maxTop = Math.floor(this.settings.gameSize.height / 4 * 3)
     this.laserSound = assetManager.getSound(AssetId.LASER, AssetType.AUDIO)
+    this.contextId = ContextId.SHIP
   }
 
-  reset (): void {
-    this.position.setVector(this.startPosition)
+  init (): void {
+    const startX = this.settings.gameSize.width / 2 - this.assetManager.getSprite(AssetId.PLAYER).width
+    const startY = this.settings.gameSize.height / 4 * 3 + this.assetManager.getSprite(AssetId.PLAYER).height * 2
+    this.position.setVector(new Vector2(startX, startY))
     this.velocity.set(0, 0)
     this.colliding = false
+  }
+
+  clear (ctx: CanvasRenderingContext2D): void {
+    ctx.clearRect(Math.floor(this.position.x), Math.floor(this.position.y), this.dimension.width, this.dimension.height)
   }
 
   /**
    *
    */
-  move (): void {
+  move (dt: number): void {
     if (!this.colliding) {
       this.counter++
-      this.context.clearRect(Math.floor(this.position.x), Math.floor(this.position.y), this.width, this.height)
       this.acceleration.set(0, 0)
       if (this.state[Actions.LEFT]) {
-        this.acceleration.add(-this.settings.acceleration, 0)
+        this.acceleration.add(-this.settings.player.acceleration, 0)
       }
       if (this.state[Actions.RIGHT]) {
-        this.acceleration.add(this.settings.acceleration, 0)
+        this.acceleration.add(this.settings.player.acceleration, 0)
       }
       if (this.state[Actions.UP]) {
-        this.acceleration.add(0, -this.settings.acceleration)
+        this.acceleration.add(0, -this.settings.player.acceleration)
       }
       if (this.state[Actions.DOWN]) {
-        this.acceleration.add(0, this.settings.acceleration)
+        this.acceleration.add(0, this.settings.player.acceleration)
       }
-      this.velocity.multiply(this.settings.friction)
+      this.velocity.multiply(this.settings.player.friction)
       this.velocity.addVector(this.acceleration)
-      this.velocity.limit(this.settings.maxVelocity)
-      this.position.addVector(this.velocity)
+      this.velocity.limit(this.settings.player.maxVelocity)
+      const vel = this.velocity.clone()
+      vel.multiply(dt)
+      this.position.addVector(vel)
       if (this.position.x <= 0) {
         this.position.x = 0
         this.velocity.x += -1
       }
-      if (this.position.x >= this.canvasWidth - this.width) {
-        this.position.x = this.canvasWidth - this.width
+      if (this.position.x >= this.settings.gameSize.width - this.dimension.width) {
+        this.position.x = this.settings.gameSize.width - this.dimension.width
       }
       if (this.position.y <= this.maxTop) {
         this.position.y = this.maxTop
       }
-      if (this.position.y >= this.canvasHeight - this.height) {
-        this.position.y = this.canvasHeight - this.height
+      if (this.position.y >= this.settings.gameSize.height - this.dimension.height) {
+        this.position.y = this.settings.gameSize.height - this.dimension.height
       }
 
-      // Finish by redrawing the ship
-      this.draw()
-
-      if (this.state[Actions.SHOOT] && this.counter >= this.settings.fireDelay && !this.colliding) {
+      if (this.state[Actions.SHOOT] && this.counter >= this.settings.player.fireDelay && !this.colliding) {
         this.fire()
         this.counter = 0
       }
@@ -127,8 +127,8 @@ export default class Ship implements IDrawable, Observer, ICollideAble {
     return !this.colliding
   }
 
-  draw (): void {
-    this.context.drawImage(this.sprite, Math.floor(this.position.x), Math.floor(this.position.y))
+  render (ctx: CanvasRenderingContext2D): void {
+    ctx.drawImage(this.sprite, Math.floor(this.position.x), Math.floor(this.position.y))
   }
 
   update (state: any): void {
@@ -145,7 +145,7 @@ export default class Ship implements IDrawable, Observer, ICollideAble {
 
   /**
    *
-   * @param {CollideAble} other
+   * @param {ICollideAble} other
    * @returns {boolean}
    */
   isCollideAbleWith (other: ICollideAble): boolean {

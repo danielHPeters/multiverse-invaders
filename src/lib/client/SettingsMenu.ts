@@ -1,4 +1,4 @@
-import Settings from './Settings'
+import Settings from '../../config/Settings'
 import { Actions } from './InputManager'
 import AssetManager from './AssetManager'
 import EventHandler from '../event/EventHandler'

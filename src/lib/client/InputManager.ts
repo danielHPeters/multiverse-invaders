@@ -1,5 +1,5 @@
 import Observable from '../observer/Observable'
-import Settings from './Settings'
+import Settings from '../../config/Settings'
 
 export enum Actions {
   UP = 'UP',
