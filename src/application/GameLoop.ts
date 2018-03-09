@@ -1,5 +1,7 @@
 import IGameLoop from '../lib/interfaces/IGameLoop'
 import IGame from '../lib/interfaces/IGame'
+import { Actions } from '../lib/client/InputManager'
+import Observer from '../lib/observer/Observer'
 
 /**
  * Game loop.
@@ -7,10 +9,11 @@ import IGame from '../lib/interfaces/IGame'
  * @author Daniel Peters
  * @version 1.0
  */
-export default class GameLoop implements IGameLoop {
+export default class GameLoop implements IGameLoop, Observer {
   public game: IGame
   public lastTime: number
   public frameId: number
+  private state: any
 
   /**
    * Constructor.
@@ -20,6 +23,7 @@ export default class GameLoop implements IGameLoop {
   constructor (game: IGame) {
     this.game = game
     this.lastTime = null
+    this.state = {}
   }
 
   /**
@@ -35,7 +39,6 @@ export default class GameLoop implements IGameLoop {
    *
    */
   public stop (): void {
-    this.game.state.running = false
     if (this.frameId) {
       cancelAnimationFrame(this.frameId)
     }
@@ -57,17 +60,25 @@ export default class GameLoop implements IGameLoop {
    *
    */
   public loop (time: number): void {
-    if (this.game.state.running) {
-      this.game.clear()
-      if (this.lastTime !== null) {
-        const diff = time - this.lastTime
-        if (!this.game.state.paused) {
-          this.game.update(diff / 1000)
+    if (this.state[Actions.RESTART]) {
+      this.restart()
+    } else {
+      if (this.game.state.running) {
+        this.game.clear()
+        if (this.lastTime !== null) {
+          const diff = time - this.lastTime
+          if (!this.game.state.paused) {
+            this.game.state.update(diff / 1000)
+          }
         }
+        this.lastTime = time
+        this.game.render()
+        this.frameId = requestAnimationFrame(time => this.loop(time))
       }
-      this.lastTime = time
-      this.game.render()
-      this.frameId = requestAnimationFrame(time => this.loop(time))
     }
+  }
+
+  update (state: any): void {
+    this.state = state
   }
 }

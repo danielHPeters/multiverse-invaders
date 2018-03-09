@@ -7,35 +7,53 @@ import Entity from '../lib/entity/Entity'
 import Dimension from '../lib/geometry/Dimension'
 import Settings from '../config/Settings'
 
+/**
+ * Shifting background.
+ *
+ * @author Daniel Peters
+ * @version 1.0
+ */
 export default class Background extends Entity implements IRenderable, IMovable {
-  velocity: Vector2
-  acceleration: Vector2
   contextId: ContextId
   speed: number
-  type: EntityType
   sprite: any
 
   /**
+   * Constructor.
    *
-   * @param {number} x
-   * @param {number} y
    * @param {number} width
    * @param {number} height
    * @param sprite
    * @param {Settings} settings
    */
-  constructor (x: number, y: number, width: number, height: number, sprite: any, settings: Settings) {
-    super(new Vector2(x, y), new Dimension(width, height), settings)
+  constructor (width: number, height: number, sprite: any, settings: Settings) {
+    super(new Vector2(0, 0), new Dimension(width, height), settings)
     this.speed = 1
     this.sprite = sprite
-    this.type = EntityType.BACKGROUND
     this.contextId = ContextId.BACKGROUND
   }
 
-  reset (): void {
+  /**
+   * Initialize.
+   */
+  init (): void {
     this.position.set(0, 0)
   }
 
+  /**
+   *
+   * @param {CanvasRenderingContext2D} ctx
+   */
+  render (ctx: CanvasRenderingContext2D): void {
+    ctx.drawImage(this.sprite, this.position.x, this.position.y)
+    ctx.drawImage(this.sprite, this.position.x, this.position.y - this.dimension.height)
+  }
+
+  /**
+   * Update position.
+   *
+   * @param {number} dt Delta Time
+   */
   move (dt: number): void {
     this.position.y += this.speed
     if (this.position.y >= this.dimension.height) {
@@ -44,13 +62,9 @@ export default class Background extends Entity implements IRenderable, IMovable 
   }
 
   /**
-   *
+   * Clear the background.
    */
-  render (ctx: CanvasRenderingContext2D): void {
-    ctx.drawImage(this.sprite, this.position.x, this.position.y)
-    ctx.drawImage(this.sprite, this.position.x, this.position.y - this.dimension.height)
-  }
-
   clear (): void {
+    // Not applicable
   }
 }

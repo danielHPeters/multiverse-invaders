@@ -44,6 +44,8 @@ export default class Sound {
    *
    */
   stop (): void {
-    this.source.stop(0)
+    if (this.source) {
+      this.source.stop(0)
+    }
   }
 }

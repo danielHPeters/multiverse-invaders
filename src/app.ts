@@ -32,6 +32,7 @@ assetManager.downloadAll(() => {
   const state = new InvadersState(settings, inputManager, assetManager)
   const game = new SpaceGame(state, assetManager, inputManager, settings, canvases)
   const loop = new GameLoop(game)
+  inputManager.register(loop)
   settingsMenu.init()
   let gameOver = document.getElementById('game-over')
   let set = document.getElementById('settings')

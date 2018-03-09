@@ -18,7 +18,6 @@ export default class Entity {
    *
    * @param {Vector2} position Initial position
    * @param {Dimension} dimension Initial dimension
-   * @param color Color of the entity
    * @param {Settings} settings
    */
   constructor (position: Vector2, dimension: Dimension, settings: Settings) {

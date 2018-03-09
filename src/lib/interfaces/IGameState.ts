@@ -18,4 +18,8 @@ export default interface IGameState {
   movables: IMovable[]
   renderables: IRenderable[]
   collideables: ICollideAble[]
+
+  update (dt: number): void
+
+  reset (): void
 }

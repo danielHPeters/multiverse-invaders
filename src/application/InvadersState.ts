@@ -13,6 +13,7 @@ import IRenderable from '../lib/interfaces/IRenderable'
 import Entity from '../lib/entity/Entity'
 import IMovable from '../lib/interfaces/IMovable'
 import Sound from '../lib/audio/Sound'
+import CollisionManager from '../lib/collision/CollisionManager'
 
 /**
  * Multiverse invaders game state.
@@ -30,6 +31,7 @@ export default class InvadersState implements IGameState {
   movables: IMovable[]
   pools: Pool[]
   assetManager: AssetManager
+  collisionManager: CollisionManager
   backgroundAudio: Sound
   gameOverAudio: Sound
   playerScore: number
@@ -39,15 +41,16 @@ export default class InvadersState implements IGameState {
    * @param {Settings} settings
    * @param {InputManager} inputManager
    * @param {AssetManager} assetManager
+   * @param {CollisionManager} collisionManager
    */
   constructor (settings: Settings, inputManager: InputManager, assetManager: AssetManager) {
     this.assetManager = assetManager
+    this.quadTree = new QuadTree(new HitBox(0, 0, settings.gameSize.width, settings.gameSize.height))
+    this.collisionManager = new CollisionManager(this.quadTree)
     this.running = false
     this.paused = false
     this.playerScore = 0
     const background = new Background(
-      0,
-      0,
       settings.gameSize.width,
       settings.gameSize.height,
       assetManager.getSprite(AssetId.BACKGROUND),
@@ -57,7 +60,6 @@ export default class InvadersState implements IGameState {
     const ship = new Ship(assetManager.getSprite(AssetId.PLAYER).width, assetManager.getSprite(AssetId.PLAYER).height, assetManager, playerBulletPool, settings)
     const enemyBulletPool = new Pool(this.assetManager, 50, EntityType.ENEMY_BULLET, AssetId.ENEMY_BULLET, settings)
     const enemyPool = new Pool(this.assetManager, 30, EntityType.ENEMY, AssetId.ENEMY, settings, enemyBulletPool)
-    this.quadTree = new QuadTree(new HitBox(0, 0, settings.gameSize.width, settings.gameSize.height))
     this.pools = []
     this.entities = []
     this.renderables = []
@@ -67,40 +69,67 @@ export default class InvadersState implements IGameState {
     this.pools.push(playerBulletPool)
     this.pools.push(enemyBulletPool)
     this.pools.push(enemyPool)
+
     this.entities.push(ship)
-    this.movables.push(ship)
-    this.renderables.push(ship)
     this.entities.push(background)
+
+    enemyPool.pool.forEach(enemy => this.entities.push(enemy))
+    enemyBulletPool.pool.forEach(bullet => this.entities.push(bullet))
+    playerBulletPool.pool.forEach(bullet => this.entities.push(bullet))
+
+    this.collideables.push(ship)
+
+    enemyPool.pool.forEach(enemy => this.collideables.push(enemy))
+    enemyBulletPool.pool.forEach(bullet => this.collideables.push(bullet))
+    playerBulletPool.pool.forEach(bullet => this.collideables.push(bullet))
+
+    this.movables.push(ship)
     this.movables.push(background)
     this.movables.push(enemyPool)
     this.movables.push(playerBulletPool)
     this.movables.push(enemyBulletPool)
+
+    this.renderables.push(ship)
     this.renderables.push(background)
     this.renderables.push(playerBulletPool)
     this.renderables.push(enemyBulletPool)
     this.renderables.push(enemyPool)
 
     this.backgroundAudio = this.assetManager.getSound(AssetId.MAIN_THEME, AssetType.AUDIO_AMB)
-    this.backgroundAudio.play(true)
-    this.spawnWave()
+    this.gameOverAudio = this.assetManager.getSound(AssetId.GAME_OVER, AssetType.AUDIO_AMB)
     inputManager.register(ship)
+  }
+
+  /**
+   *
+   * @param {number} dt
+   */
+  update (dt: number): void {
+    if (this.entities[0])
+    this.spawnWave()
+    this.quadTree.clear()
+    this.quadTree.insert(this.collideables)
+    this.collisionManager.detectCollision()
+    this.movables.forEach(movable => movable.move(dt))
   }
 
   /**
    *
    */
   spawnWave (): void {
-    const height = this.assetManager.getSprite(AssetId.ENEMY).height
-    const width = this.assetManager.getSprite(AssetId.ENEMY).width
-    let x = 200
-    let y = -height
-    const spacer = y * 1.5
-    for (let i = 1; i <= 21; i++) {
-      this.pools[1].get(x, y, 4)
-      x += width + 25
-      if (i % 7 === 0) {
-        x = 200
-        y += spacer
+    if (this.pools[2].getPool().length === 0) {
+      const height = this.assetManager.getSprite(AssetId.ENEMY).height
+      const width = this.assetManager.getSprite(AssetId.ENEMY).width
+      let x = 200
+      let y = -height
+      const spacer = y * 1.5
+      for (let i = 1; i <= 21; i++) {
+        this.pools[2].get(x, y, 300)
+        x += width + 25
+        if (i % 7 === 0) {
+          x = 200
+          y += spacer
+        }
       }
     }
   }
@@ -109,6 +138,9 @@ export default class InvadersState implements IGameState {
     this.playerScore += 10
   }
 
+  /**
+   *
+   */
   gameOver (): void {
     this.backgroundAudio.stop()
     document.getElementById('game-over').style.display = 'block'
@@ -116,13 +148,17 @@ export default class InvadersState implements IGameState {
     this.gameOverAudio.play(true)
   }
 
+  /**
+   *
+   */
   reset (): void {
+    this.backgroundAudio.stop()
     this.gameOverAudio.stop()
-    this.backgroundAudio.play(true)
     document.getElementById('game-over').style.display = 'none'
     this.quadTree.clear()
     this.entities.forEach(entity => entity.init())
-    this.pools.forEach(pool => pool.clearAll())
+    this.spawnWave()
     this.playerScore = 0
+    this.backgroundAudio.play(true)
   }
 }

@@ -1,7 +1,7 @@
 import Sound from '../audio/Sound'
 
 /**
- * Audiomanager class.
+ * Audio manager class.
  *
  * @author Daniel Peters
  * @version 1.0

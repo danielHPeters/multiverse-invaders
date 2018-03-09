@@ -1,4 +1,4 @@
-import AssetManager from '../lib/client/AssetManager'
+import AssetManager, { AssetType } from '../lib/client/AssetManager'
 import Bullet from './Bullet'
 import Enemy from './Enemy'
 import { EntityType } from '../lib/interfaces/ICollideAble'
@@ -7,14 +7,11 @@ import Settings from '../config/Settings'
 import IRenderable from '../lib/interfaces/IRenderable'
 import { ContextId } from '../enum/ContextId'
 import IMovable from '../lib/interfaces/IMovable'
-import Vector2 from '../lib/math/Vector2'
 
 /**
  *
  */
 export default class Pool implements IRenderable, IMovable {
-  velocity: Vector2
-  acceleration: Vector2
   contextId: ContextId
   assetManager: AssetManager
   maxSize: number
@@ -49,16 +46,24 @@ export default class Pool implements IRenderable, IMovable {
    *
    */
   init (): void {
-    let sprite = this.assetManager.getSprite(this.assetId)
+    const sprite = this.assetManager.getSprite(this.assetId)
     if (this.type === EntityType.ENEMY) {
       for (let i = 0; i < this.maxSize; i++) {
-        this.pool[i] = new Enemy(0, 0, sprite.width, sprite.height, 0, sprite, this.type, this.subPool, this.settings)
+        this.pool[i] = new Enemy(sprite.width, sprite.height, sprite, this.type, this.subPool, this.settings, this.assetManager.getSound(AssetId.EXPLOSION_I, AssetType.AUDIO))
       }
     } else {
       for (let i = 0; i < this.maxSize; i++) {
-        this.pool[i] = new Bullet(0, 0, sprite.width, sprite.height, 0, sprite, this.type, this.settings)
+        this.pool[i] = new Bullet(sprite.width, sprite.height, sprite, this.type, this.settings)
       }
     }
+  }
+
+  /**
+   *
+   * @returns {IMovable[]}
+   */
+  getPool (): IMovable[] {
+    return this.pool.filter(object => object.alive)
   }
 
   /**
@@ -68,7 +73,7 @@ export default class Pool implements IRenderable, IMovable {
    * @param {number} speed
    */
   get (x: number, y: number, speed: number): void {
-    let lastElement = this.pool[this.maxSize - 1]
+    const lastElement = this.pool[this.maxSize - 1]
     if (!lastElement.alive) {
       lastElement.spawn(x, y, speed)
       this.pool.unshift(this.pool.pop())
@@ -100,33 +105,23 @@ export default class Pool implements IRenderable, IMovable {
       // Only draw until we find a bullet that is not alive
       if (this.pool[i].alive) {
         this.pool[i].render(ctx)
-        this.pool[i].reset()
-        this.pool.push((this.pool.splice(i, 1))[0])
+        //
       } else {
-        break
+        this.pool[i].init()
+        this.pool.push((this.pool.splice(i, 1))[0])
       }
     }
   }
 
-  move (dt: number): void {
-    this.pool.forEach(object => object.move(dt))
-  }
-
-  clearAll (): void {
-    this.pool.forEach(object => object.reset())
-  }
-
-  getPool (): IMovable[] {
-    let objects = []
-    this.pool.forEach(object => {
-      if (object.alive) {
-        objects.push(object)
-      }
-    })
-    return objects
-  }
-
+  /**
+   *
+   * @param {CanvasRenderingContext2D} ctx
+   */
   clear (ctx: CanvasRenderingContext2D): void {
     this.pool.forEach(object => object.clear(ctx))
+  }
+
+  move (dt: number): void {
+    this.pool.forEach(object => object.move(dt))
   }
 }

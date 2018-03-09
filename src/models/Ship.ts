@@ -17,10 +17,9 @@ import { ContextId } from '../enum/ContextId'
  *
  */
 export default class Ship extends Entity implements IRenderable, IMovable, Observer, ICollideAble {
-  speed: number
   acceleration: Vector2
   sprite: any
-  pool: Pool
+  bulletPool: Pool
   counter: number
   collidesWith
   type: EntityType
@@ -38,12 +37,9 @@ export default class Ship extends Entity implements IRenderable, IMovable, Obser
    *
    * @param {number} width
    * @param {number} height
-   * @param {number} canvasWidth
-   * @param {number} canvasHeight
-   * @param context
    * @param {AssetManager} assetManager
    * @param {Pool} pool
-   * @param settings
+   * @param {Settings} settings
    */
   constructor (width: number, height: number, assetManager: AssetManager, pool: Pool, settings: Settings) {
     super(new Vector2(0, 0), new Dimension(width, height), settings)
@@ -52,7 +48,7 @@ export default class Ship extends Entity implements IRenderable, IMovable, Obser
     this.velocity = new Vector2(0, 0)
     this.sprite = assetManager.getSprite(AssetId.PLAYER)
     this.type = EntityType.PLAYER
-    this.pool = pool
+    this.bulletPool = pool
     this.counter = 0
     this.collidesWith = []
     this.collidesWith.push(EntityType.ENEMY_BULLET)
@@ -73,12 +69,31 @@ export default class Ship extends Entity implements IRenderable, IMovable, Obser
     this.colliding = false
   }
 
+  fire (): void {
+    this.bulletPool.getTwo(
+      Math.floor(this.position.x) + 12, Math.floor(this.position.y), 200,
+      Math.floor(this.position.x) + 66, Math.floor(this.position.y), 200
+    )
+    this.laserSound.play()
+  }
+
+  /**
+   *
+   * @param {CanvasRenderingContext2D} ctx
+   */
+  render (ctx: CanvasRenderingContext2D): void {
+    if (!this.colliding) {
+      ctx.drawImage(this.sprite, Math.floor(this.position.x), Math.floor(this.position.y))
+    }
+  }
+
   clear (ctx: CanvasRenderingContext2D): void {
     ctx.clearRect(Math.floor(this.position.x), Math.floor(this.position.y), this.dimension.width, this.dimension.height)
   }
 
   /**
    *
+   * @param {number} dt
    */
   move (dt: number): void {
     if (!this.colliding) {
@@ -123,24 +138,12 @@ export default class Ship extends Entity implements IRenderable, IMovable, Obser
     }
   }
 
-  alive (): boolean {
-    return !this.colliding
-  }
-
-  render (ctx: CanvasRenderingContext2D): void {
-    ctx.drawImage(this.sprite, Math.floor(this.position.x), Math.floor(this.position.y))
-  }
-
+  /**
+   *
+   * @param state
+   */
   update (state: any): void {
     this.state = state
-  }
-
-  fire (): void {
-    this.pool.getTwo(
-      Math.floor(this.position.x) + 12, Math.floor(this.position.y), 6,
-      Math.floor(this.position.x) + 66, Math.floor(this.position.y), 6
-    )
-    this.laserSound.play()
   }
 
   /**

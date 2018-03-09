@@ -6,14 +6,16 @@ import IRenderable from '../lib/interfaces/IRenderable'
 import IMovable from '../lib/interfaces/IMovable'
 import Dimension from '../lib/geometry/Dimension'
 import { ContextId } from '../enum/ContextId'
+import ISpawnAble from '../lib/interfaces/ISpawnAble'
 
 /**
+ * Bullet class.
  *
+ * @author Daniel Peters
+ * @version 1.0
  */
-export default class Bullet extends Entity implements IRenderable, IMovable, ICollideAble {
+export default class Bullet extends Entity implements IRenderable, IMovable, ICollideAble, ISpawnAble {
   contextId: ContextId
-  velocity: Vector2
-  acceleration: Vector2
   speed: number
   sprite: any
   alive: boolean
@@ -23,18 +25,15 @@ export default class Bullet extends Entity implements IRenderable, IMovable, ICo
 
   /**
    *
-   * @param {number} x
-   * @param {number} y
    * @param {number} width
    * @param {number} height
-   * @param {number} speed
-   * @param {any} sprite
-   * @param {string} type
-   * @param settings
+   * @param sprite
+   * @param {EntityType} type
+   * @param {Settings} settings
    */
-  constructor (x: number, y: number, width: number, height: number, speed: number, sprite: any, type: EntityType, settings: Settings) {
-    super(new Vector2(x, y), new Dimension(width, height), settings)
-    this.speed = speed
+  constructor (width: number, height: number, sprite: any, type: EntityType, settings: Settings) {
+    super(new Vector2(0, 0), new Dimension(width, height), settings)
+    this.speed = 0
     this.sprite = sprite
     this.alive = false
     this.type = type
@@ -46,6 +45,14 @@ export default class Bullet extends Entity implements IRenderable, IMovable, ICo
       this.collidesWith.push(EntityType.PLAYER)
     }
     this.settings = settings
+    this.contextId = ContextId.MAIN
+  }
+
+  init (): void {
+    this.position.set(0, 0)
+    this.speed = 0
+    this.alive = false
+    this.colliding = false
   }
 
   /**
@@ -60,31 +67,39 @@ export default class Bullet extends Entity implements IRenderable, IMovable, ICo
     this.alive = true
   }
 
-  move (dt: number): void {
-    this.position.y -= this.speed
+  /**
+   *
+   */
+  render (ctx: CanvasRenderingContext2D): void {
+    if ((this.type === EntityType.PLAYER_BULLET && this.position.y <= 0 - this.dimension.height) ||
+      (this.type === EntityType.ENEMY_BULLET && this.position.y >= this.settings.gameSize.height)) {
+      this.alive = false
+    } else {
+      ctx.drawImage(this.sprite, this.position.x, this.position.y)
+    }
   }
 
+  /**
+   *
+   * @param {CanvasRenderingContext2D} ctx
+   */
   clear (ctx: CanvasRenderingContext2D): void {
     ctx.clearRect(this.position.x - 1, this.position.y - 1, this.dimension.width + 1, this.dimension.height + 1)
   }
 
   /**
    *
+   * @param {number} dt
    */
-  render (ctx: CanvasRenderingContext2D): void {
-    /* if (this.type === EntityType.PLAYER_BULLET && this.position.y <= 0 - this.dimension.height) {
-    } else if (this.type === EntityType.ENEMY_BULLET && this.position.y >= this.settings.gameSize.height) {
-    } else { }*/
-    ctx.drawImage(this.sprite, this.position.x, this.position.y)
+  move (dt: number): void {
+    this.position.y -= Math.floor(this.speed * dt)
   }
 
-  reset (): void {
-    this.position.set(0, 0)
-    this.speed = 0
-    this.alive = false
-    this.colliding = false
-  }
-
+  /**
+   *
+   * @param {ICollideAble} other
+   * @returns {boolean}
+   */
   isCollideAbleWith (other: ICollideAble): boolean {
     return this.collidesWith.includes(other.type.toString())
   }
