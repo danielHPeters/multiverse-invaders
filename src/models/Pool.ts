@@ -7,6 +7,7 @@ import Settings from '../config/Settings'
 import IRenderable from '../lib/interfaces/IRenderable'
 import { ContextId } from '../enum/ContextId'
 import IMovable from '../lib/interfaces/IMovable'
+import IGameState from '../lib/interfaces/IGameState'
 
 /**
  *
@@ -20,6 +21,7 @@ export default class Pool implements IRenderable, IMovable {
   pool: any[]
   subPool: Pool
   settings: Settings
+  game: IGameState
 
   /**
    *
@@ -30,7 +32,7 @@ export default class Pool implements IRenderable, IMovable {
    * @param {Settings} settings
    * @param {Pool} pool
    */
-  constructor (assetManager: AssetManager, maxSize: number, type: EntityType, asId: AssetId, settings: Settings, pool: Pool = null) {
+  constructor (assetManager: AssetManager, maxSize: number, type: EntityType, asId: AssetId, settings: Settings, pool: Pool = null, game: IGameState = null) {
     this.assetManager = assetManager
     this.maxSize = maxSize
     this.type = type
@@ -39,6 +41,7 @@ export default class Pool implements IRenderable, IMovable {
     this.subPool = pool
     this.settings = settings
     this.contextId = ContextId.MAIN
+    this.game = game
     this.init()
   }
 
@@ -49,7 +52,7 @@ export default class Pool implements IRenderable, IMovable {
     const sprite = this.assetManager.getSprite(this.assetId)
     if (this.type === EntityType.ENEMY) {
       for (let i = 0; i < this.maxSize; i++) {
-        this.pool[i] = new Enemy(sprite.width, sprite.height, sprite, this.type, this.subPool, this.settings, this.assetManager.getSound(AssetId.EXPLOSION_I, AssetType.AUDIO))
+        this.pool[i] = new Enemy(sprite.width, sprite.height, sprite, this.type, this.subPool, this.settings, this.assetManager.getSound(AssetId.EXPLOSION_I, AssetType.AUDIO), this.game)
       }
     } else {
       for (let i = 0; i < this.maxSize; i++) {

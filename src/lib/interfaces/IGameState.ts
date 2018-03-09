@@ -22,4 +22,6 @@ export default interface IGameState {
   update (dt: number): void
 
   reset (): void
+
+  scorePoints (): void
 }

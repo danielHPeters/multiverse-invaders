@@ -8,9 +8,11 @@ import { AssetId } from './enum/AssetId'
 import AudioManager from './lib/client/AudioManager'
 import GameLoop from './application/GameLoop'
 import InvadersState from './application/InvadersState'
+import InvadersGui from './gui/InvadersGui'
 
 const audioManager = new AudioManager()
 const assetManager = new AssetManager(audioManager)
+const gui = new InvadersGui()
 const canvases = {
   background: document.getElementById('background') as HTMLCanvasElement,
   ship: document.getElementById('ship') as HTMLCanvasElement,
@@ -30,6 +32,7 @@ assetManager.queueDownload(AssetId.EXPLOSION_I, 'assets/audio/explosion.wav', As
 assetManager.queueDownload(AssetId.GAME_OVER, 'assets/audio/game_over.wav', AssetType.AUDIO)
 assetManager.downloadAll(() => {
   const state = new InvadersState(settings, inputManager, assetManager)
+  state.register(gui)
   const game = new SpaceGame(state, assetManager, inputManager, settings, canvases)
   const loop = new GameLoop(game)
   inputManager.register(loop)

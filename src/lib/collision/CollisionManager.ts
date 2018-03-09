@@ -34,7 +34,9 @@ export default class CollisionManager implements ICollisionManager {
           (Math.floor(objects[i].position.x) < Math.floor(obj[j].position.x) + obj[j].dimension.width &&
             Math.floor(objects[i].position.x) + objects[i].dimension.width > Math.floor(obj[j].position.x) &&
             Math.floor(objects[i].position.y) < Math.floor(obj[j].position.y) + obj[j].dimension.height &&
-            Math.floor(objects[i].position.y) + objects[i].dimension.height > Math.floor(obj[j].position.y))) {
+            Math.floor(objects[i].position.y) + objects[i].dimension.height > Math.floor(obj[j].position.y))
+        && objects[i].alive && obj[j].alive) {
+          console.log(objects[i])
           objects[i].colliding = true
           obj[j].colliding = true
         }

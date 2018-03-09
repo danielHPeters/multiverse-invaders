@@ -1,5 +1,26 @@
-export default class InvadersGui {
-  public updateScore (playerScore) {
-    document.getElementById('score').innerHTML = playerScore.toString()
+import Observer from '../lib/observer/Observer'
+
+/**
+ * Multiverse Invaders GUI.
+ *
+ * @author Daniel Peters
+ * @version 1.0
+ */
+export default class InvadersGui implements Observer {
+  scoreElement: HTMLElement
+
+  /**
+   * Constructor.
+   */
+  constructor () {
+    this.scoreElement = document.getElementById('score')
+  }
+
+  /**
+   *
+   * @param state
+   */
+  public update (state: any): void {
+    this.scoreElement.innerHTML = state.toString()
   }
 }

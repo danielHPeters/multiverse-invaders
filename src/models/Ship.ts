@@ -14,7 +14,10 @@ import Dimension from '../lib/geometry/Dimension'
 import { ContextId } from '../enum/ContextId'
 
 /**
+ * Player ship model class.
  *
+ * @author Daniel Peters
+ * @version 1.0
  */
 export default class Ship extends Entity implements IRenderable, IMovable, Observer, ICollideAble {
   acceleration: Vector2
@@ -32,6 +35,7 @@ export default class Ship extends Entity implements IRenderable, IMovable, Obser
   laserSound: Sound
   assetManager: AssetManager
   contextId: ContextId
+  alive: boolean
 
   /**
    *
@@ -59,16 +63,24 @@ export default class Ship extends Entity implements IRenderable, IMovable, Obser
     this.maxTop = Math.floor(this.settings.gameSize.height / 4 * 3)
     this.laserSound = assetManager.getSound(AssetId.LASER, AssetType.AUDIO)
     this.contextId = ContextId.SHIP
+    this.alive = false
   }
 
+  /**
+   *
+   */
   init (): void {
     const startX = this.settings.gameSize.width / 2 - this.assetManager.getSprite(AssetId.PLAYER).width
     const startY = this.settings.gameSize.height / 4 * 3 + this.assetManager.getSprite(AssetId.PLAYER).height * 2
     this.position.setVector(new Vector2(startX, startY))
     this.velocity.set(0, 0)
     this.colliding = false
+    this.alive = true
   }
 
+  /**
+   *
+   */
   fire (): void {
     this.bulletPool.getTwo(
       Math.floor(this.position.x) + 12, Math.floor(this.position.y), 200,
@@ -87,6 +99,10 @@ export default class Ship extends Entity implements IRenderable, IMovable, Obser
     }
   }
 
+  /**
+   *
+   * @param {CanvasRenderingContext2D} ctx
+   */
   clear (ctx: CanvasRenderingContext2D): void {
     ctx.clearRect(Math.floor(this.position.x), Math.floor(this.position.y), this.dimension.width, this.dimension.height)
   }
@@ -131,7 +147,7 @@ export default class Ship extends Entity implements IRenderable, IMovable, Obser
         this.position.y = this.settings.gameSize.height - this.dimension.height
       }
 
-      if (this.state[Actions.SHOOT] && this.counter >= this.settings.player.fireDelay && !this.colliding) {
+      if (this.state[Actions.SHOOT] && this.counter >= this.settings.player.fireDelay) {
         this.fire()
         this.counter = 0
       }

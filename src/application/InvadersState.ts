@@ -14,6 +14,7 @@ import Entity from '../lib/entity/Entity'
 import IMovable from '../lib/interfaces/IMovable'
 import Sound from '../lib/audio/Sound'
 import CollisionManager from '../lib/collision/CollisionManager'
+import Observable from '../lib/observer/Observable'
 
 /**
  * Multiverse invaders game state.
@@ -21,7 +22,7 @@ import CollisionManager from '../lib/collision/CollisionManager'
  * @author Daniel Peters
  * @version 1.0
  */
-export default class InvadersState implements IGameState {
+export default class InvadersState extends Observable implements IGameState {
   running: boolean
   paused: boolean
   quadTree: QuadTree
@@ -44,6 +45,7 @@ export default class InvadersState implements IGameState {
    * @param {CollisionManager} collisionManager
    */
   constructor (settings: Settings, inputManager: InputManager, assetManager: AssetManager) {
+    super()
     this.assetManager = assetManager
     this.quadTree = new QuadTree(new HitBox(0, 0, settings.gameSize.width, settings.gameSize.height))
     this.collisionManager = new CollisionManager(this.quadTree)
@@ -59,7 +61,7 @@ export default class InvadersState implements IGameState {
     const playerBulletPool = new Pool(this.assetManager, 80, EntityType.PLAYER_BULLET, AssetId.PLAYER_BULLET, settings)
     const ship = new Ship(assetManager.getSprite(AssetId.PLAYER).width, assetManager.getSprite(AssetId.PLAYER).height, assetManager, playerBulletPool, settings)
     const enemyBulletPool = new Pool(this.assetManager, 50, EntityType.ENEMY_BULLET, AssetId.ENEMY_BULLET, settings)
-    const enemyPool = new Pool(this.assetManager, 30, EntityType.ENEMY, AssetId.ENEMY, settings, enemyBulletPool)
+    const enemyPool = new Pool(this.assetManager, 30, EntityType.ENEMY, AssetId.ENEMY, settings, enemyBulletPool, this)
     this.pools = []
     this.entities = []
     this.renderables = []
@@ -105,7 +107,6 @@ export default class InvadersState implements IGameState {
    * @param {number} dt
    */
   update (dt: number): void {
-    if (this.entities[0])
     this.spawnWave()
     this.quadTree.clear()
     this.quadTree.insert(this.collideables)
@@ -136,6 +137,8 @@ export default class InvadersState implements IGameState {
 
   scorePoints (): void {
     this.playerScore += 10
+    this.state = this.playerScore
+    this.notify()
   }
 
   /**
@@ -159,6 +162,8 @@ export default class InvadersState implements IGameState {
     this.entities.forEach(entity => entity.init())
     this.spawnWave()
     this.playerScore = 0
+    this.state = this.playerScore
+    this.notify()
     this.backgroundAudio.play(true)
   }
 }

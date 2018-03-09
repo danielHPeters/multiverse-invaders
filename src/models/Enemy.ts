@@ -9,6 +9,7 @@ import Entity from '../lib/entity/Entity'
 import Dimension from '../lib/geometry/Dimension'
 import { ContextId } from '../enum/ContextId'
 import ISpawnAble from '../lib/interfaces/ISpawnAble'
+import IGameState from '../lib/interfaces/IGameState'
 
 /**
  * Enemy ship class.
@@ -32,19 +33,20 @@ export default class Enemy extends Entity implements IRenderable, IMovable, ICol
   type: EntityType
   colliding: boolean
   explosionSound: Sound
+  game: IGameState
 
   /**
    *
    * @param {number} width
    * @param {number} height
-   * @param {number} speed
    * @param sprite
    * @param {EntityType} type
    * @param {Pool} bulletPool
    * @param {Settings} settings
    * @param {Sound} sound
+   * @param {IGameState} game
    */
-  constructor (width: number, height: number, sprite, type: EntityType, bulletPool: Pool, settings: Settings, sound: Sound) {
+  constructor (width: number, height: number, sprite, type: EntityType, bulletPool: Pool, settings: Settings, sound: Sound, game: IGameState) {
     super(new Vector2(0, 0), new Dimension(width, height), settings)
     this.velocity = new Vector2(0, 0)
     this.sprite = sprite
@@ -58,6 +60,7 @@ export default class Enemy extends Entity implements IRenderable, IMovable, ICol
     this.bulletPool = bulletPool
     this.contextId = ContextId.MAIN
     this.explosionSound = sound
+    this.game = game
   }
 
   /**
@@ -101,27 +104,28 @@ export default class Enemy extends Entity implements IRenderable, IMovable, ICol
    * @param {number} dt Delta time
    */
   move (dt: number): void {
-    this.position.addVector(this.velocity)
-    if (this.position.x <= this.leftEdge) {
-      this.velocity.x = this.speed
-    } else if (this.position.x >= this.rightEdge + this.dimension.width) {
-      this.velocity.x = -this.speed
-    } else if (this.position.y >= this.bottomEdge) {
-      this.speed = 1.5
-      this.velocity.y = 0
-      this.position.y -= 5
-      this.velocity.x = -this.speed
-    }
     if (!this.colliding) {
-      this.chance = Math.floor(Math.random() * 101)
-      if (this.chance / 100 < this.percentFire) {
-        this.fire()
+      if (this.alive) {
+        this.position.addVector(this.velocity)
+        if (this.position.x <= this.leftEdge) {
+          this.velocity.x = this.speed
+        } else if (this.position.x >= this.rightEdge + this.dimension.width) {
+          this.velocity.x = -this.speed
+        } else if (this.position.y >= this.bottomEdge) {
+          this.speed = 1.5
+          this.velocity.y = 0
+          this.position.y -= 5
+          this.velocity.x = -this.speed
+        }
+        this.chance = Math.floor(Math.random() * 101)
+        if (this.chance / 100 < this.percentFire) {
+          this.fire()
+        }
       }
     } else {
-      // this.game.scorePoints()
+      this.game.scorePoints()
       // this.explosionSound.play()
       this.alive = false
-      this.colliding = false
     }
   }
 

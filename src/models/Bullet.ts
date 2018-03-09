@@ -92,7 +92,14 @@ export default class Bullet extends Entity implements IRenderable, IMovable, ICo
    * @param {number} dt
    */
   move (dt: number): void {
-    this.position.y -= Math.floor(this.speed * dt)
+    if ((this.type === EntityType.PLAYER_BULLET && this.position.y <= 0 - this.dimension.height) ||
+      (this.type === EntityType.ENEMY_BULLET && this.position.y >= this.settings.gameSize.height) ||
+      this.colliding) {
+      this.alive = false
+      this.colliding = false
+    } else {
+      this.position.y -= Math.floor(this.speed * dt)
+    }
   }
 
   /**
