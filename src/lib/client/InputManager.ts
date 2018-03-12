@@ -27,7 +27,7 @@ export default class InputManager extends Observable {
    */
   constructor (settings: Settings) {
     super()
-    this.inputMap = settings.keyBoard
+    this.inputMap = settings.keyboard
     this.init()
     this.initializeTouchHandler()
     this.touches = {

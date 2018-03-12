@@ -8,13 +8,13 @@ import Dimension from '../lib/geometry/Dimension'
  * @version 1.0
  */
 export default class Settings {
-  keyBoard
+  keyboard
   player
   audio
   gameSize: Dimension
 
   constructor (canvas: HTMLCanvasElement) {
-    this.keyBoard = {
+    this.keyboard = {
       'w': Actions.UP,
       's': Actions.DOWN,
       'a': Actions.LEFT,
@@ -37,15 +37,15 @@ export default class Settings {
   }
 
   findKey (value): string {
-    return Object.keys(this.keyBoard).filter(key => this.keyBoard[key] === value)[0]
+    return Object.keys(this.keyboard).filter(key => this.keyboard[key] === value)[0]
   }
 
   setKey (newKey, action: Actions): void {
     let oldKey = this.findKey(action)
     if (newKey !== oldKey) {
       console.log('old:' + oldKey, ' new: ' + newKey + ' value: ' + action)
-      this.keyBoard[newKey] = this.keyBoard[oldKey]
-      delete this.keyBoard[oldKey]
+      this.keyboard[newKey] = this.keyboard[oldKey]
+      delete this.keyboard[oldKey]
     }
   }
 }
