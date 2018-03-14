@@ -163,6 +163,9 @@ export default class SettingsMenu {
       input.max = opts.max.toString()
       input.step = opts.step.toString()
     }
+    if (type === 'number') {
+      input.step = opts.step.toString()
+    }
     input.addEventListener('change', event => action(input))
     row.appendChild(label)
     row.appendChild(input)
