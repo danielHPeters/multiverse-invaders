@@ -12,13 +12,12 @@ import { ContextId } from '../enum/ContextId'
  * @author Daniel Peters
  * @version 1.0
  */
-export default class SpaceGame implements IGame {
+export default class InvadersGame implements IGame {
   state: IGameState
   background: Background
   assetManager: AssetManager
   inputManager: InputManager
   settings: Settings
-  canvases
   contexts: Map<ContextId, CanvasRenderingContext2D>
 
   /**
@@ -27,15 +26,14 @@ export default class SpaceGame implements IGame {
    * @param {AssetManager} assetManager
    * @param {InputManager} inputManager
    * @param {Settings} settings
-   * @param canvases
+   * @param {CanvasRenderingContext2D[]} contexts
    */
-  constructor (state: IGameState, assetManager: AssetManager, inputManager: InputManager, settings: Settings, canvases) {
+  constructor (state: IGameState, assetManager: AssetManager, inputManager: InputManager, settings: Settings, contexts: Map<ContextId, CanvasRenderingContext2D>) {
     this.state = state
     this.assetManager = assetManager
     this.inputManager = inputManager
     this.settings = settings
-    this.canvases = canvases
-    this.contexts = new Map<ContextId, CanvasRenderingContext2D>()
+    this.contexts = contexts
     this.init()
   }
 
@@ -43,12 +41,7 @@ export default class SpaceGame implements IGame {
    *
    */
   public init (): void {
-    if (this.canvases.background.getContext) {
-      this.contexts.set(ContextId.BACKGROUND, this.canvases.background.getContext('2d'))
-      this.contexts.set(ContextId.SHIP, this.canvases.ship.getContext('2d'))
-      this.contexts.set(ContextId.MAIN, this.canvases.main.getContext('2d'))
-      this.contexts.forEach(context => context.clearRect(0, 0, this.settings.gameSize.width, this.settings.gameSize.height))
-    }
+    this.contexts.forEach(context => context.clearRect(0, 0, this.settings.gameSize.width, this.settings.gameSize.height))
     this.state.reset()
   }
 

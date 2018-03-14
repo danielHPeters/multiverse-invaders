@@ -58,7 +58,7 @@ export default class AudioManager {
    *
    * @param {number} value
    */
-  adjustMasterVolume (value: number): void {
+  public adjustMasterVolume (value: number): void {
     this.masterGain.gain.value = value
   }
 
@@ -66,7 +66,7 @@ export default class AudioManager {
    *
    * @param {number} value
    */
-  adjustAmbientVolume (value: number): void {
+  public adjustAmbientVolume (value: number): void {
     this.ambientGain.gain.value = value
   }
 
@@ -74,7 +74,7 @@ export default class AudioManager {
    *
    * @param {number} value
    */
-  adjustEffectsVolume (value: number): void {
+  public adjustEffectsVolume (value: number): void {
     this.effectsGain.gain.value = value
   }
 
@@ -84,7 +84,7 @@ export default class AudioManager {
    * @param {boolean} ambient
    * @returns {Sound}
    */
-  createSound (buffer, ambient: boolean): Sound {
+  public createSound (buffer, ambient: boolean): Sound {
     return new Sound(this.audioContext, ambient ? this.ambientGain : this.effectsGain, buffer)
   }
 }

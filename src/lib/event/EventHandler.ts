@@ -9,7 +9,7 @@ export default class EventHandler {
    * @param {Array<string>} events the events to be registered
    * @param {EventListener} listener the event listener function
    */
-  static registerOnElement (element: HTMLElement, events: Array<string>, listener: EventListener): void {
+  static register (element: HTMLElement, events: Array<string>, listener: EventListener): void {
     events.forEach(event => element.addEventListener(event, listener))
   }
 }

@@ -124,7 +124,7 @@ export default class Enemy extends Entity implements IRenderable, IMovable, ICol
       }
     } else {
       this.game.scorePoints()
-      // this.explosionSound.play()
+      this.explosionSound.play()
       this.alive = false
     }
   }

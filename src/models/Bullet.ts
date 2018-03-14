@@ -48,6 +48,9 @@ export default class Bullet extends Entity implements IRenderable, IMovable, ICo
     this.contextId = ContextId.MAIN
   }
 
+  /**
+   *
+   */
   init (): void {
     this.position.set(0, 0)
     this.speed = 0

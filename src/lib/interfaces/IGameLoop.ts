@@ -32,7 +32,7 @@ export default interface IGameLoop {
   togglePause (): void
 
   /**
-   * Main Loop.
+   * Application Loop.
    *
    * @param {number} time
    */

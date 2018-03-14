@@ -13,7 +13,11 @@ export default class Settings {
   audio
   gameSize: Dimension
 
-  constructor (canvas: HTMLCanvasElement) {
+  /**
+   *
+   * @param {Dimension} dimension
+   */
+  constructor (dimension: Dimension) {
     this.keyboard = {
       'w': Actions.UP,
       's': Actions.DOWN,
@@ -33,7 +37,7 @@ export default class Settings {
       ambient: 1,
       effects: 1
     }
-    this.gameSize = new Dimension(canvas.width, canvas.height)
+    this.gameSize = dimension
   }
 
   findKey (value): string {
