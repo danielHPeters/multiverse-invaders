@@ -10,9 +10,9 @@ import Observer from '../lib/observer/Observer'
  * @version 1.0
  */
 export default class GameLoop implements IGameLoop, Observer {
-  public game: IGame
-  public lastTime: number
-  public frameId: number
+  game: IGame
+  lastTime: number
+  frameId: number
   private state: any
 
   /**
@@ -29,7 +29,7 @@ export default class GameLoop implements IGameLoop, Observer {
   /**
    *
    */
-  public start (): void {
+  start (): void {
     this.game.init()
     this.game.state.running = true
     this.frameId = requestAnimationFrame(time => this.loop(time))
@@ -38,13 +38,13 @@ export default class GameLoop implements IGameLoop, Observer {
   /**
    *
    */
-  public stop (): void {
+  stop (): void {
     if (this.frameId) {
       cancelAnimationFrame(this.frameId)
     }
   }
 
-  public restart (): void {
+  restart (): void {
     this.stop()
     this.start()
   }
@@ -52,14 +52,14 @@ export default class GameLoop implements IGameLoop, Observer {
   /**
    *
    */
-  public togglePause (): void {
+  togglePause (): void {
     this.game.state.paused = !this.game.state.paused
   }
 
   /**
    *
    */
-  public loop (time: number): void {
+  loop (time: number): void {
     if (this.state[Actions.RESTART]) {
       this.restart()
     } else {

@@ -44,14 +44,14 @@ export default class Application {
    * Instantiate a singleton instance of Application.
    * @returns {Application}
    */
-  public static bootstrap (): Application {
+  static bootstrap (): Application {
     return new Application()
   }
 
   /**
    * Initialize the game.
    */
-  public init (): void {
+  init (): void {
     this.initContexts()
     this.initAssetQueue()
     this.assetManager.downloadAll(() => this.setUpGame())
