@@ -13,7 +13,7 @@ export default class CollisionManager implements ICollisionManager {
   /**
    * Constructor.
    *
-   * @param {QuadTree} quadTree
+   * @param quadTree
    */
   constructor (quadTree: QuadTree) {
     this.quadTree = quadTree

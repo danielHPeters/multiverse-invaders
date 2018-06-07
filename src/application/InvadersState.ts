@@ -39,10 +39,9 @@ export default class InvadersState extends Observable implements IGameState {
 
   /**
    *
-   * @param {Settings} settings
-   * @param {InputManager} inputManager
-   * @param {AssetManager} assetManager
-   * @param {CollisionManager} collisionManager
+   * @param settings
+   * @param inputManager
+   * @param assetManager
    */
   constructor (settings: Settings, inputManager: InputManager, assetManager: AssetManager) {
     super()
@@ -104,7 +103,7 @@ export default class InvadersState extends Observable implements IGameState {
 
   /**
    *
-   * @param {number} dt
+   * @param dt
    */
   update (dt: number): void {
     this.spawnWave()
@@ -114,9 +113,6 @@ export default class InvadersState extends Observable implements IGameState {
     this.movables.forEach(movable => movable.move(dt))
   }
 
-  /**
-   *
-   */
   spawnWave (): void {
     if (this.pools[2].getPool().length === 0) {
       const height = this.assetManager.getSprite(AssetId.ENEMY).height
@@ -141,9 +137,6 @@ export default class InvadersState extends Observable implements IGameState {
     this.notify()
   }
 
-  /**
-   *
-   */
   gameOver (): void {
     this.backgroundAudio.stop()
     document.getElementById('game-over').style.display = 'block'
@@ -151,9 +144,6 @@ export default class InvadersState extends Observable implements IGameState {
     this.gameOverAudio.play(true)
   }
 
-  /**
-   *
-   */
   reset (): void {
     this.backgroundAudio.stop()
     this.gameOverAudio.stop()

@@ -20,14 +20,6 @@ export default class InvadersGame implements IGame {
   settings: Settings
   contexts: Map<ContextId, CanvasRenderingContext2D>
 
-  /**
-   *
-   * @param {IGameState} state
-   * @param {AssetManager} assetManager
-   * @param {InputManager} inputManager
-   * @param {Settings} settings
-   * @param {CanvasRenderingContext2D[]} contexts
-   */
   constructor (state: IGameState, assetManager: AssetManager, inputManager: InputManager, settings: Settings, contexts: Map<ContextId, CanvasRenderingContext2D>) {
     this.state = state
     this.assetManager = assetManager
@@ -37,25 +29,16 @@ export default class InvadersGame implements IGame {
     this.init()
   }
 
-  /**
-   *
-   */
-  public init (): void {
+  init (): void {
     this.contexts.forEach(context => context.clearRect(0, 0, this.settings.gameSize.width, this.settings.gameSize.height))
     this.state.reset()
   }
 
-  /**
-   *
-   */
-  public clear (): void {
+  clear (): void {
     this.state.renderables.forEach(renderable => renderable.clear(this.contexts.get(renderable.contextId)))
   }
 
-  /**
-   *
-   */
-  public render (): void {
+  render (): void {
     this.state.renderables.forEach(renderable => renderable.render(this.contexts.get(renderable.contextId)))
   }
 }

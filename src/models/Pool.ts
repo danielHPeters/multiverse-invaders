@@ -23,16 +23,6 @@ export default class Pool implements IRenderable, IMovable {
   settings: Settings
   game: IGameState
 
-  /**
-   *
-   * @param {AssetManager} assetManager
-   * @param {number} maxSize
-   * @param {EntityType} type
-   * @param {AssetId} asId
-   * @param {Settings} settings
-   * @param {Pool} pool
-   * @param {IGameState}game
-   */
   constructor (assetManager: AssetManager, maxSize: number, type: EntityType, asId: AssetId, settings: Settings, pool: Pool = null, game: IGameState = null) {
     this.assetManager = assetManager
     this.maxSize = maxSize
@@ -46,9 +36,6 @@ export default class Pool implements IRenderable, IMovable {
     this.init()
   }
 
-  /**
-   *
-   */
   init (): void {
     const sprite = this.assetManager.getSprite(this.assetId)
     if (this.type === EntityType.ENEMY) {
@@ -68,21 +55,11 @@ export default class Pool implements IRenderable, IMovable {
     }
   }
 
-  /**
-   *
-   * @returns {IMovable[]}
-   */
-  public getPool (): IMovable[] {
+  getPool (): IMovable[] {
     return this.pool.filter(object => object.alive)
   }
 
-  /**
-   *
-   * @param {number} x
-   * @param {number} y
-   * @param {number} speed
-   */
-  public get (x: number, y: number, speed: number): void {
+  get (x: number, y: number, speed: number): void {
     const lastElement = this.pool[this.maxSize - 1]
     if (!lastElement.alive) {
       lastElement.spawn(x, y, speed)
@@ -90,16 +67,7 @@ export default class Pool implements IRenderable, IMovable {
     }
   }
 
-  /**
-   *
-   * @param {number} x1
-   * @param {number} y1
-   * @param {number} speed1
-   * @param {number} x2
-   * @param {number} y2
-   * @param {number} speed2
-   */
-  public getTwo (x1: number, y1: number, speed1: number, x2: number, y2: number, speed2: number): void {
+  getTwo (x1: number, y1: number, speed1: number, x2: number, y2: number, speed2: number): void {
     if (!this.pool[this.maxSize - 1].alive &&
       !this.pool[this.maxSize - 2].alive) {
       this.get(x1, y1, speed1)
@@ -107,11 +75,7 @@ export default class Pool implements IRenderable, IMovable {
     }
   }
 
-  /**
-   *
-   * @param {CanvasRenderingContext2D} ctx
-   */
-  public render (ctx: CanvasRenderingContext2D): void {
+  render (ctx: CanvasRenderingContext2D): void {
     for (let i = 0; i < this.pool.length; i++) {
       // Only draw until we find a bullet that is not alive
       if (this.pool[i].alive) {
@@ -123,15 +87,11 @@ export default class Pool implements IRenderable, IMovable {
     }
   }
 
-  /**
-   *
-   * @param {CanvasRenderingContext2D} ctx
-   */
-  public clear (ctx: CanvasRenderingContext2D): void {
+  clear (ctx: CanvasRenderingContext2D): void {
     this.pool.forEach(object => object.clear(ctx))
   }
 
-  public move (dt: number): void {
+  move (dt: number): void {
     this.pool.forEach(object => object.move(dt))
   }
 }

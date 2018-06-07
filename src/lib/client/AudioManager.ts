@@ -12,16 +12,10 @@ export default class AudioManager {
   private effectsGain: GainNode
   private ambientGain: GainNode
 
-  /**
-   *
-   */
   constructor () {
     this.initAudioContext()
   }
 
-  /**
-   *
-   */
   initAudioContext (): void {
     try {
       this.audioContext = new AudioContext()
@@ -39,12 +33,6 @@ export default class AudioManager {
     }
   }
 
-  /**
-   *
-   * @param data
-   * @param id
-   * @param callback
-   */
   decodeAudio (data, id, callback): void {
     this.audioContext.decodeAudioData(data).then(
       buffer => callback(buffer),

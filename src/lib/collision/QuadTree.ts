@@ -42,7 +42,7 @@ export default class QuadTree {
   /**
    *
    * @param returnedObjects
-   * @returns {any}
+   * @returns
    */
   getAllObjects (returnedObjects) {
     this.nodes.forEach(node => node.getAllObjects(returnedObjects))

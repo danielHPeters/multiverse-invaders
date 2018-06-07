@@ -1,7 +1,7 @@
 import TileSetMap from './TileSetMap'
 
 /**
- * Area with a tileset map.
+ * Area with a TileSet map.
  *
  * @author Daniel Peters
  * @version 1.0
@@ -12,7 +12,7 @@ export default class Area {
   /**
    * Constructor.
    *
-   * @param {TileSetMap} map
+   * @param map
    */
   constructor (map: TileSetMap) {
     this.map = map

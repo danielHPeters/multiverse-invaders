@@ -1,5 +1,4 @@
 import Vector2 from '../lib/math/Vector2'
-import { EntityType } from '../lib/interfaces/ICollideAble'
 import IRenderable from '../lib/interfaces/IRenderable'
 import { ContextId } from '../enum/ContextId'
 import IMovable from '../lib/interfaces/IMovable'
@@ -16,17 +15,9 @@ import Settings from '../config/Settings'
 export default class Background extends Entity implements IRenderable, IMovable {
   contextId: ContextId
   speed: number
-  sprite: any
+  sprite: HTMLImageElement
 
-  /**
-   * Constructor.
-   *
-   * @param {number} width
-   * @param {number} height
-   * @param sprite
-   * @param {Settings} settings
-   */
-  constructor (width: number, height: number, sprite: any, settings: Settings) {
+  constructor (width: number, height: number, sprite: HTMLImageElement, settings: Settings) {
     super(new Vector2(0, 0), new Dimension(width, height), settings)
     this.speed = 1
     this.sprite = sprite
@@ -40,10 +31,6 @@ export default class Background extends Entity implements IRenderable, IMovable 
     this.position.set(0, 0)
   }
 
-  /**
-   *
-   * @param {CanvasRenderingContext2D} ctx
-   */
   render (ctx: CanvasRenderingContext2D): void {
     ctx.drawImage(this.sprite, this.position.x, this.position.y)
     ctx.drawImage(this.sprite, this.position.x, this.position.y - this.dimension.height)
@@ -52,7 +39,7 @@ export default class Background extends Entity implements IRenderable, IMovable 
   /**
    * Update position.
    *
-   * @param {number} dt Delta Time
+   * @param dt Delta Time
    */
   move (dt: number): void {
     this.position.y += this.speed

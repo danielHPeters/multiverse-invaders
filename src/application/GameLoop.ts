@@ -18,7 +18,7 @@ export default class GameLoop implements IGameLoop, Observer {
   /**
    * Constructor.
    *
-   * @param {IGame} game Game instance
+   * @param game Game instance
    */
   constructor (game: IGame) {
     this.game = game
@@ -26,18 +26,12 @@ export default class GameLoop implements IGameLoop, Observer {
     this.state = {}
   }
 
-  /**
-   *
-   */
   start (): void {
     this.game.init()
     this.game.state.running = true
     this.frameId = requestAnimationFrame(time => this.loop(time))
   }
 
-  /**
-   *
-   */
   stop (): void {
     if (this.frameId) {
       cancelAnimationFrame(this.frameId)
@@ -49,16 +43,10 @@ export default class GameLoop implements IGameLoop, Observer {
     this.start()
   }
 
-  /**
-   *
-   */
   togglePause (): void {
     this.game.state.paused = !this.game.state.paused
   }
 
-  /**
-   *
-   */
   loop (time: number): void {
     if (this.state[Actions.RESTART]) {
       this.restart()

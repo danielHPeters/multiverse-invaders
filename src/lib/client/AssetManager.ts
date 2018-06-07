@@ -23,7 +23,7 @@ export default class AssetManager {
   /**
    * Constructor.
    *
-   * @param {AudioManager} audioManager
+   * @param audioManager Audio manager instance
    */
   constructor (audioManager: AudioManager) {
     this.cache = {
@@ -37,20 +37,14 @@ export default class AssetManager {
   }
 
   /**
+   * Check if downloading has finished.
    *
-   * @returns {boolean}
+   * @returns True when all downloads are finished and or failed
    */
   done (): boolean {
     return this.downloadCount === this.queue.length
   }
 
-  /**
-   *
-   * @param {AssetId} id
-   * @param {string} path
-   * @param {AssetType} type
-   * @param {{}} opts
-   */
   queueDownload (id: AssetId, path: string, type: AssetType, opts = null): void {
     this.queue.push({
       id: id,
@@ -63,12 +57,11 @@ export default class AssetManager {
   /**
    * Build an AJAX Request to loadAudio audio file into the buffer cache.
    *
-   * @param item object with name of file and path to file
-   * @param callback function to execute on done
+   * @param item Object with name of file and path to file
+   * @param callback Function to execute on done
    */
   loadAudio (item, callback): void {
     Ajax.create({
-      method: 'GET',
       url: item.path,
       responseType: 'arraybuffer'
     }, response => {
@@ -82,11 +75,6 @@ export default class AssetManager {
     })
   }
 
-  /**
-   *
-   * @param item
-   * @param callback
-   */
   loadSprite (item, callback): void {
     let sprite = new Image()
     sprite.addEventListener('load', () => {
@@ -102,8 +90,8 @@ export default class AssetManager {
   /**
    * Load sprites sheet.
    *
-   * @param item sprite sheet info
-   * @param callback called upon downloading all
+   * @param item Sprite sheet info
+   * @param callback Called upon downloading all
    */
   loadSpriteSheet (item, callback): void {
     let spriteSheet = new Image()
@@ -117,10 +105,6 @@ export default class AssetManager {
     spriteSheet.src = item.path
   }
 
-  /**
-   *
-   * @param callback
-   */
   downloadAll (callback): void {
     this.queue.forEach(item => {
       if (item.type === AssetType.AUDIO) {
@@ -137,29 +121,18 @@ export default class AssetManager {
    * Create an audio buffer source node from cached buffer.
    * Send it to the destination of the audio context and play it.
    *
-   * @param {AssetId} id file id
-   * @param {AssetType} type
+   * @param id File id
+   * @param type Asset type
    */
   getSound (id: AssetId, type: AssetType): Sound {
-    let ambient = type === AssetType.AUDIO_AMB
+    const ambient = type === AssetType.AUDIO_AMB
     return this.audioManager.createSound(this.cache.audio[id], ambient)
   }
 
-  /**
-   *
-   * @param {AssetId} id
-   * @returns {any}
-   */
-  getSprite (id: AssetId): any {
+  getSprite (id: AssetId): HTMLImageElement {
     return this.cache.sprites[id]
   }
 
-  /**
-   * Get sprite sheet by name.
-   *
-   * @param {AssetId} id
-   * @returns {SpriteSheet}
-   */
   getSpriteSheet (id: AssetId): SpriteSheet {
     return this.cache.spriteSheets[id]
   }

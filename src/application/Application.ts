@@ -42,7 +42,7 @@ export default class Application {
 
   /**
    * Instantiate a singleton instance of Application.
-   * @returns {Application}
+   * @returns
    */
   static bootstrap (): Application {
     return new Application()
@@ -70,7 +70,7 @@ export default class Application {
   }
 
   /**
-   * Queue assets to be preloaded.
+   * Queue assets for download.
    */
   private initAssetQueue (): void {
     this.assetManager.queueDownload(AssetId.BACKGROUND, 'assets/textures/background.png', AssetType.SPRITE)

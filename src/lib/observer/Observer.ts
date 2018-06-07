@@ -7,7 +7,7 @@
 export default interface Observer {
   /**
    *
-   * @param {any} state
+   * @param state
    */
   update (state: any): void
 }

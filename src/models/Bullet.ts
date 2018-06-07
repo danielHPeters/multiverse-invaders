@@ -17,21 +17,13 @@ import ISpawnAble from '../lib/interfaces/ISpawnAble'
 export default class Bullet extends Entity implements IRenderable, IMovable, ICollideAble, ISpawnAble {
   contextId: ContextId
   speed: number
-  sprite: any
+  sprite: HTMLImageElement
   alive: boolean
   collidesWith
   type: EntityType
   colliding: boolean
 
-  /**
-   *
-   * @param {number} width
-   * @param {number} height
-   * @param sprite
-   * @param {EntityType} type
-   * @param {Settings} settings
-   */
-  constructor (width: number, height: number, sprite: any, type: EntityType, settings: Settings) {
+  constructor (width: number, height: number, sprite: HTMLImageElement, type: EntityType, settings: Settings) {
     super(new Vector2(0, 0), new Dimension(width, height), settings)
     this.speed = 0
     this.sprite = sprite
@@ -48,9 +40,6 @@ export default class Bullet extends Entity implements IRenderable, IMovable, ICo
     this.contextId = ContextId.MAIN
   }
 
-  /**
-   *
-   */
   init (): void {
     this.position.set(0, 0)
     this.speed = 0
@@ -58,21 +47,12 @@ export default class Bullet extends Entity implements IRenderable, IMovable, ICo
     this.colliding = false
   }
 
-  /**
-   *
-   * @param {number} x
-   * @param {number} y
-   * @param {number} speed
-   */
   spawn (x: number, y: number, speed: number): void {
     this.position.set(x, y)
     this.speed = speed
     this.alive = true
   }
 
-  /**
-   *
-   */
   render (ctx: CanvasRenderingContext2D): void {
     if ((this.type === EntityType.PLAYER_BULLET && this.position.y <= 0 - this.dimension.height) ||
       (this.type === EntityType.ENEMY_BULLET && this.position.y >= this.settings.gameSize.height)) {
@@ -82,18 +62,10 @@ export default class Bullet extends Entity implements IRenderable, IMovable, ICo
     }
   }
 
-  /**
-   *
-   * @param {CanvasRenderingContext2D} ctx
-   */
   clear (ctx: CanvasRenderingContext2D): void {
     ctx.clearRect(this.position.x - 1, this.position.y - 1, this.dimension.width + 1, this.dimension.height + 1)
   }
 
-  /**
-   *
-   * @param {number} dt
-   */
   move (dt: number): void {
     if ((this.type === EntityType.PLAYER_BULLET && this.position.y <= 0 - this.dimension.height) ||
       (this.type === EntityType.ENEMY_BULLET && this.position.y >= this.settings.gameSize.height) ||
@@ -105,11 +77,6 @@ export default class Bullet extends Entity implements IRenderable, IMovable, ICo
     }
   }
 
-  /**
-   *
-   * @param {ICollideAble} other
-   * @returns {boolean}
-   */
   isCollideAbleWith (other: ICollideAble): boolean {
     return this.collidesWith.includes(other.type.toString())
   }

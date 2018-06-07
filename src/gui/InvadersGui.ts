@@ -20,7 +20,7 @@ export default class InvadersGui implements Observer {
    *
    * @param state
    */
-  public update (state: any): void {
+  update (state: any): void {
     this.scoreElement.innerHTML = state.toString()
   }
 }

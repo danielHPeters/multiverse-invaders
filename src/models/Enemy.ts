@@ -35,17 +35,6 @@ export default class Enemy extends Entity implements IRenderable, IMovable, ICol
   explosionSound: Sound
   game: IGameState
 
-  /**
-   *
-   * @param {number} width
-   * @param {number} height
-   * @param sprite
-   * @param {EntityType} type
-   * @param {Pool} bulletPool
-   * @param {Settings} settings
-   * @param {Sound} sound
-   * @param {IGameState} game
-   */
   constructor (width: number, height: number, sprite, type: EntityType, bulletPool: Pool, settings: Settings, sound: Sound, game: IGameState) {
     super(new Vector2(0, 0), new Dimension(width, height), settings)
     this.velocity = new Vector2(0, 0)
@@ -63,9 +52,6 @@ export default class Enemy extends Entity implements IRenderable, IMovable, ICol
     this.game = game
   }
 
-  /**
-   *
-   */
   init (): void {
     this.position.set(0, 0)
     this.velocity.set(0, 0)
@@ -74,35 +60,20 @@ export default class Enemy extends Entity implements IRenderable, IMovable, ICol
     this.colliding = false
   }
 
-  /**
-   *
-   */
   fire (): void {
     this.bulletPool.get(Math.floor(this.position.x + this.dimension.width / 2), Math.floor(this.position.y + this.dimension.height), -200)
   }
 
-  /**
-   *
-   * @param {CanvasRenderingContext2D} ctx
-   */
   render (ctx: CanvasRenderingContext2D): void {
     if (this.alive) {
       ctx.drawImage(this.sprite, this.position.x, this.position.y)
     }
   }
 
-  /**
-   *
-   * @param {CanvasRenderingContext2D} ctx
-   */
   clear (ctx: CanvasRenderingContext2D): void {
     ctx.clearRect(this.position.x - 1, this.position.y, this.dimension.width + 1, this.dimension.height)
   }
 
-  /**
-   *
-   * @param {number} dt Delta time
-   */
   move (dt: number): void {
     if (!this.colliding) {
       if (this.alive) {
@@ -129,12 +100,6 @@ export default class Enemy extends Entity implements IRenderable, IMovable, ICol
     }
   }
 
-  /**
-   *
-   * @param {number} x
-   * @param {number} y
-   * @param {number} speed
-   */
   spawn (x: number, y: number, speed: number): void {
     this.position.set(x, y)
     this.velocity.set(0, speed)
@@ -145,10 +110,6 @@ export default class Enemy extends Entity implements IRenderable, IMovable, ICol
     this.bottomEdge = this.position.y + 280
   }
 
-  /**
-   *
-   * @param {ICollideAble} other
-   */
   isCollideAbleWith (other: ICollideAble): boolean {
     return this.collidesWith.includes(other.type.toString())
   }

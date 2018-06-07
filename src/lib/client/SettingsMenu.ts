@@ -32,21 +32,21 @@ export default class SettingsMenu {
     this.visible = false
   }
 
-  public init (): void {
+  init (): void {
     this.createMainMenu()
     this.createKeyboardMenu('keyboardMenu', 'Keyboard', 'Keyboard Settings')
     this.createPlayerMenu('playerMenu', 'Player', 'Player Settings')
     this.createAudioMenu('audioMenu', 'Audio', 'Audio Settings')
   }
 
-  public clear (): void {
+  clear (): void {
     while (this.element.firstChild) {
       this.element.removeChild(this.element.firstChild)
     }
     this.init()
   }
 
-  public toggleShow (): void {
+  toggleShow (): void {
     this.element.style.display = this.visible ? 'none' : 'block'
     this.visible = !this.visible
   }

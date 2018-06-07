@@ -1,7 +1,20 @@
+export enum HttpMethod {
+  POST = 'post', GET = 'get'
+}
+
+export interface AjaxOptions {
+  url: string,
+  method: HttpMethod,
+  contentType: string
+  responseType: XMLHttpRequestResponseType
+  async: boolean,
+  data: any
+}
+
 export default class Ajax {
   private static defaults = {
     url: '',
-    method: 'GET',
+    method: HttpMethod.GET,
     contentType: 'text/html',
     async: true,
     data: null
@@ -19,11 +32,9 @@ export default class Ajax {
    * data = request body.
    * @param callback success callback function
    */
-  public static create (opts, callback): void {
+  public static create (opts: Partial<AjaxOptions>, callback: (response: any) => void): void {
     let xHttp = new XMLHttpRequest()
-    xHttp.addEventListener('load', () => {
-      callback(xHttp.response)
-    })
+    xHttp.addEventListener('load', () => callback(xHttp.response))
     xHttp.open(
       opts.method ? opts.method : Ajax.defaults.method,
       opts.url ? opts.url : Ajax.defaults.url,

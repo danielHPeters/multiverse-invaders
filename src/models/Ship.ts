@@ -37,14 +37,6 @@ export default class Ship extends Entity implements IRenderable, IMovable, Obser
   contextId: ContextId
   alive: boolean
 
-  /**
-   *
-   * @param {number} width
-   * @param {number} height
-   * @param {AssetManager} assetManager
-   * @param {Pool} pool
-   * @param {Settings} settings
-   */
   constructor (width: number, height: number, assetManager: AssetManager, pool: Pool, settings: Settings) {
     super(new Vector2(0, 0), new Dimension(width, height), settings)
     this.startPosition = new Vector2(0, 0)
