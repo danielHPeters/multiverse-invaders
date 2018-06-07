@@ -1,30 +1,29 @@
-const Uglify = require('uglifyjs-webpack-plugin')
+'use strict'
+
+const { CheckerPlugin } = require('awesome-typescript-loader')
 const path = require('path')
 
 module.exports = {
   entry: {
-    'invaders': './src/app.ts',
-    'invaders.min': './src/app.ts'
+    invaders: './src/app.ts',
+  },
+  output: {
+    path: path.join(__dirname, './public/js'),
+    filename: '[name].min.js'
   },
   devtool: 'source-map',
-  output: {
-    path: path.join(__dirname, './public/javascripts'),
-    filename: '[name].js'
-  },
   resolve: {
-    // Add '.ts' and '.tsx' as a resolvable extension.
-    extensions: ['.webpack.js', '.web.js', '.ts', '.tsx', '.js']
+     // Add '.ts' and '.tsx' as a resolvable extension.
+     extensions: ['.ts', '.tsx', '.js', '.jsx']
   },
   module: {
     rules: [
-      // all files with a '.ts' or '.tsx' extension will be handled by 'ts-loader'
-      {test: /\.tsx?$/, loader: 'ts-loader'}
+      // all files with a '.ts' or '.tsx' extension will be handled by 'awesome-typescript-loader'.
+      { test: /\.tsx?$/, loaders: ['awesome-typescript-loader'] },
+      { test: /\.jsx?$/, loaders: ['babel-loader'] }
     ]
   },
   plugins: [
-    new Uglify({
-      include: /\.min\.js$/,
-      sourceMap: true
-    })
+    new CheckerPlugin()
   ]
 }

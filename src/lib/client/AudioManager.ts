@@ -24,8 +24,6 @@ export default class AudioManager {
    */
   initAudioContext (): void {
     try {
-      // Fix for browsers using prefixes
-      window.AudioContext = window.AudioContext || webkitAudioContext
       this.audioContext = new AudioContext()
       this.masterGain = this.audioContext.createGain()
       this.effectsGain = this.audioContext.createGain()
@@ -54,36 +52,18 @@ export default class AudioManager {
     )
   }
 
-  /**
-   *
-   * @param {number} value
-   */
   adjustMasterVolume (value: number): void {
     this.masterGain.gain.value = value
   }
 
-  /**
-   *
-   * @param {number} value
-   */
   adjustAmbientVolume (value: number): void {
     this.ambientGain.gain.value = value
   }
 
-  /**
-   *
-   * @param {number} value
-   */
   adjustEffectsVolume (value: number): void {
     this.effectsGain.gain.value = value
   }
 
-  /**
-   *
-   * @param buffer
-   * @param {boolean} ambient
-   * @returns {Sound}
-   */
   createSound (buffer, ambient: boolean): Sound {
     return new Sound(this.audioContext, ambient ? this.ambientGain : this.effectsGain, buffer)
   }
