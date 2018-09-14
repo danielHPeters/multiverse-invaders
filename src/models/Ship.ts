@@ -1,15 +1,15 @@
 import Vector2 from '../lib/math/Vector2'
 import Pool from './Pool'
 import Observer from '../lib/observer/Observer'
-import ICollideAble, { EntityType } from '../lib/interfaces/ICollideAble'
+import Collideable from '../lib/interfaces/Collideable'
 import { Actions } from '../lib/client/InputManager'
 import AssetManager, { AssetType } from '../lib/client/AssetManager'
 import Sound from '../lib/audio/Sound'
 import { AssetId } from '../enum/AssetId'
 import Entity from '../lib/entity/Entity'
 import Settings from '../config/Settings'
-import IMovable from '../lib/interfaces/IMovable'
-import IRenderable from '../lib/interfaces/IRenderable'
+import Movable from '../lib/interfaces/Movable'
+import Renderable from '../lib/interfaces/Renderable'
 import Dimension from '../lib/geometry/Dimension'
 import { ContextId } from '../enum/ContextId'
 
@@ -19,13 +19,13 @@ import { ContextId } from '../enum/ContextId'
  * @author Daniel Peters
  * @version 1.0
  */
-export default class Ship extends Entity implements IRenderable, IMovable, Observer, ICollideAble {
+export default class Ship extends Entity implements Renderable, Movable, Observer, Collideable {
   acceleration: Vector2
   sprite: any
   bulletPool: Pool
   counter: number
   collidesWith
-  type: EntityType
+  type: AssetId
   colliding: boolean
   velocity: Vector2
   state
@@ -43,11 +43,11 @@ export default class Ship extends Entity implements IRenderable, IMovable, Obser
     this.acceleration = new Vector2(0, 0)
     this.velocity = new Vector2(0, 0)
     this.sprite = assetManager.getSprite(AssetId.PLAYER)
-    this.type = EntityType.PLAYER
+    this.type = AssetId.PLAYER
     this.bulletPool = pool
     this.counter = 0
     this.collidesWith = []
-    this.collidesWith.push(EntityType.ENEMY_BULLET)
+    this.collidesWith.push(AssetId.ENEMY_BULLET)
     this.colliding = false
     this.state = {}
     this.settings = settings
@@ -156,10 +156,10 @@ export default class Ship extends Entity implements IRenderable, IMovable, Obser
 
   /**
    *
-   * @param {ICollideAble} other
+   * @param {Collideable} other
    * @returns {boolean}
    */
-  isCollideAbleWith (other: ICollideAble): boolean {
+  isCollideAbleWith (other: Collideable): boolean {
     return this.collidesWith.includes(other.type.toString())
   }
 }

@@ -1,8 +1,8 @@
 import QuadTree from '../collision/QuadTree'
-import ICollideAble from './ICollideAble'
+import Collideable from './Collideable'
 import Entity from '../entity/Entity'
-import IRenderable from './IRenderable'
-import IMovable from './IMovable'
+import Renderable from './Renderable'
+import Movable from './Movable'
 
 /**
  * Game state interface.
@@ -10,14 +10,14 @@ import IMovable from './IMovable'
  * @author Daniel Peters
  * @version 1.0
  */
-export default interface IGameState {
+export default interface GameState {
   running: boolean
   paused: boolean
   quadTree: QuadTree
   entities: Entity[]
-  movables: IMovable[]
-  renderables: IRenderable[]
-  collideables: ICollideAble[]
+  movables: Movable[]
+  renderables: Renderable[]
+  collideables: Collideable[]
 
   update (dt: number): void
 

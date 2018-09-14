@@ -8,10 +8,10 @@ import { ContextId } from '../enum/ContextId'
 import Dimension from '../lib/geometry/Dimension'
 import { AssetId } from '../enum/AssetId'
 import InvadersState from './InvadersState'
-import GameLoop from './GameLoop'
+import InvadersLoop from './InvadersLoop'
 import EventHandler from '../lib/event/EventHandler'
 import InvadersGame from './InvadersGame'
-import IGameLoop from '../lib/interfaces/IGameLoop'
+import GameLoop from '../lib/interfaces/GameLoop'
 
 /**
  * Application application class.
@@ -96,9 +96,9 @@ export default class Application {
 
   /**
    *
-   * @param {IGameLoop} loop
+   * @param {GameLoop} loop
    */
-  private initGui (loop: IGameLoop): void {
+  private initGui (loop: GameLoop): void {
     const settingsMenu = new SettingsMenu('settings-menu', this.settings, this.assetManager, this.audioManager)
     const gameOver = document.getElementById('game-over')
     const set = document.getElementById('settings')
@@ -119,7 +119,7 @@ export default class Application {
   private setUpGame (): void {
     const state = new InvadersState(this.settings, this.inputManager, this.assetManager)
     const game = new InvadersGame(state, this.assetManager, this.inputManager, this.settings, this.contexts)
-    const loop = new GameLoop(game)
+    const loop = new InvadersLoop(game)
     this.inputManager.register(loop)
     this.initGui(loop)
     state.register(this.gui)

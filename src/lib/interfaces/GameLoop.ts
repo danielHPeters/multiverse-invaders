@@ -1,4 +1,4 @@
-import IGame from './IGame'
+import Game from './Game'
 
 /**
  * Game Loop interface.
@@ -6,8 +6,8 @@ import IGame from './IGame'
  * @author Daniel Peters
  * @version 1.0
  */
-export default interface IGameLoop {
-  game: IGame
+export default interface GameLoop {
+  game: Game
   lastTime: number
   frameId: number
 

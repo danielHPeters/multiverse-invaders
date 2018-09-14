@@ -4,7 +4,7 @@
  * @author Daniel Peters
  * @version 1.0
  */
-export default interface ISpawnAble {
+export default interface SpawnAble {
   alive: boolean
 
   /**

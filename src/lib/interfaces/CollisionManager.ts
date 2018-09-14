@@ -6,7 +6,7 @@
  */
 import QuadTree from '../collision/QuadTree'
 
-export default interface ICollisionManager {
+export default interface CollisionManager {
   quadTree: QuadTree
 
   /**

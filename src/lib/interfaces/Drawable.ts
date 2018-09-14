@@ -6,7 +6,7 @@ import Vector2 from '../../lib/math/Vector2'
  * @author Daniel Peters
  * @version 1.0
  */
-export default interface IDrawable {
+export default interface Drawable {
   position: Vector2
   speed: number
   width: number

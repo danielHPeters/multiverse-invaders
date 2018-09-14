@@ -1,29 +1,28 @@
 import AssetManager, { AssetType } from '../lib/client/AssetManager'
 import Bullet from './Bullet'
 import Enemy from './Enemy'
-import { EntityType } from '../lib/interfaces/ICollideAble'
 import { AssetId } from '../enum/AssetId'
 import Settings from '../config/Settings'
-import IRenderable from '../lib/interfaces/IRenderable'
+import Renderable from '../lib/interfaces/Renderable'
 import { ContextId } from '../enum/ContextId'
-import IMovable from '../lib/interfaces/IMovable'
-import IGameState from '../lib/interfaces/IGameState'
+import Movable from '../lib/interfaces/Movable'
+import GameState from '../lib/interfaces/GameState'
 
 /**
  *
  */
-export default class Pool implements IRenderable, IMovable {
+export default class Pool implements Renderable, Movable {
   contextId: ContextId
   assetManager: AssetManager
   maxSize: number
-  type: EntityType
+  type: AssetId
   assetId: AssetId
   pool: any[]
   subPool: Pool
   settings: Settings
-  game: IGameState
+  game: GameState
 
-  constructor (assetManager: AssetManager, maxSize: number, type: EntityType, asId: AssetId, settings: Settings, pool: Pool = null, game: IGameState = null) {
+  constructor (assetManager: AssetManager, maxSize: number, type: AssetId, asId: AssetId, settings: Settings, pool: Pool = null, game: GameState = null) {
     this.assetManager = assetManager
     this.maxSize = maxSize
     this.type = type
@@ -38,7 +37,7 @@ export default class Pool implements IRenderable, IMovable {
 
   init (): void {
     const sprite = this.assetManager.getSprite(this.assetId)
-    if (this.type === EntityType.ENEMY) {
+    if (this.type === AssetId.ENEMY) {
       for (let i = 0; i < this.maxSize; i++) {
         this.pool[i] = new Enemy(
           sprite.width,
@@ -55,7 +54,7 @@ export default class Pool implements IRenderable, IMovable {
     }
   }
 
-  getPool (): IMovable[] {
+  getPool (): Movable[] {
     return this.pool.filter(object => object.alive)
   }
 

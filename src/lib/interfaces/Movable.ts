@@ -4,7 +4,7 @@
  * @author Daniel Peters
  * @version 1.0
  */
-export default interface IMovable {
+export default interface Movable {
 
   /**
    * Move entity.

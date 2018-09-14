@@ -1,5 +1,5 @@
 import QuadTree from './QuadTree'
-import ICollisionManager from '../interfaces/ICollisionManager'
+import CollisionManager from '../interfaces/CollisionManager'
 
 /**
  * Collision Manager.
@@ -7,7 +7,7 @@ import ICollisionManager from '../interfaces/ICollisionManager'
  * @author Daniel Peters
  * @version 1.0
  */
-export default class CollisionManager implements ICollisionManager {
+export default class CollisionManagerBasics implements CollisionManager {
   quadTree: QuadTree
 
   /**

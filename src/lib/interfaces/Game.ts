@@ -1,4 +1,4 @@
-import IGameState from './IGameState'
+import GameState from './GameState'
 import InputManager from '../client/InputManager'
 import AssetManager from '../client/AssetManager'
 
@@ -8,8 +8,8 @@ import AssetManager from '../client/AssetManager'
  * @author Daniel Peters
  * @version 1.0
  */
-export default interface IGame {
-  state: IGameState
+export default interface Game {
+  state: GameState
   inputManager: InputManager
   assetManager: AssetManager
 

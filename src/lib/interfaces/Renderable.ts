@@ -3,7 +3,7 @@
  */
 import { ContextId } from '../../enum/ContextId'
 
-export default interface IRenderable {
+export default interface Renderable {
   contextId: ContextId
 
   /**

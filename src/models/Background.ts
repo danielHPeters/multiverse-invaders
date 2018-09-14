@@ -1,7 +1,7 @@
 import Vector2 from '../lib/math/Vector2'
-import IRenderable from '../lib/interfaces/IRenderable'
+import Renderable from '../lib/interfaces/Renderable'
 import { ContextId } from '../enum/ContextId'
-import IMovable from '../lib/interfaces/IMovable'
+import Movable from '../lib/interfaces/Movable'
 import Entity from '../lib/entity/Entity'
 import Dimension from '../lib/geometry/Dimension'
 import Settings from '../config/Settings'
@@ -12,7 +12,7 @@ import Settings from '../config/Settings'
  * @author Daniel Peters
  * @version 1.0
  */
-export default class Background extends Entity implements IRenderable, IMovable {
+export default class Background extends Entity implements Renderable, Movable {
   contextId: ContextId
   speed: number
   sprite: HTMLImageElement

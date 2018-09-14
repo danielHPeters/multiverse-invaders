@@ -1,5 +1,5 @@
-import IGameLoop from '../lib/interfaces/IGameLoop'
-import IGame from '../lib/interfaces/IGame'
+import GameLoop from '../lib/interfaces/GameLoop'
+import Game from '../lib/interfaces/Game'
 import { Actions } from '../lib/client/InputManager'
 import Observer from '../lib/observer/Observer'
 
@@ -9,8 +9,8 @@ import Observer from '../lib/observer/Observer'
  * @author Daniel Peters
  * @version 1.0
  */
-export default class GameLoop implements IGameLoop, Observer {
-  game: IGame
+export default class InvadersLoop implements GameLoop, Observer {
+  game: Game
   lastTime: number
   frameId: number
   private state: any
@@ -20,7 +20,7 @@ export default class GameLoop implements IGameLoop, Observer {
    *
    * @param game Game instance
    */
-  constructor (game: IGame) {
+  constructor (game: Game) {
     this.game = game
     this.lastTime = null
     this.state = {}

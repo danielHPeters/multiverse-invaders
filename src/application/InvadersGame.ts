@@ -2,8 +2,8 @@ import Background from '../models/Background'
 import AssetManager from '../lib/client/AssetManager'
 import InputManager from '../lib/client/InputManager'
 import Settings from '../config/Settings'
-import IGame from '../lib/interfaces/IGame'
-import IGameState from '../lib/interfaces/IGameState'
+import Game from '../lib/interfaces/Game'
+import GameState from '../lib/interfaces/GameState'
 import { ContextId } from '../enum/ContextId'
 
 /**
@@ -12,15 +12,15 @@ import { ContextId } from '../enum/ContextId'
  * @author Daniel Peters
  * @version 1.0
  */
-export default class InvadersGame implements IGame {
-  state: IGameState
+export default class InvadersGame implements Game {
+  state: GameState
   background: Background
   assetManager: AssetManager
   inputManager: InputManager
   settings: Settings
   contexts: Map<ContextId, CanvasRenderingContext2D>
 
-  constructor (state: IGameState, assetManager: AssetManager, inputManager: InputManager, settings: Settings, contexts: Map<ContextId, CanvasRenderingContext2D>) {
+  constructor (state: GameState, assetManager: AssetManager, inputManager: InputManager, settings: Settings, contexts: Map<ContextId, CanvasRenderingContext2D>) {
     this.state = state
     this.assetManager = assetManager
     this.inputManager = inputManager

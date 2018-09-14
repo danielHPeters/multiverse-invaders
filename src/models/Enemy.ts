@@ -1,15 +1,16 @@
 import Vector2 from '../lib/math/Vector2'
 import Pool from './Pool'
-import ICollideAble, { EntityType } from '../lib/interfaces/ICollideAble'
+import Collideable from '../lib/interfaces/Collideable'
 import Sound from '../lib/audio/Sound'
 import Settings from '../config/Settings'
-import IRenderable from '../lib/interfaces/IRenderable'
-import IMovable from '../lib/interfaces/IMovable'
+import Renderable from '../lib/interfaces/Renderable'
+import Movable from '../lib/interfaces/Movable'
 import Entity from '../lib/entity/Entity'
 import Dimension from '../lib/geometry/Dimension'
 import { ContextId } from '../enum/ContextId'
-import ISpawnAble from '../lib/interfaces/ISpawnAble'
-import IGameState from '../lib/interfaces/IGameState'
+import SpawnAble from '../lib/interfaces/SpawnAble'
+import GameState from '../lib/interfaces/GameState'
+import { AssetId } from '../enum/AssetId'
 
 /**
  * Enemy ship class.
@@ -17,7 +18,7 @@ import IGameState from '../lib/interfaces/IGameState'
  * @author Daniel Peters
  * @version 1.0
  */
-export default class Enemy extends Entity implements IRenderable, IMovable, ICollideAble, ISpawnAble {
+export default class Enemy extends Entity implements Renderable, Movable, Collideable, SpawnAble {
   contextId: ContextId
   velocity: Vector2
   speed: number
@@ -30,12 +31,12 @@ export default class Enemy extends Entity implements IRenderable, IMovable, ICol
   alive: boolean
   bulletPool: Pool
   collidesWith
-  type: EntityType
+  type: AssetId
   colliding: boolean
   explosionSound: Sound
-  game: IGameState
+  game: GameState
 
-  constructor (width: number, height: number, sprite, type: EntityType, bulletPool: Pool, settings: Settings, sound: Sound, game: IGameState) {
+  constructor (width: number, height: number, sprite, type: AssetId, bulletPool: Pool, settings: Settings, sound: Sound, game: GameState) {
     super(new Vector2(0, 0), new Dimension(width, height), settings)
     this.velocity = new Vector2(0, 0)
     this.sprite = sprite
@@ -44,7 +45,7 @@ export default class Enemy extends Entity implements IRenderable, IMovable, ICol
     this.alive = false
     this.type = type
     this.collidesWith = []
-    this.collidesWith.push(EntityType.PLAYER_BULLET)
+    this.collidesWith.push(AssetId.PLAYER_BULLET)
     this.colliding = false
     this.bulletPool = bulletPool
     this.contextId = ContextId.MAIN
@@ -110,7 +111,7 @@ export default class Enemy extends Entity implements IRenderable, IMovable, ICol
     this.bottomEdge = this.position.y + 280
   }
 
-  isCollideAbleWith (other: ICollideAble): boolean {
+  isCollideAbleWith (other: Collideable): boolean {
     return this.collidesWith.includes(other.type.toString())
   }
 }

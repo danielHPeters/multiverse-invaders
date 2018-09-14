@@ -1,5 +1,5 @@
-import IGameState from '../lib/interfaces/IGameState'
-import ICollideAble, { EntityType } from '../lib/interfaces/ICollideAble'
+import GameState from '../lib/interfaces/GameState'
+import Collideable from '../lib/interfaces/Collideable'
 import QuadTree from '../lib/collision/QuadTree'
 import Settings from '../config/Settings'
 import InputManager from '../lib/client/InputManager'
@@ -9,12 +9,13 @@ import HitBox from '../lib/collision/HitBox'
 import { AssetId } from '../enum/AssetId'
 import Background from '../models/Background'
 import Pool from '../models/Pool'
-import IRenderable from '../lib/interfaces/IRenderable'
+import Renderable from '../lib/interfaces/Renderable'
 import Entity from '../lib/entity/Entity'
-import IMovable from '../lib/interfaces/IMovable'
+import Movable from '../lib/interfaces/Movable'
 import Sound from '../lib/audio/Sound'
-import CollisionManager from '../lib/collision/CollisionManager'
+import CollisionManagerBasics from '../lib/collision/CollisionManager'
 import Observable from '../lib/observer/Observable'
+import CollisionManager from '../lib/interfaces/CollisionManager'
 
 /**
  * Multiverse invaders game state.
@@ -22,14 +23,14 @@ import Observable from '../lib/observer/Observable'
  * @author Daniel Peters
  * @version 1.0
  */
-export default class InvadersState extends Observable implements IGameState {
+export default class InvadersState extends Observable implements GameState {
   running: boolean
   paused: boolean
   quadTree: QuadTree
   entities: Entity[]
-  renderables: IRenderable[]
-  collideables: ICollideAble[]
-  movables: IMovable[]
+  renderables: Renderable[]
+  collideables: Collideable[]
+  movables: Movable[]
   pools: Pool[]
   assetManager: AssetManager
   collisionManager: CollisionManager
@@ -47,7 +48,7 @@ export default class InvadersState extends Observable implements IGameState {
     super()
     this.assetManager = assetManager
     this.quadTree = new QuadTree(new HitBox(0, 0, settings.gameSize.width, settings.gameSize.height))
-    this.collisionManager = new CollisionManager(this.quadTree)
+    this.collisionManager = new CollisionManagerBasics(this.quadTree)
     this.running = false
     this.paused = false
     this.playerScore = 0
@@ -57,10 +58,10 @@ export default class InvadersState extends Observable implements IGameState {
       assetManager.getSprite(AssetId.BACKGROUND),
       settings
     )
-    const playerBulletPool = new Pool(this.assetManager, 80, EntityType.PLAYER_BULLET, AssetId.PLAYER_BULLET, settings)
+    const playerBulletPool = new Pool(this.assetManager, 80, AssetId.PLAYER_BULLET, AssetId.PLAYER_BULLET, settings)
     const ship = new Ship(assetManager.getSprite(AssetId.PLAYER).width, assetManager.getSprite(AssetId.PLAYER).height, assetManager, playerBulletPool, settings)
-    const enemyBulletPool = new Pool(this.assetManager, 50, EntityType.ENEMY_BULLET, AssetId.ENEMY_BULLET, settings)
-    const enemyPool = new Pool(this.assetManager, 30, EntityType.ENEMY, AssetId.ENEMY, settings, enemyBulletPool, this)
+    const enemyBulletPool = new Pool(this.assetManager, 50, AssetId.ENEMY_BULLET, AssetId.ENEMY_BULLET, settings)
+    const enemyPool = new Pool(this.assetManager, 30, AssetId.ENEMY, AssetId.ENEMY, settings, enemyBulletPool, this)
     this.pools = []
     this.entities = []
     this.renderables = []

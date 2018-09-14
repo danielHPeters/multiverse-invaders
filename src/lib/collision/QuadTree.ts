@@ -1,5 +1,5 @@
 import HitBox from './HitBox'
-import ICollideAble from '../interfaces/ICollideAble'
+import Collideable from '../interfaces/Collideable'
 
 /**
  * QuadTree class used to optimize collision checking.
@@ -12,7 +12,7 @@ export default class QuadTree {
   maxObjects: number
   maxLevels: number
   hitBox: HitBox
-  objects: ICollideAble[]
+  objects: Collideable[]
   nodes: QuadTree[]
 
   /**
