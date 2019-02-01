@@ -10,7 +10,7 @@ import { AssetId } from '../../enum/AssetId'
  */
 export default class HitBox implements Collideable {
   type: AssetId
-  collidesWith
+  collidesWith: AssetId[]
   colliding: boolean
   position: Vector2
   width: number
@@ -34,6 +34,6 @@ export default class HitBox implements Collideable {
   }
 
   isCollideAbleWith (other: Collideable): boolean {
-    return this.collidesWith.includes(other.type.toString())
+    return this.collidesWith.includes(other.type)
   }
 }

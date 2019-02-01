@@ -139,16 +139,24 @@ export default class InvadersState extends Observable implements GameState {
   }
 
   gameOver (): void {
+    const gameOverElement = document.getElementById('game-over')
+
+    if (gameOverElement) {
+      gameOverElement.style.display = 'block'
+    }
     this.backgroundAudio.stop()
-    document.getElementById('game-over').style.display = 'block'
     this.gameOverAudio = this.assetManager.getSound(AssetId.GAME_OVER, AssetType.AUDIO_AMB)
     this.gameOverAudio.play(true)
   }
 
   reset (): void {
+    const gameOverElement = document.getElementById('game-over')
+
+    if (gameOverElement) {
+      gameOverElement.style.display = 'none'
+    }
     this.backgroundAudio.stop()
     this.gameOverAudio.stop()
-    document.getElementById('game-over').style.display = 'none'
     this.quadTree.clear()
     this.entities.forEach(entity => entity.init())
     this.spawnWave()

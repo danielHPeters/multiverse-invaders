@@ -51,7 +51,7 @@ export default class Animation {
    * @param {number} width display width
    * @param {number} height display height
    */
-  draw (ctx, x: number, y: number, width: number, height: number): void {
+  draw (ctx: CanvasRenderingContext2D, x: number, y: number, width: number, height: number): void {
     let row = Math.floor(this._sequence[this._currentFrame] / this._spriteSheet.framesPerRow)
     let col = Math.floor(this._sequence[this._currentFrame] % this._spriteSheet.framesPerRow)
     ctx.drawImage(

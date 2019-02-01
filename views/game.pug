@@ -1,17 +1,17 @@
 extends layout
 
 block content
-  canvas#background(width='1200' height='720') Your browser does not support canvas. Please try again with a different browser.
-  canvas#main(width='1200', height='720')
-  canvas#ship(width='1200', height='720')
+  canvas#background.background-canvas(width='1200' height='720') Your browser does not support canvas. Please try again with a different browser.
+  canvas#main.main-canvas(width='1200', height='720')
+  canvas#ship.ship-canvas(width='1200', height='720')
   .settings#settings SETTINGS
     span
   .score SCORE:
     span#score
-  #settings-menu
-  .game-over#game-over GAME OVER
+  #settings-menu.settings-menu
+  #game-over.game-over GAME OVER
     p
       span RESTART
   input#shoot.shoot-button(type='image', src='assets/textures/button.png' alt='mobile shoot button')
   input#move.move-button(type='image', src='assets/textures/move-button.png' alt='mobile move button')
-  script(src='javascripts/invaders.min.js')
+  script(src='js/invaders.min.js')

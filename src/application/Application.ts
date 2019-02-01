@@ -61,12 +61,15 @@ export default class Application {
    * Initialize all canvas contexts.
    */
   private initContexts (): void {
-    const bgCanvas = document.getElementById('background') as HTMLCanvasElement
-    const shipCanvas = document.getElementById('ship') as HTMLCanvasElement
-    const mainCanvas = document.getElementById('main') as HTMLCanvasElement
-    this.contexts.set(ContextId.BACKGROUND, bgCanvas.getContext('2d'))
-    this.contexts.set(ContextId.SHIP, shipCanvas.getContext('2d'))
-    this.contexts.set(ContextId.MAIN, mainCanvas.getContext('2d'))
+    const bgContext = (document.getElementById('background') as HTMLCanvasElement).getContext('2d')
+    const shipContext = (document.getElementById('ship') as HTMLCanvasElement).getContext('2d')
+    const mainContext = (document.getElementById('main') as HTMLCanvasElement).getContext('2d')
+
+    if (bgContext && shipContext && mainContext) {
+      this.contexts.set(ContextId.BACKGROUND, bgContext)
+      this.contexts.set(ContextId.SHIP, shipContext)
+      this.contexts.set(ContextId.MAIN, mainContext)
+    }
   }
 
   /**
@@ -86,12 +89,15 @@ export default class Application {
 
   private initTouchControlElements (): void {
     const shoot = document.getElementById('shoot')
-    shoot.addEventListener('touchstart', () => this.inputManager.shoot())
-    shoot.addEventListener('touchend', () => this.inputManager.cancelShoot())
-    shoot.addEventListener('contextmenu', event => {
-      event.preventDefault()
-      return false
-    })
+
+    if (shoot) {
+      shoot.addEventListener('touchstart', () => this.inputManager.shoot())
+      shoot.addEventListener('touchend', () => this.inputManager.cancelShoot())
+      shoot.addEventListener('contextmenu', event => {
+        event.preventDefault()
+        return false
+      })
+    }
   }
 
   /**
@@ -106,11 +112,13 @@ export default class Application {
 
     settingsMenu.init()
     this.initTouchControlElements()
-    EventHandler.register(gameOver, events, () => loop.restart())
-    EventHandler.register(set, events, () => {
-      settingsMenu.toggleShow()
-      loop.togglePause()
-    })
+    if (gameOver && set) {
+      EventHandler.register(gameOver, events, () => loop.restart())
+      EventHandler.register(set, events, () => {
+        settingsMenu.toggleShow()
+        loop.togglePause()
+      })
+    }
   }
 
   /**

@@ -8,9 +8,9 @@ import Dimension from '../lib/geometry/Dimension'
  * @version 1.0
  */
 export default class Settings {
-  keyboard
-  player
-  audio
+  keyboard: any
+  player: any
+  audio: any
   gameSize: Dimension
 
   /**
@@ -40,11 +40,11 @@ export default class Settings {
     this.gameSize = dimension
   }
 
-  findKey (value): string {
+  findKey (value: string): string {
     return Object.keys(this.keyboard).filter(key => this.keyboard[key] === value)[0]
   }
 
-  setKey (newKey, action: Actions): void {
+  setKey (newKey: string, action: string): void {
     let oldKey = this.findKey(action)
     if (newKey !== oldKey) {
       console.log('old:' + oldKey, ' new: ' + newKey + ' value: ' + action)

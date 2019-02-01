@@ -9,7 +9,7 @@ export default class Sound {
   source: AudioBufferSourceNode
   gainNode: GainNode
   masterGain: GainNode
-  buffer
+  buffer: AudioBuffer
   playing: boolean
 
   /**
@@ -18,7 +18,7 @@ export default class Sound {
    * @param {GainNode} masterGain
    * @param buffer
    */
-  constructor (audioContext, masterGain: GainNode, buffer) {
+  constructor (audioContext: AudioContext, masterGain: GainNode, buffer: AudioBuffer) {
     this.audioContext = audioContext
     this.masterGain = masterGain
     this.buffer = buffer

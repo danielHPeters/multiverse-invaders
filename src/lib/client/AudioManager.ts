@@ -1,4 +1,5 @@
 import Sound from '../audio/Sound'
+import { AssetId } from '../../enum/AssetId'
 
 /**
  * Audio manager class.
@@ -33,7 +34,7 @@ export default class AudioManager {
     }
   }
 
-  decodeAudio (data, id, callback): void {
+  decodeAudio (data: any, id: AssetId, callback: (buffer: AudioBuffer) => void): void {
     this.audioContext.decodeAudioData(data).then(
       buffer => callback(buffer),
       error => { console.log('Error with decoding audio data' + error) }
@@ -52,7 +53,7 @@ export default class AudioManager {
     this.effectsGain.gain.value = value
   }
 
-  createSound (buffer, ambient: boolean): Sound {
+  createSound (buffer: AudioBuffer, ambient: boolean): Sound {
     return new Sound(this.audioContext, ambient ? this.ambientGain : this.effectsGain, buffer)
   }
 }

@@ -11,7 +11,7 @@ import Observer from '../lib/observer/Observer'
  */
 export default class InvadersLoop implements GameLoop, Observer {
   game: Game
-  lastTime: number
+  lastTime: number | undefined
   frameId: number
   private state: any
 
@@ -22,7 +22,7 @@ export default class InvadersLoop implements GameLoop, Observer {
    */
   constructor (game: Game) {
     this.game = game
-    this.lastTime = null
+    this.lastTime = undefined
     this.state = {}
   }
 
@@ -53,7 +53,7 @@ export default class InvadersLoop implements GameLoop, Observer {
     } else {
       if (this.game.state.running) {
         this.game.clear()
-        if (this.lastTime !== null) {
+        if (this.lastTime !== undefined) {
           const diff = time - this.lastTime
           if (!this.game.state.paused) {
             this.game.state.update(diff / 1000)

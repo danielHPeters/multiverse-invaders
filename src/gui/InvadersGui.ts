@@ -13,7 +13,11 @@ export default class InvadersGui implements Observer {
    * Constructor.
    */
   constructor () {
-    this.scoreElement = document.getElementById('score')
+    const element = document.getElementById('score')
+
+    if (element) {
+      this.scoreElement = element
+    }
   }
 
   /**

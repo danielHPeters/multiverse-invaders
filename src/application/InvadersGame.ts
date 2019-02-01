@@ -35,10 +35,22 @@ export default class InvadersGame implements Game {
   }
 
   clear (): void {
-    this.state.renderables.forEach(renderable => renderable.clear(this.contexts.get(renderable.contextId)))
+    this.state.renderables.forEach(renderable => {
+      const ctx = this.contexts.get(renderable.contextId)
+
+      if (ctx) {
+        renderable.clear(ctx)
+      }
+    })
   }
 
   render (): void {
-    this.state.renderables.forEach(renderable => renderable.render(this.contexts.get(renderable.contextId)))
+    this.state.renderables.forEach(renderable => {
+      const ctx = this.contexts.get(renderable.contextId)
+
+      if (ctx) {
+        renderable.render(ctx)
+      }
+    })
   }
 }

@@ -23,10 +23,10 @@ export default class CollisionManagerBasics implements CollisionManager {
    * Collision detection algorithm.
    */
   detectCollision (): void {
-    let objects = []
+    let objects: any[] = []
     this.quadTree.getAllObjects(objects)
     for (let i = 0; i < objects.length; i++) {
-      let obj = []
+      let obj: any[] = []
       this.quadTree.findObjects(obj, objects[i])
 
       for (let j = 0; j < obj.length; j++) {

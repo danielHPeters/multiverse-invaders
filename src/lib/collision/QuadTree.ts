@@ -1,5 +1,4 @@
 import HitBox from './HitBox'
-import Collideable from '../interfaces/Collideable'
 
 /**
  * QuadTree class used to optimize collision checking.
@@ -12,7 +11,7 @@ export default class QuadTree {
   maxObjects: number
   maxLevels: number
   hitBox: HitBox
-  objects: Collideable[]
+  objects: any[]
   nodes: QuadTree[]
 
   /**
@@ -44,7 +43,7 @@ export default class QuadTree {
    * @param returnedObjects
    * @returns
    */
-  getAllObjects (returnedObjects) {
+  getAllObjects (returnedObjects: any) {
     this.nodes.forEach(node => node.getAllObjects(returnedObjects))
     this.objects.forEach(object => returnedObjects.push(object))
     return returnedObjects
@@ -56,7 +55,7 @@ export default class QuadTree {
    * @param object
    * @returns {any}
    */
-  findObjects (returnedObjects, object) {
+  findObjects (returnedObjects: any, object: any) {
     if (typeof object === 'undefined') {
       console.log('UNDEFINED OBJECT')
       return
@@ -74,7 +73,7 @@ export default class QuadTree {
    *
    * @param object
    */
-  insert (object): void {
+  insert (object: any): void {
     if (typeof object === 'undefined') {
       return
     }
@@ -114,7 +113,7 @@ export default class QuadTree {
    * @param object
    * @returns {number}
    */
-  getIndex (object): number {
+  getIndex (object: any): number {
     let index = -1
     let verticalMidpoint = this.hitBox.position.x + this.hitBox.width / 2
     let horizontalMidpoint = this.hitBox.position.y + this.hitBox.height / 2

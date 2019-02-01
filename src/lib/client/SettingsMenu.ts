@@ -5,8 +5,8 @@ import AudioManager from './AudioManager'
 
 enum ElementClasses {
   TAB = 'tab',
-  TAB_CONTENT = 'tabContent',
-  TAB_LINK = 'tabLink',
+  TAB_CONTENT = 'tab-content',
+  TAB_LINK = 'tab-link',
   ACTIVE = 'active'
 }
 
@@ -116,22 +116,32 @@ export default class SettingsMenu {
     })
   }
 
-  private openTab (event, tabId: string): void {
+  private openTab (event: Event, tabId: string): void {
     let tabContent
     let tabLink
+
     tabContent = document.getElementsByClassName(ElementClasses.TAB_CONTENT)
     for (let i = 0; i < tabContent.length; i++) {
-      tabContent[i].style.display = 'none'
+      const element = tabContent[i] as HTMLElement
+      element.style.display = 'none'
     }
     tabLink = document.getElementsByClassName(ElementClasses.TAB_LINK)
     for (let i = 0; i < tabLink.length; i++) {
       tabLink[i].className = tabLink[i].className.replace(' ' + ElementClasses.ACTIVE, '')
     }
-    document.getElementById(tabId).style.display = 'block'
-    event.currentTarget.className += ' ' + ElementClasses.ACTIVE
+    const tabElement = document.getElementById(tabId)
+    if (tabElement) {
+      tabElement.style.display = 'block'
+    }
+
+    const target = event.currentTarget as HTMLElement
+
+    if (target) {
+      target.classList.add(ElementClasses.ACTIVE)
+    }
   }
 
-  private createTab (id: string, linkText: string, title: string, callback): void {
+  private createTab (id: string, linkText: string, title: string, callback: (container: HTMLElement) => void): void {
     const container = document.createElement('div')
     const menuLink = document.createElement('button')
     const titleElement = document.createElement('h4')
@@ -147,7 +157,11 @@ export default class SettingsMenu {
     callback(container)
   }
 
-  private addEntry (id, value, type, labelText: string, parent, action, opts = { min: 0, max: 1, step: 0.1 }): void {
+  private addEntry (id: string, value: any, type: any, labelText: string, parent: HTMLElement, action: (input: HTMLInputElement) => void, opts = {
+    min: 0,
+    max: 1,
+    step: 0.1
+  }): void {
     const row = document.createElement('div')
     const label = document.createElement('label')
     const input = document.createElement('input')

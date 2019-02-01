@@ -26,7 +26,7 @@ export default class Camera {
   viewportRect: Rectangle
   worldRect: Rectangle
 
-  constructor (x, y, viewWidth, viewHeight, worldWidth, worldHeight) {
+  constructor (x: number, y: number, viewWidth: number, viewHeight: number, worldWidth: number, worldHeight: number) {
     // position of camera (left-top coordinate)
     this.position = new Vector2(x, y)
     this.previousPosition = new Vector2(x, y)
