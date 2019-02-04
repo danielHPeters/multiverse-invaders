@@ -25,18 +25,27 @@ export default class Enemy extends Entity implements Renderable, Movable, Collid
   leftEdge: number
   rightEdge: number
   bottomEdge: number
-  sprite: any
+  sprite: HTMLImageElement
   percentFire: number
   chance: number
   alive: boolean
   bulletPool: Pool
-  collidesWith
+  collidesWith: AssetId[]
   type: AssetId
   colliding: boolean
   explosionSound: Sound
   game: GameState
 
-  constructor (width: number, height: number, sprite, type: AssetId, bulletPool: Pool, settings: Settings, sound: Sound, game: GameState) {
+  constructor (
+    width: number,
+    height: number,
+    sprite: HTMLImageElement,
+    type: AssetId,
+    bulletPool: Pool,
+    settings: Settings,
+    sound: Sound,
+    game: GameState
+  ) {
     super(new Vector2(0, 0), new Dimension(width, height), settings)
     this.velocity = new Vector2(0, 0)
     this.sprite = sprite
@@ -112,6 +121,6 @@ export default class Enemy extends Entity implements Renderable, Movable, Collid
   }
 
   isCollideAbleWith (other: Collideable): boolean {
-    return this.collidesWith.includes(other.type.toString())
+    return this.collidesWith.includes(other.type)
   }
 }

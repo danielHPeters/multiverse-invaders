@@ -14,11 +14,12 @@ export default class MatrixFactory {
    * @param mArray The array used to create the matrix
    * @returns {Matrix} The generated matrix object
    */
-  static createMatrix (mArray): Matrix {
+  static createMatrix (mArray: number[][]): Matrix {
     const length = mArray[0].length
+
     for (let i = 1; i < mArray.length; i++) {
       if (mArray[i].length !== length) {
-        return null
+        return Matrix.EMPTY
       }
     }
     return new Matrix(mArray)

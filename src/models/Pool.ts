@@ -16,36 +16,46 @@ export default class Pool implements Renderable, Movable {
   assetManager: AssetManager
   maxSize: number
   type: AssetId
-  assetId: AssetId
   pool: any[]
-  subPool: Pool
   settings: Settings
   game: GameState
+  subPool: Pool | undefined
 
-  constructor (assetManager: AssetManager, maxSize: number, type: AssetId, asId: AssetId, settings: Settings, pool: Pool = null, game: GameState = null) {
+  constructor (
+    assetManager: AssetManager,
+    maxSize: number,
+    type: AssetId,
+    settings: Settings,
+    game: GameState,
+    pool: Pool | undefined = undefined
+  ) {
     this.assetManager = assetManager
     this.maxSize = maxSize
     this.type = type
-    this.assetId = asId
     this.pool = []
-    this.subPool = pool
     this.settings = settings
     this.contextId = ContextId.MAIN
     this.game = game
+    this.subPool = pool
     this.init()
   }
 
   init (): void {
-    const sprite = this.assetManager.getSprite(this.assetId)
+    const sprite = this.assetManager.getSprite(this.type)
+
     if (this.type === AssetId.ENEMY) {
-      for (let i = 0; i < this.maxSize; i++) {
-        this.pool[i] = new Enemy(
-          sprite.width,
-          sprite.height, sprite,
-          this.type,
-          this.subPool,
-          this.settings,
-          this.assetManager.getSound(AssetId.EXPLOSION_I, AssetType.AUDIO), this.game)
+      if (this.subPool) {
+        for (let i = 0; i < this.maxSize; i++) {
+          this.pool[i] = new Enemy(
+            sprite.width,
+            sprite.height, sprite,
+            this.type,
+            this.subPool,
+            this.settings,
+            this.assetManager.getSound(AssetId.EXPLOSION_I, AssetType.AUDIO),
+            this.game
+          )
+        }
       }
     } else {
       for (let i = 0; i < this.maxSize; i++) {
@@ -76,7 +86,7 @@ export default class Pool implements Renderable, Movable {
 
   render (ctx: CanvasRenderingContext2D): void {
     for (let i = 0; i < this.pool.length; i++) {
-      // Only draw until we find a bullet that is not alive
+      // Only render until we find a bullet that is not alive
       if (this.pool[i].alive) {
         this.pool[i].render(ctx)
       } else {

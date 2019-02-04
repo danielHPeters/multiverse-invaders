@@ -7,11 +7,11 @@ import SpriteSheet from './SpriteSheet'
  * @version 1.0
  */
 export default class Animation {
-  private _spriteSheet: SpriteSheet
-  private _speed: number
-  private _sequence: number[]
-  private _currentFrame: number
-  private _counter: number
+  spriteSheet: SpriteSheet
+  speed: number
+  private readonly sequence: number[]
+  private currentFrame: number
+  private counter: number
 
   /**
    * Constructor Sets all animation data.
@@ -22,14 +22,14 @@ export default class Animation {
    * @param {number} end animation end frame
    */
   constructor (spriteSheet: SpriteSheet, speed: number, start: number, end: number) {
-    this._spriteSheet = spriteSheet
-    this._speed = speed
-    this._sequence = []
-    this._currentFrame = 0
-    this._counter = 0
+    this.spriteSheet = spriteSheet
+    this.speed = speed
+    this.sequence = []
+    this.currentFrame = 0
+    this.counter = 0
 
     for (let frame = start; frame <= end; frame++) {
-      this._sequence.push(frame)
+      this.sequence.push(frame)
     }
   }
 
@@ -37,73 +37,34 @@ export default class Animation {
    * Update animation frames.
    */
   update (): void {
-    if (this._counter === (this._speed - 1)) {
-      this._currentFrame = (this._currentFrame + 1) % this._sequence.length
+    if (this.counter === (this.speed - 1)) {
+      this.currentFrame = (this.currentFrame + 1) % this.sequence.length
     }
-    this._counter = (this._counter + 1) % this._speed
+    this.counter = (this.counter + 1) % this.speed
   }
 
   /**
-   * Draw current frame
-   * @param ctx canvas context
+   * Draw current frame.
+   *
+   * @param {CanvasRenderingContext2D} ctx canvas context
    * @param {number} x location x
    * @param {number} y location y
    * @param {number} width display width
    * @param {number} height display height
    */
-  draw (ctx: CanvasRenderingContext2D, x: number, y: number, width: number, height: number): void {
-    let row = Math.floor(this._sequence[this._currentFrame] / this._spriteSheet.framesPerRow)
-    let col = Math.floor(this._sequence[this._currentFrame] % this._spriteSheet.framesPerRow)
+  render (ctx: CanvasRenderingContext2D, x: number, y: number, width: number, height: number): void {
+    let row = Math.floor(this.sequence[this.currentFrame] / this.spriteSheet.framesPerRow)
+    let col = Math.floor(this.sequence[this.currentFrame] % this.spriteSheet.framesPerRow)
     ctx.drawImage(
-      this._spriteSheet.image,
-      col * this._spriteSheet.frameWidth,
-      row * this._spriteSheet.frameHeight,
-      this._spriteSheet.frameWidth,
-      this._spriteSheet.frameHeight,
+      this.spriteSheet.image,
+      col * this.spriteSheet.frameWidth,
+      row * this.spriteSheet.frameHeight,
+      this.spriteSheet.frameWidth,
+      this.spriteSheet.frameHeight,
       x,
       y,
       width,
       height
     )
-  }
-
-  get spriteSheet (): SpriteSheet {
-    return this._spriteSheet
-  }
-
-  set spriteSheet (value: SpriteSheet) {
-    this._spriteSheet = value
-  }
-
-  get speed (): number {
-    return this._speed
-  }
-
-  set speed (value: number) {
-    this._speed = value
-  }
-
-  get sequence (): number[] {
-    return this._sequence
-  }
-
-  set sequence (value: number[]) {
-    this._sequence = value
-  }
-
-  get currentFrame (): number {
-    return this._currentFrame
-  }
-
-  set currentFrame (value: number) {
-    this._currentFrame = value
-  }
-
-  get counter (): number {
-    return this._counter
-  }
-
-  set counter (value: number) {
-    this._counter = value
   }
 }

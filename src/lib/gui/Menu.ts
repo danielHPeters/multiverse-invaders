@@ -42,7 +42,9 @@ export default class Menu {
     let tabLink
     tabContent = document.getElementsByClassName(ElementClasses.MENU_CONTENT)
     for (let i = 0; i < tabContent.length; i++) {
-      tabContent[i].style.display = 'none'
+      const element = tabContent[i] as HTMLElement
+
+      element.style.display = 'none'
     }
     tabLink = document.getElementsByClassName(ElementClasses.MENU_LINK)
     for (let i = 0; i < tabLink.length; i++) {
@@ -52,7 +54,7 @@ export default class Menu {
     this.linkElement.className += ' ' + ElementClasses.ACTIVE
   }
 
-  addSlider (action) {
+  addSlider (action: (event: Event) => void) {
     const slider = document.createElement('input')
     slider.setAttribute('id', 'effectsVolume')
     slider.setAttribute('type', 'range')

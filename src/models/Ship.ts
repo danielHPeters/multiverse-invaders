@@ -21,16 +21,16 @@ import { ContextId } from '../enum/ContextId'
  */
 export default class Ship extends Entity implements Renderable, Movable, Observer, Collideable {
   acceleration: Vector2
-  sprite: any
+  sprite: HTMLImageElement
   bulletPool: Pool
   counter: number
-  collidesWith
+  collidesWith: AssetId[]
   type: AssetId
   colliding: boolean
   velocity: Vector2
-  state
+  state: any
   maxTop: number
-  startPosition
+  startPosition: Vector2
   settings: Settings
   laserSound: Sound
   assetManager: AssetManager
@@ -160,6 +160,6 @@ export default class Ship extends Entity implements Renderable, Movable, Observe
    * @returns {boolean}
    */
   isCollideAbleWith (other: Collideable): boolean {
-    return this.collidesWith.includes(other.type.toString())
+    return this.collidesWith.includes(other.type)
   }
 }

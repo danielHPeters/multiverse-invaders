@@ -21,7 +21,7 @@ export default class Camera {
   viewWidth: number
   viewHeight: number
   axis: AXIS
-  following: Drawable
+  following: Drawable | undefined
   deadZone: Vector2
   viewportRect: Rectangle
   worldRect: Rectangle
@@ -40,7 +40,7 @@ export default class Camera {
     this.axis = AXIS.BOTH
 
     // object that should be followed
-    this.following = null
+    this.following = undefined
 
     // rectangle that represents the viewport
     this.viewportRect = new Rectangle(this.position.x, this.position.y, this.viewWidth, this.viewHeight)
@@ -57,29 +57,30 @@ export default class Camera {
    * @param xDeadZone
    * @param yDeadZone
    */
-  follow (following: Drawable, xDeadZone, yDeadZone): void {
+  follow (following: Drawable, xDeadZone: number, yDeadZone: number): void {
     this.following = following
     this.deadZone.set(xDeadZone, yDeadZone)
   }
 
   update (): void {
     this.previousPosition.setVector(this.position)
+    const target = this.following
     // keep following the player (or other desired object)
-    if (this.following != null) {
+    if (target !== undefined) {
       if (this.axis === AXIS.HORIZONTAL || this.axis === AXIS.BOTH) {
         // moves camera on horizontal axis based on followed object position
-        if (this.following.position.x - this.position.x + this.deadZone.x > this.viewWidth) {
-          this.position.x = this.following.position.x - (this.viewWidth - this.deadZone.x)
-        } else if (this.following.position.x - this.deadZone.x < this.position.x) {
-          this.position.x = this.following.position.x - this.deadZone.x
+        if (target.position.x - this.position.x + this.deadZone.x > this.viewWidth) {
+          this.position.x = target.position.x - (this.viewWidth - this.deadZone.x)
+        } else if (target.position.x - this.deadZone.x < this.position.x) {
+          this.position.x = target.position.x - this.deadZone.x
         }
       }
       if (this.axis === AXIS.VERTICAL || this.axis === AXIS.BOTH) {
         // moves camera on vertical axis based on followed object position
-        if (this.following.position.y - this.position.y + this.deadZone.y > this.viewHeight) {
-          this.position.y = this.following.position.y - (this.viewHeight - this.deadZone.y)
-        } else if (this.following.position.y - this.deadZone.y < this.position.y) {
-          this.position.y = this.following.position.y - this.deadZone.y
+        if (target.position.y - this.position.y + this.deadZone.y > this.viewHeight) {
+          this.position.y = target.position.y - (this.viewHeight - this.deadZone.y)
+        } else if (target.position.y - this.deadZone.y < this.position.y) {
+          this.position.y = target.position.y - this.deadZone.y
         }
       }
     }

@@ -1,8 +1,11 @@
-/**
- * Interface for entities who be rendered.
- */
 import { ContextId } from '../../enum/ContextId'
 
+/**
+ * Interface for entities who be rendered.
+ *
+ * @author Daniel Peters
+ * @version 1.0
+ */
 export default interface Renderable {
   contextId: ContextId
 

@@ -58,10 +58,11 @@ export default class InvadersState extends Observable implements GameState {
       assetManager.getSprite(AssetId.BACKGROUND),
       settings
     )
-    const playerBulletPool = new Pool(this.assetManager, 80, AssetId.PLAYER_BULLET, AssetId.PLAYER_BULLET, settings)
+    const playerBulletPool = new Pool(this.assetManager, 80, AssetId.PLAYER_BULLET, settings, this)
     const ship = new Ship(assetManager.getSprite(AssetId.PLAYER).width, assetManager.getSprite(AssetId.PLAYER).height, assetManager, playerBulletPool, settings)
-    const enemyBulletPool = new Pool(this.assetManager, 50, AssetId.ENEMY_BULLET, AssetId.ENEMY_BULLET, settings)
-    const enemyPool = new Pool(this.assetManager, 30, AssetId.ENEMY, AssetId.ENEMY, settings, enemyBulletPool, this)
+    const enemyBulletPool = new Pool(this.assetManager, 50, AssetId.ENEMY_BULLET, settings, this)
+    const enemyPool = new Pool(this.assetManager, 30, AssetId.ENEMY, settings, this, enemyBulletPool)
+
     this.pools = []
     this.entities = []
     this.renderables = []

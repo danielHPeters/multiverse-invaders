@@ -24,7 +24,7 @@ export default class Dimension {
    *
    * @param {number} factor
    */
-  scale (factor: number) {
+  scale (factor: number): void {
     this.width *= factor
     this.height *= factor
   }

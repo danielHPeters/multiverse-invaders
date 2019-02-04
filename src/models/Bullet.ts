@@ -20,7 +20,7 @@ export default class Bullet extends Entity implements Renderable, Movable, Colli
   speed: number
   sprite: HTMLImageElement
   alive: boolean
-  collidesWith
+  collidesWith: AssetId[]
   type: AssetId
   colliding: boolean
 
@@ -32,6 +32,7 @@ export default class Bullet extends Entity implements Renderable, Movable, Colli
     this.type = type
     this.colliding = false
     this.collidesWith = []
+
     if (this.type === AssetId.PLAYER_BULLET) {
       this.collidesWith.push(AssetId.ENEMY)
     } else if (this.type === AssetId.ENEMY_BULLET) {
@@ -79,6 +80,6 @@ export default class Bullet extends Entity implements Renderable, Movable, Colli
   }
 
   isCollideAbleWith (other: Collideable): boolean {
-    return this.collidesWith.includes(other.type.toString())
+    return this.collidesWith.includes(other.type)
   }
 }
